@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Centavo — Design System Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F7F5F1;
+    --surface: #FFFFFF;
+    --text: #1A1816;
+    --muted: #6B6560;
+    --border: #E8E4DF;
+    --income: #2D6A4F;
+    --income-light: #EBF5F0;
+    --expense: #9B2335;
+    --expense-light: #F9EEF0;
+    --font-serif: 'Instrument Serif', Georgia, serif;
+    --font-sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
+  }
+  [data-theme="dark"] {
+    --bg: #1A1816;
+    --surface: #2A2724;
+    --text: #F7F5F1;
+    --muted: #9B948F;
+    --border: #3A3532;
+    --income-light: #1A3329;
+    --expense-light: #3A1520;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-sans); font-size: 15px; line-height: 1.5; transition: background .2s, color .2s; }
+  .page { max-width: 1100px; margin: 0 auto; padding: 48px 24px 80px; }
+  .section { margin-bottom: 64px; }
+  .section-title { font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 24px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 64px; }
+  .header-wordmark { font-family: var(--font-serif); font-size: 28px; color: var(--text); }
+  .header-wordmark span { color: var(--income); }
+  .header-meta { font-size: 12px; color: var(--muted); text-align: right; line-height: 1.8; }
+  .theme-toggle { position: fixed; top: 20px; right: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 6px 14px; font-family: var(--font-sans); font-size: 12px; font-weight: 600; color: var(--text); cursor: pointer; transition: all .2s; z-index: 100; }
+  .theme-toggle:hover { background: var(--border); }
+
+  /* Phone mockup */
+  .phone-wrap { display: flex; justify-content: center; }
+  .phone { width: 340px; background: var(--bg); border-radius: 40px; border: 7px solid var(--text); overflow: hidden; box-shadow: 0 32px 80px rgba(0,0,0,.12); }
+  .phone-notch { width: 100px; height: 28px; background: var(--text); border-radius: 0 0 16px 16px; margin: 0 auto; }
+  .phone-screen { background: var(--bg); }
+
+  /* Dashboard */
+  .app-header { padding: 16px 18px 0; display: flex; justify-content: space-between; align-items: center; }
+  .app-logo { font-family: var(--font-serif); font-size: 16px; color: var(--text); }
+  .avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: var(--muted); }
+  .month-nav { padding: 20px 18px 6px; display: flex; justify-content: space-between; align-items: center; }
+  .month-arrow { color: var(--muted); font-size: 14px; cursor: pointer; }
+  .month-label { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+  .hero-section { padding: 6px 18px 20px; text-align: center; border-bottom: 1px solid var(--border); }
+  .hero-label { font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+  .hero-amount { font-family: var(--font-serif); font-size: 38px; line-height: 1.1; color: var(--income); }
+  .summary-cards { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--border); }
+  .summary-card { padding: 14px 18px; border-right: 1px solid var(--border); }
+  .summary-card:last-child { border-right: none; }
+  .summary-card-label { font-size: 10px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 3px; }
+  .summary-card-label.income { color: var(--income); }
+  .summary-card-label.expense { color: var(--expense); }
+  .summary-card-amount { font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums lining-nums; }
+  .categories-section { padding: 14px 0 0; }
+  .categories-label { font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); padding: 0 18px; margin-bottom: 6px; }
+  .category-row { display: flex; align-items: center; padding: 8px 18px; gap: 10px; }
+  .category-icon { width: 28px; height: 28px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+  .category-icon.income { background: var(--income-light); }
+  .category-icon.expense { background: var(--expense-light); }
+  .category-name { flex: 1; font-size: 13px; font-weight: 500; }
+  .category-amount { font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums lining-nums; }
+  .category-amount.income { color: var(--income); }
+  .category-amount.expense { color: var(--expense); }
+  .bottom-nav { display: flex; padding: 10px 0 18px; border-top: 1px solid var(--border); margin-top: 6px; background: var(--surface); }
+  .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .nav-icon { font-size: 18px; color: var(--muted); }
+  .nav-icon.active { color: var(--text); }
+  .nav-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--text); opacity: 0; }
+  .nav-dot.active { opacity: 1; }
+
+  /* Add transaction screen */
+  .screen-header { padding: 16px 18px 14px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); }
+  .back-btn { color: var(--muted); font-size: 18px; }
+  .screen-title { font-size: 15px; font-weight: 600; }
+  .type-toggle { display: flex; margin: 16px 18px 0; background: var(--border); border-radius: 10px; padding: 3px; }
+  .type-option { flex: 1; padding: 9px; text-align: center; font-size: 13px; font-weight: 600; color: var(--muted); border-radius: 8px; }
+  .type-option.active.expense { background: var(--surface); color: var(--expense); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  .type-option.active.income { background: var(--surface); color: var(--income); }
+  .amount-field { padding: 24px 18px 16px; text-align: center; border-bottom: 1px solid var(--border); }
+  .amount-currency { font-size: 20px; color: var(--muted); font-family: var(--font-serif); }
+  .amount-input-display { font-family: var(--font-serif); font-size: 46px; color: var(--text); line-height: 1; }
+  .amount-cursor { animation: blink 1s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+  .form-section { padding: 14px 18px 0; }
+  .form-label { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .chip-row { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+  .chip { display: flex; align-items: center; gap: 5px; padding: 6px 10px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface); font-size: 12px; font-weight: 500; color: var(--muted); white-space: nowrap; }
+  .chip.selected.expense { background: var(--expense-light); border-color: var(--expense); color: var(--expense); }
+  .text-input { width: 100%; border: 1px solid var(--border); background: var(--surface); border-radius: 9px; padding: 11px 13px; font-family: var(--font-sans); font-size: 14px; color: var(--text); outline: none; margin-top: 14px; }
+  .text-input::placeholder { color: var(--muted); }
+  .save-btn { margin: 20px 18px 18px; width: calc(100% - 36px); padding: 14px; border: none; border-radius: 10px; font-family: var(--font-sans); font-size: 14px; font-weight: 700; cursor: pointer; }
+
+  /* Palette */
+  .palette { display: flex; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+  .swatch { flex: 1; aspect-ratio: 1; display: flex; flex-direction: column; justify-content: flex-end; padding: 8px; }
+  .swatch-hex { font-size: 9px; font-weight: 700; font-family: monospace; opacity: .8; }
+  .swatch-name { font-size: 9px; opacity: .5; margin-top: 1px; }
+
+  /* Typography specimen */
+  .type-specimen { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .type-row { padding: 18px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: baseline; gap: 20px; }
+  .type-row:last-child { border-bottom: none; }
+  .type-meta { width: 130px; flex-shrink: 0; }
+  .type-meta-role { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .type-meta-spec { font-size: 10px; color: var(--muted); margin-top: 2px; opacity: .6; }
+
+  /* Components */
+  .component-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .component-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .component-card-title { font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+  .btn { padding: 11px 18px; border-radius: 9px; font-family: var(--font-sans); font-size: 13px; font-weight: 600; cursor: pointer; width: 100%; margin-bottom: 7px; border: none; }
+  .btn-primary { background: var(--text); color: var(--bg); }
+  .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text); }
+  .btn-income { background: var(--income-light); color: var(--income); }
+  .btn-expense { background: var(--expense-light); color: var(--expense); }
+  .tx-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .tx-row:last-child { border-bottom: none; }
+  .tx-icon { width: 32px; height: 32px; border-radius: 8px; background: var(--income-light); display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .tx-icon.ex { background: var(--expense-light); }
+  .tx-info { flex: 1; }
+  .tx-name { font-size: 13px; font-weight: 500; }
+  .tx-cat { font-size: 11px; color: var(--muted); }
+  .tx-amount { font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums lining-nums; }
+  .tx-amount.inc { color: var(--income); }
+  .tx-amount.exp { color: var(--expense); }
+  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+  .badge-income { background: var(--income-light); color: var(--income); }
+  .badge-expense { background: var(--expense-light); color: var(--expense); }
+
+  @media (max-width: 700px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    .component-grid { grid-template-columns: 1fr; }
+    .phone { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" onclick="document.documentElement.dataset.theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'">
+  ☾ / ☀
+</button>
+
+<div class="page">
+
+  <div class="header">
+    <div>
+      <div class="header-wordmark">centav<span>o</span></div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px;">design system preview · abril 2026</div>
+    </div>
+    <div class="header-meta">
+      Warm Minimal<br>
+      Instrument Serif + Plus Jakarta Sans<br>
+      Vite · React · Dexie.js · TailwindCSS v4
+    </div>
+  </div>
+
+  <!-- COLOR PALETTE -->
+  <div class="section">
+    <div class="section-title">Color Palette — Semantic only. Green = income. Burgundy = expense. Nothing else.</div>
+    <div class="palette">
+      <div class="swatch" style="background:#F7F5F1;color:#1A1816"><div class="swatch-hex">#F7F5F1</div><div class="swatch-name">background</div></div>
+      <div class="swatch" style="background:#FFFFFF;color:#1A1816;border-right:1px solid #E8E4DF"><div class="swatch-hex">#FFFFFF</div><div class="swatch-name">surface</div></div>
+      <div class="swatch" style="background:#E8E4DF;color:#1A1816"><div class="swatch-hex">#E8E4DF</div><div class="swatch-name">border</div></div>
+      <div class="swatch" style="background:#6B6560;color:#F7F5F1"><div class="swatch-hex">#6B6560</div><div class="swatch-name">muted</div></div>
+      <div class="swatch" style="background:#1A1816;color:#F7F5F1"><div class="swatch-hex">#1A1816</div><div class="swatch-name">text</div></div>
+      <div class="swatch" style="background:#2D6A4F;color:#EBF5F0"><div class="swatch-hex">#2D6A4F</div><div class="swatch-name">income</div></div>
+      <div class="swatch" style="background:#9B2335;color:#F9EEF0"><div class="swatch-hex">#9B2335</div><div class="swatch-name">expense</div></div>
+    </div>
+  </div>
+
+  <!-- TYPOGRAPHY -->
+  <div class="section">
+    <div class="section-title">Typography</div>
+    <div class="type-specimen">
+      <div class="type-row">
+        <div class="type-meta"><div class="type-meta-role">Hero number</div><div class="type-meta-spec">Instrument Serif, 44px</div></div>
+        <div style="font-family:'Instrument Serif';font-size:44px;line-height:1.1;color:var(--income)">R$4.250,00</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta"><div class="type-meta-role">Heading</div><div class="type-meta-spec">Plus Jakarta Sans 600, 17px</div></div>
+        <div style="font-size:17px;font-weight:600">Lançamentos de abril</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta"><div class="type-meta-role">Body</div><div class="type-meta-spec">Plus Jakarta Sans 400, 15px</div></div>
+        <div style="font-size:15px">Adicione uma despesa ou receita. Nenhum dado sai do seu dispositivo.</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta"><div class="type-meta-role">Label / cap</div><div class="type-meta-spec">Plus Jakarta Sans 600, 11px uppercase</div></div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">Saldo livre · abril 2026</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta"><div class="type-meta-role">Tabular amounts</div><div class="type-meta-spec">Plus Jakarta Sans, tabular-nums</div></div>
+        <div>
+          <div style="font-weight:700;font-variant-numeric:tabular-nums lining-nums;color:var(--expense)">−R$8.250,00</div>
+          <div style="font-weight:700;font-variant-numeric:tabular-nums lining-nums;color:var(--income);margin-top:4px">+R$12.500,00</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHONE MOCKUPS -->
+  <div class="section">
+    <div class="section-title">Screen Mockups</div>
+    <div class="grid-2">
+
+      <!-- Dashboard -->
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="app-header">
+              <div class="app-logo">centavo</div>
+              <div class="avatar">LC</div>
+            </div>
+            <div class="month-nav">
+              <span class="month-arrow">←</span>
+              <span class="month-label">abril 2026</span>
+              <span class="month-arrow">→</span>
+            </div>
+            <div class="hero-section">
+              <div class="hero-label">Saldo Livre</div>
+              <div class="hero-amount">R$4.250,00</div>
+            </div>
+            <div class="summary-cards">
+              <div class="summary-card">
+                <div class="summary-card-label income">Receitas</div>
+                <div class="summary-card-amount">R$12.500</div>
+              </div>
+              <div class="summary-card">
+                <div class="summary-card-label expense">Despesas</div>
+                <div class="summary-card-amount">R$8.250</div>
+              </div>
+            </div>
+            <div class="categories-section">
+              <div class="categories-label">Por categoria</div>
+              <div class="category-row">
+                <div class="category-icon income">💼</div>
+                <div class="category-name">Salário</div>
+                <div class="category-amount income">+R$9.500</div>
+              </div>
+              <div class="category-row">
+                <div class="category-icon expense">🏠</div>
+                <div class="category-name">Aluguel</div>
+                <div class="category-amount expense">−R$2.200</div>
+              </div>
+              <div class="category-row">
+                <div class="category-icon income">💻</div>
+                <div class="category-name">Freelance</div>
+                <div class="category-amount income">+R$3.000</div>
+              </div>
+              <div class="category-row">
+                <div class="category-icon expense">🍽️</div>
+                <div class="category-name">Alimentação</div>
+                <div class="category-amount expense">−R$1.850</div>
+              </div>
+            </div>
+            <div class="bottom-nav">
+              <div class="nav-item"><div class="nav-icon active">⌂</div><div class="nav-dot active"></div></div>
+              <div class="nav-item"><div class="nav-icon">≡</div><div class="nav-dot"></div></div>
+              <div class="nav-item"><div class="nav-icon">⊕</div><div class="nav-dot"></div></div>
+              <div class="nav-item"><div class="nav-icon">⚙</div><div class="nav-dot"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add transaction -->
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="screen-header">
+              <span class="back-btn">←</span>
+              <span class="screen-title">Novo lançamento</span>
+            </div>
+            <div class="type-toggle">
+              <div class="type-option active expense">Despesa</div>
+              <div class="type-option" style="color:var(--muted)">Receita</div>
+            </div>
+            <div class="amount-field">
+              <div class="amount-currency">R$</div>
+              <div class="amount-input-display">124,<span class="amount-cursor">_</span></div>
+            </div>
+            <div class="form-section">
+              <div class="form-label">Categoria</div>
+              <div class="chip-row">
+                <div class="chip selected expense">🍽️ Alimentação</div>
+                <div class="chip">🏠 Aluguel</div>
+                <div class="chip">🚌 Transporte</div>
+                <div class="chip">💊 Saúde</div>
+              </div>
+              <input class="text-input" type="text" placeholder="Descrição (opcional)" value="iFood · quinta-feira">
+            </div>
+            <button class="save-btn" style="background:var(--expense);color:#fff">Salvar despesa</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- COMPONENTS -->
+  <div class="section">
+    <div class="section-title">Components</div>
+    <div class="component-grid">
+
+      <div class="component-card">
+        <div class="component-card-title">Buttons</div>
+        <button class="btn btn-primary">Salvar lançamento</button>
+        <button class="btn btn-secondary">Cancelar</button>
+        <button class="btn btn-income">+ Receita</button>
+        <button class="btn btn-expense">− Despesa</button>
+      </div>
+
+      <div class="component-card">
+        <div class="component-card-title">Transaction Rows</div>
+        <div class="tx-row">
+          <div class="tx-icon">💼</div>
+          <div class="tx-info"><div class="tx-name">Pagamento PJ</div><div class="tx-cat">Freelance · 14 abr</div></div>
+          <div class="tx-amount inc">+R$3.000</div>
+        </div>
+        <div class="tx-row">
+          <div class="tx-icon ex">🍽️</div>
+          <div class="tx-info"><div class="tx-name">iFood</div><div class="tx-cat">Alimentação · 11 abr</div></div>
+          <div class="tx-amount exp">−R$124</div>
+        </div>
+        <div class="tx-row">
+          <div class="tx-icon ex">🚌</div>
+          <div class="tx-info"><div class="tx-name">Uber</div><div class="tx-cat">Transporte · 10 abr</div></div>
+          <div class="tx-amount exp">−R$32</div>
+        </div>
+      </div>
+
+      <div class="component-card">
+        <div class="component-card-title">Badges</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+          <span class="badge badge-income">📈 Receita</span>
+          <span class="badge badge-expense">📉 Despesa</span>
+          <span class="badge" style="background:var(--border);color:var(--muted)">abril 2026</span>
+        </div>
+        <div style="padding:12px;border-radius:9px;background:var(--income-light);border:1px solid rgba(45,106,79,.2);margin-bottom:8px">
+          <div style="font-size:11px;font-weight:700;color:var(--income);margin-bottom:2px">Saldo positivo</div>
+          <div style="font-size:12px;color:var(--muted)">Você fechou o mês no azul.</div>
+        </div>
+        <div style="padding:12px;border-radius:9px;background:var(--expense-light);border:1px solid rgba(155,35,53,.2)">
+          <div style="font-size:11px;font-weight:700;color:var(--expense);margin-bottom:2px">Saldo negativo</div>
+          <div style="font-size:12px;color:var(--muted)">Despesas superaram receitas este mês.</div>
+        </div>
+      </div>
+
+      <div class="component-card">
+        <div class="component-card-title">Month Selector</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border:1px solid var(--border);border-radius:9px;background:var(--bg)">
+          <span style="color:var(--muted);font-size:16px">←</span>
+          <div style="text-align:center">
+            <div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">mês atual</div>
+            <div style="font-size:17px;font-weight:700;margin-top:2px">Abril 2026</div>
+          </div>
+          <span style="color:var(--muted);font-size:16px">→</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- IMPLEMENTATION NOTES -->
+  <div class="section">
+    <div class="section-title">Implementation Notes for DESIGN.md</div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;letter-spacing:.06em;text-transform:uppercase">Tailwind Color Extension</div>
+        <pre style="font-size:11px;line-height:1.6;color:var(--text);background:var(--bg);padding:12px;border-radius:8px;overflow-x:auto">colors: {
+  bg: '#F7F5F1',
+  ink: '#1A1816',
+  muted: '#6B6560',
+  border: '#E8E4DF',
+  income: '#2D6A4F',
+  expense: '#9B2335',
+}</pre>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;letter-spacing:.06em;text-transform:uppercase">Amount Display</div>
+        <pre style="font-size:11px;line-height:1.6;color:var(--text);background:var(--bg);padding:12px;border-radius:8px;overflow-x:auto">// stored as integer (centavos)
+// R$124,50 = 12450
+
+new Intl.NumberFormat('pt-BR', {
+  style: 'currency',
+  currency: 'BRL'
+}).format(amount / 100)
+
+// CSS for tabular numbers:
+font-variant-numeric:
+  tabular-nums lining-nums;</pre>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;letter-spacing:.06em;text-transform:uppercase">Font Loading (Google Fonts)</div>
+        <pre style="font-size:11px;line-height:1.6;color:var(--text);background:var(--bg);padding:12px;border-radius:8px;overflow-x:auto">fonts.googleapis.com/css2?
+  family=Instrument+Serif:ital@0;1
+  &family=Plus+Jakarta+Sans:
+    wght@400;500;600;700
+  &display=swap</pre>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;letter-spacing:.06em;text-transform:uppercase">Optional: Paper Grain on Hero</div>
+        <pre style="font-size:11px;line-height:1.6;color:var(--text);background:var(--bg);padding:12px;border-radius:8px;overflow-x:auto">/* SVG filter on balance card */
+filter: url(#paper-grain);
+
+&lt;filter id="paper-grain"&gt;
+  &lt;feTurbulence
+    type="fractalNoise"
+    baseFrequency="0.65"
+    numOctaves="3"
+    stitchTiles="stitch"/&gt;
+  &lt;feBlend
+    in="SourceGraphic"
+    mode="multiply"
+    opacity=".04"/&gt;
+&lt;/filter&gt;</pre>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

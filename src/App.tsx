@@ -1,121 +1,57 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { MonthlyDashboard } from './components/MonthlyDashboard'
+import { TransactionList } from './components/TransactionList'
+import { AddTransactionForm } from './components/AddTransactionForm'
+import { ComponentsGallery } from './components/ComponentsGallery'
+import { SideNav } from './components/SideNav'
+import { BottomNav } from './components/BottomNav'
 
-function App() {
-  const [count, setCount] = useState(0)
+type Tab = 'home' | 'transactions' | 'add' | 'settings'
 
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+function getInitialMonth() {
+  const now = new Date()
+  return { year: now.getFullYear(), month: now.getMonth() + 1 }
 }
 
-export default App
+export default function App() {
+  const [tab, setTab] = useState<Tab>('home')
+  const [{ year, month }, setMonth] = useState(getInitialMonth)
+
+  function prevMonth() {
+    setMonth(({ year, month }) =>
+      month === 1 ? { year: year - 1, month: 12 } : { year, month: month - 1 }
+    )
+  }
+
+  function nextMonth() {
+    setMonth(({ year, month }) =>
+      month === 12 ? { year: year + 1, month: 1 } : { year, month: month + 1 }
+    )
+  }
+
+  return (
+    <div className="flex min-h-svh">
+      {/* Desktop sidebar — hidden on mobile */}
+      <SideNav active={tab} onChange={setTab} />
+
+      {/* Main content */}
+      <main className="flex-1 flex flex-col min-h-svh overflow-hidden">
+        {tab === 'home' && (
+          <MonthlyDashboard year={year} month={month} onPrev={prevMonth} onNext={nextMonth} />
+        )}
+        {tab === 'transactions' && (
+          <TransactionList year={year} month={month} onPrev={prevMonth} onNext={nextMonth} />
+        )}
+        {tab === 'add' && (
+          <AddTransactionForm onSaved={() => setTab('home')} onCancel={() => setTab('home')} />
+        )}
+        {tab === 'settings' && (
+          <ComponentsGallery />
+        )}
+      </main>
+
+      {/* Mobile bottom nav — hidden on desktop */}
+      <BottomNav active={tab} onChange={setTab} />
+    </div>
+  )
+}
