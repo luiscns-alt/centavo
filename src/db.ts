@@ -36,12 +36,42 @@ const DEFAULT_CATEGORIES: Omit<Category, 'id'>[] = [
   { name: 'Outros',         type: 'expense', icon: '➕' },
 ]
 
-class CentavoDB extends Dexie {
+/** Shape of a v1 transaction row, read only during the v1 → v2 upgrade */
+interface TransactionV1 {
+  accountId?: number
+  categoryId: number
+  amount: number              // float reais
+  type: 'income' | 'expense' | 'transfer'
+  description?: string
+  date: Date | string
+  createdAt: Date | number
+}
+
+/** Convert a v1 row in place to the v2 shape; returns false if it must be dropped */
+export function upgradeTransactionV1(row: Record<string, unknown>): boolean {
+  const v1 = row as unknown as TransactionV1
+  // Transfers moved money between accounts, which no longer exist
+  if (v1.type === 'transfer') return false
+  if (typeof v1.amount !== 'number' || !Number.isFinite(v1.amount)) return false
+
+  const date = v1.date instanceof Date ? toISODate(v1.date) : v1.date
+  if (typeof date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return false
+
+  const tx = row as unknown as Transaction
+  tx.amount = Math.round(Math.abs(v1.amount) * 100)
+  tx.date = date
+  tx.createdAt = v1.createdAt instanceof Date ? v1.createdAt.getTime() : Number(v1.createdAt) || Date.now()
+  if (!tx.description) delete tx.description
+  delete row.accountId
+  return true
+}
+
+export class CentavoDB extends Dexie {
   categories!: EntityTable<Category, 'id'>
   transactions!: EntityTable<Transaction, 'id'>
 
-  constructor() {
-    super('centavoDB')
+  constructor(name = 'centavoDB') {
+    super(name)
 
     // v1 had accounts + transactions with accountId, float amounts, Date objects
     this.version(1).stores({
@@ -50,12 +80,17 @@ class CentavoDB extends Dexie {
       transactions: '++id, accountId, categoryId, type, date, createdAt',
     })
 
-    // v2: remove accounts, simplify transactions (no accountId, integer centavos, date string)
+    // v2: remove accounts, simplify transactions (no accountId, integer centavos, date string).
+    // Existing rows are converted, not cleared — only transfers are dropped.
     this.version(2).stores({
       accounts: null,
       categories: '++id, type',
       transactions: '++id, categoryId, type, date, createdAt',
-    }).upgrade(tx => tx.table('transactions').clear())
+    }).upgrade(tx =>
+      tx.table('transactions').toCollection().modify((row, ref) => {
+        if (!upgradeTransactionV1(row)) delete (ref as { value?: unknown }).value
+      })
+    )
 
     this.on('populate', async () => {
       await this.categories.bulkAdd(DEFAULT_CATEGORIES as Category[])
@@ -77,9 +112,13 @@ export function formatBRL(centavos: number): string {
 
 /** Today as YYYY-MM-DD in local time — toISOString() would return the UTC date (tomorrow after 21h in BRT) */
 export function todayISO(): string {
-  const now = new Date()
+  return toISODate(new Date())
+}
+
+/** A Date as YYYY-MM-DD in local time */
+export function toISODate(d: Date): string {
   const pad = (n: number) => String(n).padStart(2, '0')
-  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
 }
 
 /**

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { ChevronLeft } from 'lucide-react'
 import { db, parseBRL, todayISO, type Transaction } from '../db'
+import { requestPersistentStorageOnce } from '../storage'
 import { Button } from './ui/Button'
 
 type TxType = 'income' | 'expense'
@@ -58,6 +59,7 @@ export function AddTransactionForm({ onSaved, onCancel }: Props) {
         createdAt: Date.now(),
       }
       await db.transactions.add(tx as Transaction)
+      void requestPersistentStorageOnce()
       setAmountRaw('')
       setDescription('')
       setCategoryId('')
