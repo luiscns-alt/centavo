@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { MonthlyDashboard } from './components/MonthlyDashboard'
 import { TransactionList } from './components/TransactionList'
 import { AddTransactionForm } from './components/AddTransactionForm'
-import { ComponentsGallery } from './components/ComponentsGallery'
+import { Settings } from './components/Settings'
 import { SideNav } from './components/SideNav'
 import { BottomNav } from './components/BottomNav'
 
@@ -46,7 +46,7 @@ export default function App() {
           <AddTransactionForm onSaved={() => setTab('home')} onCancel={() => setTab('home')} />
         )}
         {tab === 'settings' && (
-          <ComponentsGallery />
+          <Settings />
         )}
       </main>
 
