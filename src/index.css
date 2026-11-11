@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  /* Colors */
+  /* Colors — light (default). Dark values are swapped in below via the same variables. */
   --color-bg: #F7F5F1;
   --color-surface: #FFFFFF;
   --color-ink: #1A1816;
@@ -12,15 +12,29 @@
   --color-expense: #9B2335;
   --color-expense-light: #F9EEF0;
 
-  /* Dark mode surfaces */
-  --color-bg-dark: #1A1816;
-  --color-surface-dark: #2A2724;
-  --color-border-dark: #3A3532;
-  --color-muted-dark: #9B948F;
-
   /* Fonts */
   --font-serif: 'Instrument Serif', Georgia, serif;
   --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Motion (DESIGN.md → Motion) */
+  --ease-out: cubic-bezier(.2, .8, .2, 1);
+  --ease-in-out: cubic-bezier(.4, 0, .2, 1);
+}
+
+/* Dark mode — DESIGN.md: invert surfaces, income/expense ~15% less saturated and lifted for contrast */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #1A1816;
+    --color-surface: #23201E;
+    --color-ink: #F7F5F1;
+    --color-muted: #9B948F;
+    --color-border: #3A3532;
+    --color-income: #7DB497;
+    --color-income-light: #22302A;
+    --color-expense: #D38591;
+    --color-expense-light: #36252A;
+    color-scheme: dark;
+  }
 }
 
 /* Base */
@@ -28,29 +42,94 @@
 
 html {
   font-family: var(--font-sans);
-  background: #F7F5F1;
-  color: #1A1816;
+  background: var(--color-bg);
+  color: var(--color-ink);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
 }
 
-body { margin: 0; }
+/* Edge-to-edge (Android app, installed PWA): keep content clear of the status bar and notches.
+   0 in a normal browser tab. The bottom inset is handled by the bottom nav (.pb-safe). */
+body {
+  margin: 0;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left);
+}
 
 #root {
   min-height: 100svh;
   display: flex;
   flex-direction: column;
-  background: #F7F5F1;
+  background: var(--color-bg);
 }
 
-/* Tabular numbers for transaction amounts */
+::selection { background: var(--color-border); color: var(--color-ink); }
+
+/* Keyboard focus: a quiet ink ring instead of the browser's default outline */
+:focus { outline: none; }
+:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+input:focus-visible { outline: none; }
+
+/* Tabular numbers for amounts */
 .nums {
   font-variant-numeric: tabular-nums lining-nums;
 }
 
-@media (prefers-color-scheme: dark) {
-  html, #root {
-    background: #1A1816;
-    color: #F7F5F1;
-  }
+/* Horizontal scrollers without a visible scrollbar */
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* Native date picker icon follows the text color */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: .5;
+  cursor: pointer;
 }
+@media (prefers-color-scheme: dark) {
+  input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); }
+}
+
+/* Bottom nav clears the iOS home indicator */
+.pb-safe { padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+
+/* ─── Motion ──────────────────────────────────────────────────────────────── */
+
+/* Month switch: subtle horizontal slide, 150ms */
+@keyframes month-in-next { from { opacity: 0; transform: translateX(12px); } }
+@keyframes month-in-prev { from { opacity: 0; transform: translateX(-12px); } }
+.month-in-next { animation: month-in-next 150ms var(--ease-in-out); }
+.month-in-prev { animation: month-in-prev 150ms var(--ease-in-out); }
+
+/* Content enter: card slides up, 200ms */
+@keyframes slide-up { from { opacity: 0; transform: translateY(8px); } }
+.slide-up { animation: slide-up 200ms var(--ease-out) both; }
+
+/* Category share bars grow in */
+@keyframes bar-grow { from { transform: scaleX(0); } }
+.bar-grow { transform-origin: left; animation: bar-grow 350ms var(--ease-out) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .month-in-next, .month-in-prev, .slide-up, .bar-grow { animation: none; }
+  * { transition-duration: 0ms !important; }
+}
+
+/* Raised + button in the mobile bottom nav */
+.fab-shadow { box-shadow: 0 6px 16px -6px rgb(26 24 22 / .5); }
+@media (prefers-color-scheme: dark) { .fab-shadow { box-shadow: 0 6px 16px -6px rgb(0 0 0 / .6); } }
+
+/* Budget overflow: the part past the limit is striped (never color alone) */
+.bar-hatch {
+  background-color: var(--color-expense);
+  background-image: repeating-linear-gradient(45deg, transparent 0 3px, rgb(255 255 255 / .45) 3px 5px);
+}
+@media (prefers-color-scheme: dark) {
+  .bar-hatch { background-image: repeating-linear-gradient(45deg, transparent 0 3px, rgb(0 0 0 / .35) 3px 5px); }
+}
+
+/* Toast enters from below */
+@keyframes toast-in { from { opacity: 0; transform: translateY(12px); } }
+.toast-in { animation: toast-in 200ms var(--ease-out) both; }
+@media (prefers-reduced-motion: reduce) { .toast-in { animation: none; } }
