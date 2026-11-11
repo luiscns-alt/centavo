@@ -7,6 +7,7 @@ import { MONTH_LONG } from '../../shared/utils/dates'
 import { formatBRL } from '../../shared/utils/money'
 import { STORAGE_KEYS } from '../../shared/constants/storageKeys'
 import { readJSON, writeJSON } from '../../shared/utils/storage'
+import { css, cx } from '../../../styled-system/css'
 
 interface Toast { id: string; level: 'warning' | 'over'; text: string }
 
@@ -88,12 +89,12 @@ export function BudgetToaster({ onOpen }: { onOpen: () => void }) {
   if (!toast) return null
   const Icon = toast.level === 'over' ? OctagonAlert : AlertTriangle
   return (
-    <div className="fixed inset-x-0 bottom-24 md:bottom-6 z-50 flex justify-center px-4 pointer-events-none">
-      <div role="status" className="toast-in pointer-events-auto max-w-[440px] w-full bg-ink text-bg rounded-2xl shadow-lg px-4 py-3 flex items-center gap-3">
-        <Icon size={18} strokeWidth={2} className="shrink-0" aria-hidden />
-        <p className="flex-1 m-0 text-[13px] leading-snug">{toast.text}</p>
-        <button onClick={() => { setToast(null); onOpen() }} className="text-[13px] font-semibold underline underline-offset-2 shrink-0">Ver</button>
-        <button onClick={() => setToast(null)} aria-label="Fechar aviso" className="opacity-70 hover:opacity-100 shrink-0"><X size={16} /></button>
+    <div className={css({ position: 'fixed', insetX: '0', bottom: '24', md: { bottom: '6' }, zIndex: '50', display: 'flex', justifyContent: 'center', px: '4', pointerEvents: 'none' })}>
+      <div role="status" className={cx(css({ pointerEvents: 'auto', maxW: '[440px]', w: 'full', bg: 'ink', color: 'bg', rounded: '2xl', shadow: 'lg', px: '4', py: '3', display: 'flex', alignItems: 'center', gap: '3' }), 'toast-in')}>
+        <Icon size={18} strokeWidth={2} className={css({ flexShrink: '0' })} aria-hidden />
+        <p className={css({ flex: '1', m: '0', fontSize: '13', lineHeight: 'snug' })}>{toast.text}</p>
+        <button onClick={() => { setToast(null); onOpen() }} className={css({ fontSize: '13', fontWeight: 'semibold', textDecoration: 'underline', textUnderlineOffset: '2px', flexShrink: '0' })}>Ver</button>
+        <button onClick={() => setToast(null)} aria-label="Fechar aviso" className={css({ opacity: '0.7', _hover: { opacity: '1' }, flexShrink: '0' })}><X size={16} /></button>
       </div>
     </div>
   )

@@ -3,6 +3,7 @@ import { X } from 'lucide-react'
 import { CategoryError } from '../../core/db'
 import type { Category } from '../../core/types'
 import { firstGrapheme } from '../../shared/utils/text'
+import { css, cx } from '../../../styled-system/css'
 
 const SUGGESTED: Record<Category['type'], string[]> = {
   expense: ['🏷️', '🛒', '☕', '🍕', '🍺', '⛽', '🚌', '🅿️', '🏋️', '💇', '👕', '🧸', '🎮', '📱', '💡', '🔧', '🌱', '🏥', '🎓', '🐶'],
@@ -41,19 +42,19 @@ export function CategoryEditor({ type, initial, submitLabel = 'Adicionar', paren
 
   return (
     <div
-      className="bg-surface border border-border rounded-xl p-3 slide-up"
+      className={cx(css({ bg: 'surface', borderWidth: '1px', borderColor: 'border', rounded: 'xl', p: '3' }), 'slide-up')}
       onKeyDown={e => {
         // Handled here so Esc closes the editor, not the whole form
         if (e.key === 'Escape') { e.stopPropagation(); onCancel() }
         if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); void submit() }
       }}
     >
-      <div className="flex items-center gap-2">
+      <div className={css({ display: 'flex', alignItems: 'center', gap: '2' })}>
         <input
           aria-label="Emoji"
           value={icon}
           onChange={e => setIcon(firstGrapheme(e.target.value.replace(icon, '')) || firstGrapheme(e.target.value))}
-          className="w-11 h-11 shrink-0 rounded-[10px] border border-border bg-bg text-center text-[20px] outline-none focus:border-muted/60"
+          className={css({ w: '11', h: '11', flexShrink: '0', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', textAlign: 'center', fontSize: '20', outline: 'none', _focus: { borderColor: 'muted/60' } })}
         />
         <input
           autoFocus
@@ -62,19 +63,19 @@ export function CategoryEditor({ type, initial, submitLabel = 'Adicionar', paren
           value={name}
           maxLength={24}
           onChange={e => { setName(e.target.value); setError(null) }}
-          className="flex-1 min-w-0 h-11 px-3 rounded-[10px] border border-border bg-bg text-[15px] text-ink placeholder:text-muted outline-none focus:border-muted/60"
+          className={css({ flex: '1', minW: '0', h: '11', px: '3', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', fontSize: '15', color: 'ink', _placeholder: { color: 'muted' }, outline: 'none', _focus: { borderColor: 'muted/60' } })}
         />
         <button
           type="button"
           onClick={onCancel}
           aria-label="Cancelar"
-          className="w-9 h-9 shrink-0 rounded-full flex items-center justify-center text-muted hover:text-ink hover:bg-bg transition-colors"
+          className={css({ w: '9', h: '9', flexShrink: '0', rounded: 'full', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'muted', _hover: { color: 'ink', bg: 'bg' }, transition: 'colors' })}
         >
           <X size={18} strokeWidth={1.75} />
         </button>
       </div>
 
-      <div className="mt-2.5 flex gap-1 overflow-x-auto no-scrollbar md:flex-wrap" role="radiogroup" aria-label="Sugestões de emoji">
+      <div className={cx(css({ mt: '2.5', display: 'flex', gap: '1', overflowX: 'auto', md: { flexWrap: 'wrap' } }), 'no-scrollbar')} role="radiogroup" aria-label="Sugestões de emoji">
         {SUGGESTED[type].map(e => (
           <button
             key={e}
@@ -82,10 +83,7 @@ export function CategoryEditor({ type, initial, submitLabel = 'Adicionar', paren
             role="radio"
             aria-checked={icon === e}
             onClick={() => setIcon(e)}
-            className={[
-              'w-9 h-9 shrink-0 rounded-[9px] text-[18px] flex items-center justify-center transition-colors',
-              icon === e ? 'bg-border' : 'hover:bg-bg',
-            ].join(' ')}
+            className={css({ w: '9', h: '9', flexShrink: '0', rounded: '[9px]', fontSize: '18', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'colors' }, icon === e ? { bg: 'border' } : { _hover: { bg: 'bg' } })}
           >
             {e}
           </button>
@@ -93,12 +91,12 @@ export function CategoryEditor({ type, initial, submitLabel = 'Adicionar', paren
       </div>
 
       {parents && parents.length > 0 && (
-        <label className="mt-3 flex items-center gap-2 text-[13px] text-muted">
+        <label className={css({ mt: '3', display: 'flex', alignItems: 'center', gap: '2', fontSize: '13', color: 'muted' })}>
           Dentro de
           <select
             value={parentId ?? ''}
             onChange={e => setParentId(e.target.value === '' ? null : Number(e.target.value))}
-            className="flex-1 min-w-0 h-9 px-2 rounded-[10px] border border-border bg-bg text-[14px] text-ink outline-none"
+            className={css({ flex: '1', minW: '0', h: '9', px: '2', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', fontSize: '14', color: 'ink', outline: 'none' })}
           >
             <option value="">Nenhuma (categoria principal)</option>
             {parents.map(p => <option key={p.id} value={p.id}>{p.icon} {p.name}</option>)}
@@ -106,15 +104,15 @@ export function CategoryEditor({ type, initial, submitLabel = 'Adicionar', paren
         </label>
       )}
 
-      <div className="mt-3 flex items-center gap-3">
-        <p className={`flex-1 m-0 text-[12px] ${error ? 'text-expense' : 'text-muted'}`} role={error ? 'alert' : undefined}>
+      <div className={css({ mt: '3', display: 'flex', alignItems: 'center', gap: '3' })}>
+        <p className={css({ flex: '1', m: '0', fontSize: '12' }, error ? { color: 'expense' } : { color: 'muted' })} role={error ? 'alert' : undefined}>
           {error ?? 'Escolha um emoji ou digite o seu.'}
         </p>
         <button
           type="button"
           onClick={() => void submit()}
           disabled={busy || name.trim() === ''}
-          className="h-9 px-4 rounded-full bg-ink text-bg text-[13px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+          className={css({ h: '9', px: '4', rounded: 'full', bg: 'ink', color: 'bg', fontSize: '13', fontWeight: 'semibold', transition: 'opacity', _hover: { opacity: '0.9' }, _disabled: { opacity: '0.4', cursor: 'not-allowed' } })}
         >
           {busy ? 'Salvando...' : submitLabel}
         </button>

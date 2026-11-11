@@ -5,6 +5,7 @@ import { MonthBarChart, TooltipRow } from '../../shared/charts/MonthBarChart'
 import type { MonthNav } from '../../shared/ui/MonthSelector'
 import { monthKey, MONTH_LONG, MONTH_SHORT } from '../../shared/utils/dates'
 import { formatBRL, formatDelta } from '../../shared/utils/money'
+import { css, cx } from '../../../styled-system/css'
 
 const WINDOW = 6
 
@@ -34,27 +35,27 @@ export function EvolutionCard({ nav, accountIds, onOpenCompare }: Props) {
   const isEmpty = !loading && points.every(p => p.cumulative === 0 && !p.hasData)
 
   return (
-    <section className="mx-5 md:mx-0 mt-6 bg-surface border border-border rounded-2xl px-5 md:px-6 pt-5 pb-4">
-      <div className="flex items-start justify-between gap-3">
+    <section className={css({ mx: '5', md: { mx: '0', px: '6' }, mt: '6', bg: 'surface', borderWidth: '1px', borderColor: 'border', rounded: '2xl', px: '5', pt: '5', pb: '4' })}>
+      <div className={css({ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '3' })}>
         <div>
-          <div className="text-[11px] font-semibold uppercase tracking-[.1em] text-muted">
+          <div className={css({ fontSize: '11', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: 'widest', color: 'muted' })}>
             {label}
           </div>
-          <div className="mt-1 text-[20px] font-bold nums text-ink leading-tight">
+          <div className={cx(css({ mt: '1', fontSize: '20', fontWeight: 'bold', color: 'ink', lineHeight: 'tight' }), 'nums')}>
             {loading || !sel ? '–' : formatBRL(sel.cumulative)}
           </div>
           {sel && !loading && (
-            <div className="text-[12px] text-muted mt-0.5 nums">
+            <div className={cx(css({ fontSize: '12', color: 'muted', mt: '0.5' }), 'nums')}>
               {formatDelta(sel.net)} de resultado em {MONTH_LONG[sel.month - 1]}
             </div>
           )}
         </div>
-        <span className="text-[12px] text-muted whitespace-nowrap pt-0.5">{WINDOW} meses</span>
+        <span className={css({ fontSize: '12', color: 'muted', whiteSpace: 'nowrap', pt: '0.5' })}>{WINDOW} meses</span>
       </div>
 
-      <div className="mt-4">
+      <div className={css({ mt: '4' })}>
         {isEmpty ? (
-          <p className="text-[13px] text-muted text-center py-10 m-0">
+          <p className={css({ fontSize: '13', color: 'muted', textAlign: 'center', py: '10', m: '0' })}>
             O gráfico aparece quando houver lançamentos.
           </p>
         ) : (
@@ -72,7 +73,7 @@ export function EvolutionCard({ nav, accountIds, onOpenCompare }: Props) {
               const p = points[i]
               return (
                 <>
-                  <div className="font-semibold text-ink mb-1 capitalize">{MONTH_LONG[p.month - 1]} {p.year}</div>
+                  <div className={css({ fontWeight: 'semibold', color: 'ink', mb: '1', textTransform: 'capitalize' })}>{MONTH_LONG[p.month - 1]} {p.year}</div>
                   <TooltipRow label={label} value={formatBRL(p.cumulative)} strong />
                   <TooltipRow label="Resultado do mês" value={p.hasData ? formatDelta(p.net) : '—'} />
                 </>
@@ -83,10 +84,10 @@ export function EvolutionCard({ nav, accountIds, onOpenCompare }: Props) {
         )}
       </div>
 
-      <div className="mt-2 pt-3 border-t border-border flex justify-end">
+      <div className={css({ mt: '2', pt: '3', borderTopWidth: '1px', borderColor: 'border', display: 'flex', justifyContent: 'flex-end' })}>
         <button
           onClick={onOpenCompare}
-          className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-ink hover:opacity-70 transition-opacity"
+          className={css({ display: 'inline-flex', alignItems: 'center', gap: '1.5', fontSize: '13', fontWeight: 'semibold', color: 'ink', _hover: { opacity: '0.7' }, transition: 'opacity' })}
         >
           Ver comparativo <ArrowRight size={15} strokeWidth={2} />
         </button>

@@ -17,6 +17,7 @@ import { todayISO, toISODate, formatMonthAbbr, formatMonthShortYear } from '../.
 import { formatBRL } from '../../shared/utils/money'
 import { STORAGE_KEYS } from '../../shared/constants/storageKeys'
 import { readLocal, writeLocal } from '../../shared/utils/storage'
+import { css, cx } from '../../../styled-system/css'
 
 type Mode = 'expense' | 'income' | 'transfer'
 
@@ -112,12 +113,12 @@ export function AddTransactionForm(props: Props) {
     }
   }, [edit?.kind, edit?.id, props.startMode])
 
-  if (initial === undefined) return <div className="flex-1" />
+  if (initial === undefined) return <div className={css({ flex: '1' })} />
   if (initial === null) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center gap-3 p-8 text-center">
-        <p className="text-[14px] text-muted m-0">Este lançamento não existe mais.</p>
-        <button onClick={props.onCancel} className="h-9 px-4 rounded-full border border-border text-[13px] font-semibold text-ink">Voltar</button>
+      <div className={css({ flex: '1', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '3', p: '8', textAlign: 'center' })}>
+        <p className={css({ fontSize: '14', color: 'muted', m: '0' })}>Este lançamento não existe mais.</p>
+        <button onClick={props.onCancel} className={css({ h: '9', px: '4', rounded: 'full', borderWidth: '1px', borderColor: 'border', fontSize: '13', fontWeight: 'semibold', color: 'ink' })}>Voltar</button>
       </div>
     )
   }
@@ -126,7 +127,7 @@ export function AddTransactionForm(props: Props) {
 }
 
 const SectionTitle = ({ children }: { children: React.ReactNode }) => (
-  <div className="px-5 text-[11px] font-semibold uppercase tracking-[.1em] text-muted mb-2.5">{children}</div>
+  <div className={css({ px: '5', fontSize: '11', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: 'widest', color: 'muted', mb: '2.5' })}>{children}</div>
 )
 
 function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, initial }: Props & { initial: FormInitial }) {
@@ -287,11 +288,8 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
       setConfirmDelete(false)
     }
   }
-
-  const activeColor = isTransfer ? 'text-ink' : mode === 'expense' ? 'text-expense' : 'text-income'
   const saveVariant = isTransfer ? 'primary' : mode === 'expense' ? 'solid-expense' : 'solid-income'
   const display = formatDigits(digits)
-  const amountSize = display.length > 12 ? 'text-[34px]' : display.length > 9 ? 'text-[40px]' : 'text-[48px]'
   const quickDates = [{ label: 'Hoje', value: todayISO() }, { label: 'Ontem', value: yesterdayISO() }]
 
   // Installment preview — the same split and invoice rule the ledger will apply
@@ -353,31 +351,31 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
   const modes = !isEdit ? MODES : edit.kind === 'tx' ? MODES.filter(m => m.id !== 'transfer') : MODES.filter(m => m.id === mode)
 
   return (
-    <div className="flex-1 flex flex-col md:items-center md:justify-start md:px-10 md:py-12">
-      <div className="flex-1 md:flex-none w-full md:max-w-[480px] bg-bg md:bg-surface md:rounded-2xl md:border md:border-border flex flex-col slide-up">
+    <div className={css({ flex: '1', display: 'flex', flexDirection: 'column', md: { alignItems: 'center', justifyContent: 'flex-start', px: '10', py: '12' } })}>
+      <div className={cx(css({ flex: '1', md: { flex: 'none', maxW: '[480px]', bg: 'surface', rounded: '2xl', borderWidth: '1px', borderColor: 'border' }, w: 'full', bg: 'bg', display: 'flex', flexDirection: 'column' }), 'slide-up')}>
 
         {/* Header */}
-        <div className="flex items-center gap-2 px-3 md:px-4 h-14 border-b border-border">
+        <div className={css({ display: 'flex', alignItems: 'center', gap: '2', px: '3', md: { px: '4' }, h: '14', borderBottomWidth: '1px', borderColor: 'border' })}>
           {onCancel && (
             <button
               type="button"
               onClick={onCancel}
-              className="w-9 h-9 rounded-full flex items-center justify-center text-muted hover:text-ink hover:bg-border/60 transition-colors"
+              className={css({ w: '9', h: '9', rounded: 'full', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'muted', _hover: { color: 'ink', bg: 'border/60' }, transition: 'colors' })}
               aria-label="Voltar"
             >
               <ChevronLeft size={20} strokeWidth={1.75} />
             </button>
           )}
-          <h1 className="m-0 text-[17px] font-semibold text-ink">{title}</h1>
-          <span className="ml-auto hidden md:inline text-[11px] text-muted">
-            <kbd className="font-sans font-semibold px-1.5 py-0.5 rounded-md border border-border">Esc</kbd> para sair
+          <h1 className={css({ m: '0', fontSize: '17', fontWeight: 'semibold', color: 'ink' })}>{title}</h1>
+          <span className={css({ ml: 'auto', display: 'none', md: { display: 'inline' }, fontSize: '11', color: 'muted' })}>
+            <kbd className={css({ fontFamily: 'sans', fontWeight: 'semibold', px: '1.5', py: '0.5', rounded: 'md', borderWidth: '1px', borderColor: 'border' })}>Esc</kbd> para sair
           </span>
         </div>
 
         {noAccounts ? (
           /* First run: every movement belongs to an account, so the first one is created here */
-          <div className="p-5">
-            <p className="text-[14px] text-muted mt-0 mb-4 leading-relaxed">
+          <div className={css({ p: '5' })}>
+            <p className={css({ fontSize: '14', color: 'muted', mt: '0', mb: '4', lineHeight: 'relaxed' })}>
               Antes do primeiro lançamento, cadastre onde está o seu dinheiro — um banco, a poupança ou a carteira.
             </p>
             <AccountEditor title="Sua primeira conta" onSubmit={v => newAccount(v, 'from')} />
@@ -386,11 +384,11 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
           <form
             onSubmit={handleSubmit}
             onKeyDown={e => { if (e.key === 'Escape') onCancel?.() }}
-            className="flex-1 flex flex-col"
+            className={css({ flex: '1', display: 'flex', flexDirection: 'column' })}
           >
             {/* Mode toggle */}
             {modes.length > 1 && (
-              <div className={`mx-5 mt-5 grid ${modes.length === 3 ? 'grid-cols-3' : 'grid-cols-2'} bg-border/70 rounded-xl p-1`} role="radiogroup" aria-label="Tipo">
+              <div className={css({ mx: '5', mt: '5', display: 'grid' }, modes.length === 3 ? { gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' } : { gridTemplateColumns: 'repeat(2, minmax(0, 1fr))' }, { bg: 'border/70', rounded: 'xl', p: '1' })} role="radiogroup" aria-label="Tipo">
                 {modes.map(m => (
                   <button
                     key={m.id}
@@ -398,12 +396,7 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
                     role="radio"
                     aria-checked={mode === m.id}
                     onClick={() => switchMode(m.id)}
-                    className={[
-                      'h-9 rounded-[9px] text-[13px] font-semibold transition-all',
-                      mode === m.id
-                        ? `bg-surface shadow-sm ${m.id === 'expense' ? 'text-expense' : m.id === 'income' ? 'text-income' : 'text-ink'}`
-                        : 'text-muted hover:text-ink',
-                    ].join(' ')}
+                    className={css({ h: '9', rounded: '[9px]', fontSize: '13', fontWeight: 'semibold', transition: 'all' }, mode === m.id ? { ...{ bg: 'surface', shadow: 'sm' }, ...m.id === 'expense' ? { color: 'expense' } : m.id === 'income' ? { color: 'income' } : { color: 'ink' } } : { color: 'muted', _hover: { color: 'ink' } })}
                   >
                     {m.label}
                   </button>
@@ -412,10 +405,10 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
             )}
 
             {/* Amount */}
-            <label className="block px-5 pt-8 pb-7 text-center cursor-text">
-              <span className="sr-only">{isCard ? 'Valor total da compra' : 'Valor'}</span>
-              <div className={`flex items-baseline justify-center gap-1.5 ${activeColor}`}>
-                <span className="text-[20px] font-semibold opacity-60">R$</span>
+            <label className={css({ display: 'block', px: '5', pt: '8', pb: '7', textAlign: 'center', cursor: 'text' })}>
+              <span className={css({ srOnly: true })}>{isCard ? 'Valor total da compra' : 'Valor'}</span>
+              <div className={css({ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: '1.5' }, isTransfer ? { color: 'ink' } : mode === 'expense' ? { color: 'expense' } : { color: 'income' })}>
+                <span className={css({ fontSize: '20', fontWeight: 'semibold', opacity: '0.6' })}>R$</span>
                 <input
                   type="text"
                   inputMode="numeric"
@@ -424,17 +417,17 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
                   placeholder="0,00"
                   value={display}
                   onChange={e => handleAmount(e.target.value)}
-                  className={`${amountSize} font-bold leading-none tracking-[-.02em] bg-transparent outline-none text-left nums placeholder:text-current placeholder:opacity-30`}
+                  className={cx(css(display.length > 12 ? { fontSize: '34' } : display.length > 9 ? { fontSize: '40' } : { fontSize: '48' }, { fontWeight: 'bold', lineHeight: 'none', letterSpacing: '[-.02em]', bg: 'transparent', outline: 'none', textAlign: 'left', _placeholder: { color: 'current', opacity: '0.3' } }), 'nums')}
                   style={{ width: `${Math.max(display.length || 4, 4) + 0.5}ch` }}
                 />
               </div>
-              {isCard && <div className="mt-2 text-[12px] text-muted">valor total da compra</div>}
+              {isCard && <div className={css({ mt: '2', fontSize: '12', color: 'muted' })}>valor total da compra</div>}
             </label>
 
-            <div className="h-px bg-border mx-5" />
+            <div className={css({ h: 'hairline', bg: 'border', mx: '5' })} />
 
             {/* Account(s) */}
-            <div className="pt-5">
+            <div className={css({ pt: '5' })}>
               <SectionTitle>{isTransfer ? 'De' : mode === 'expense' && !isEdit ? 'Conta ou cartão' : 'Conta'}</SectionTitle>
               <AccountChips
                 label={isTransfer ? 'Conta de origem' : 'Conta'}
@@ -443,10 +436,10 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
                 onChange={chooseFrom}
               />
               {!isTransfer && !isEdit && creatingAccount === null && (
-                <div className="px-5 mt-2">{newAccountChip('from')}</div>
+                <div className={css({ px: '5', mt: '2' })}>{newAccountChip('from')}</div>
               )}
               {creatingAccount === 'from' && (
-                <div className="px-5 mt-3">
+                <div className={css({ px: '5', mt: '3' })}>
                   <AccountEditor title="Nova conta" onSubmit={v => newAccount(v, 'from')} onCancel={() => setCreatingAccount(null)} />
                 </div>
               )}
@@ -454,9 +447,9 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
 
             {/* How it was paid — or, on a card, in how many installments */}
             {!isTransfer && !isCard && (
-              <div className="pt-5">
+              <div className={css({ pt: '5' })}>
                 <SectionTitle>{mode === 'expense' ? 'Pago com' : 'Recebido por'}</SectionTitle>
-                <div className="flex gap-2 overflow-x-auto no-scrollbar px-5 pb-1 md:flex-wrap" role="radiogroup" aria-label="Forma de pagamento">
+                <div className={cx(css({ display: 'flex', gap: '2', overflowX: 'auto', px: '5', pb: '1', md: { flexWrap: 'wrap' } }), 'no-scrollbar')} role="radiogroup" aria-label="Forma de pagamento">
                   {ACCOUNT_METHODS.map(m => (
                     <button
                       key={m}
@@ -464,10 +457,7 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
                       role="radio"
                       aria-checked={method === m}
                       onClick={() => setMethodChoice(m)}
-                      className={[
-                        'h-8 px-3 rounded-full border text-[12px] font-semibold whitespace-nowrap transition-colors',
-                        method === m ? 'bg-ink border-ink text-bg' : 'border-border text-muted hover:text-ink',
-                      ].join(' ')}
+                      className={css({ h: '8', px: '3', rounded: 'full', borderWidth: '1px', fontSize: '12', fontWeight: 'semibold', whiteSpace: 'nowrap', transition: 'colors' }, method === m ? { bg: 'ink', borderColor: 'ink', color: 'bg' } : { borderColor: 'border', color: 'muted', _hover: { color: 'ink' } })}
                     >
                       {PAYMENT_METHODS[m]}
                     </button>
@@ -477,35 +467,35 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
             )}
 
             {isCard && (
-              <div className="pt-5">
+              <div className={css({ pt: '5' })}>
                 <SectionTitle>Parcelas</SectionTitle>
-                <div className="px-5 flex items-center gap-3">
-                  <div className="flex items-center rounded-full border border-border bg-surface">
+                <div className={css({ px: '5', display: 'flex', alignItems: 'center', gap: '3' })}>
+                  <div className={css({ display: 'flex', alignItems: 'center', rounded: 'full', borderWidth: '1px', borderColor: 'border', bg: 'surface' })}>
                     <button
                       type="button"
                       aria-label="Menos parcelas"
                       onClick={() => setInstallments(n => Math.max(1, n - 1))}
                       disabled={installments <= 1}
-                      className="w-10 h-10 flex items-center justify-center text-ink disabled:opacity-30"
+                      className={css({ w: '10', h: '10', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'ink', _disabled: { opacity: '0.3' } })}
                     >
                       <Minus size={16} strokeWidth={2} />
                     </button>
-                    <span className="w-12 text-center text-[15px] font-bold nums text-ink" aria-live="polite">{installments}×</span>
+                    <span className={cx(css({ w: '12', textAlign: 'center', fontSize: '15', fontWeight: 'bold', color: 'ink' }), 'nums')} aria-live="polite">{installments}×</span>
                     <button
                       type="button"
                       aria-label="Mais parcelas"
                       onClick={() => setInstallments(n => Math.min(MAX_UI_INSTALLMENTS, n + 1))}
                       disabled={installments >= MAX_UI_INSTALLMENTS}
-                      className="w-10 h-10 flex items-center justify-center text-ink disabled:opacity-30"
+                      className={css({ w: '10', h: '10', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'ink', _disabled: { opacity: '0.3' } })}
                     >
                       <Plus size={16} strokeWidth={2} />
                     </button>
                   </div>
-                  <p className="m-0 flex-1 text-[12px] text-muted leading-snug nums">
+                  <p className={cx(css({ m: '0', flex: '1', fontSize: '12', color: 'muted', lineHeight: 'snug' }), 'nums')}>
                     {preview ? (
                       <>
                         {installments > 1 && (
-                          <span className="font-semibold text-ink">
+                          <span className={css({ fontWeight: 'semibold', color: 'ink' })}>
                             {preview.evenly ? `${installments}× ${formatBRL(preview.each)}` : `1ª ${formatBRL(preview.each)} + ${installments - 1}× ${formatBRL(splitInstallments(amount, installments)[1])}`}
                           </span>
                         )}
@@ -519,8 +509,8 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
             )}
 
             {isTransfer && (
-              <div className="pt-3">
-                <div className="flex justify-center text-muted" aria-hidden><ArrowDown size={16} strokeWidth={1.75} /></div>
+              <div className={css({ pt: '3' })}>
+                <div className={css({ display: 'flex', justifyContent: 'center', color: 'muted' })} aria-hidden><ArrowDown size={16} strokeWidth={1.75} /></div>
                 <SectionTitle>Para</SectionTitle>
                 {toOptions.length > 1 && (
                   <AccountChips
@@ -532,25 +522,25 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
                   />
                 )}
                 {toOptions.length < 2 && creatingAccount !== 'to' && (
-                  <p className="px-5 m-0 mb-2 text-[13px] text-muted">Para transferir, cadastre outra conta.</p>
+                  <p className={css({ px: '5', m: '0', mb: '2', fontSize: '13', color: 'muted' })}>Para transferir, cadastre outra conta.</p>
                 )}
-                {!isEdit && creatingAccount === null && <div className="px-5 mt-2">{newAccountChip('to')}</div>}
+                {!isEdit && creatingAccount === null && <div className={css({ px: '5', mt: '2' })}>{newAccountChip('to')}</div>}
                 {creatingAccount === 'to' && (
-                  <div className="px-5 mt-3">
+                  <div className={css({ px: '5', mt: '3' })}>
                     <AccountEditor title="Conta de destino" onSubmit={v => newAccount(v, 'to')} onCancel={() => setCreatingAccount(null)} />
                   </div>
                 )}
                 {!isEdit && cards.length > 0 && (
-                  <p className="px-5 mt-2 mb-0 text-[12px] text-muted">Para pagar um cartão, use “Pagar fatura” na tela do cartão.</p>
+                  <p className={css({ px: '5', mt: '2', mb: '0', fontSize: '12', color: 'muted' })}>Para pagar um cartão, use “Pagar fatura” na tela do cartão.</p>
                 )}
               </div>
             )}
 
             {/* Category chips — transfers have none: they are neither income nor expense */}
             {!isTransfer && (
-              <div className="pt-5">
+              <div className={css({ pt: '5' })}>
                 <SectionTitle>Categoria</SectionTitle>
-                <div className="flex gap-2 overflow-x-auto no-scrollbar px-5 pb-1 md:flex-wrap md:overflow-visible">
+                <div className={cx(css({ display: 'flex', gap: '2', overflowX: 'auto', px: '5', pb: '1', md: { flexWrap: 'wrap', overflow: 'visible' } }), 'no-scrollbar')}>
                   {categories?.map(cat => {
                     const selected = categoryId === cat.id
                     return (
@@ -561,7 +551,7 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
                         onClick={() => { setCategoryId(cat.id ?? ''); setError(null) }}
                         className={chip({ selected, tone: mode === 'expense' ? 'expense' : 'income' })}
                       >
-                        {cat.parentId != null && <span className="text-muted -mr-0.5" aria-hidden>↳</span>}
+                        {cat.parentId != null && <span className={css({ color: 'muted', mr: '-0.5' })} aria-hidden>↳</span>}
                         <span aria-hidden>{cat.icon}</span>
                         <span>{cat.name}</span>
                       </button>
@@ -577,10 +567,10 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
                       Nova
                     </button>
                   )}
-                  {categories === undefined && <span className="text-sm text-muted">Carregando...</span>}
+                  {categories === undefined && <span className={css({ fontSize: 'sm', color: 'muted' })}>Carregando...</span>}
                 </div>
                 {creatingCategory && (
-                  <div className="px-5 mt-3">
+                  <div className={css({ px: '5', mt: '3' })}>
                     <CategoryEditor
                       type={txType}
                       submitLabel="Criar e usar"
@@ -593,32 +583,29 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
             )}
 
             {/* Description + date */}
-            <div className="mx-5 mt-5 bg-surface border border-border rounded-xl divide-y divide-border focus-within:border-muted/50 transition-colors">
+            <div className={css({ mx: '5', mt: '5', bg: 'surface', borderWidth: '1px', borderColor: 'border', rounded: 'xl', '& > :not(:last-child)': { borderBottomWidth: '1px', borderColor: 'border' }, _focusWithin: { borderColor: 'muted/50' }, transition: 'colors' })}>
               <input
                 type="text"
                 placeholder="Descrição (opcional)"
                 value={description}
                 onChange={e => setDescription(e.target.value)}
-                className="w-full h-12 px-4 bg-transparent text-[15px] text-ink placeholder:text-muted outline-none"
+                className={css({ w: 'full', h: '12', px: '4', bg: 'transparent', fontSize: '15', color: 'ink', _placeholder: { color: 'muted' }, outline: 'none' })}
               />
-              <div className="flex items-center gap-2 pl-4 pr-3 h-12">
+              <div className={css({ display: 'flex', alignItems: 'center', gap: '2', pl: '4', pr: '3', h: '12' })}>
                 <input
                   type="date"
                   value={date}
                   onChange={e => setDate(e.target.value)}
                   required
                   aria-label={isCard ? 'Data da compra' : 'Data'}
-                  className="flex-1 min-w-0 bg-transparent text-[15px] text-ink outline-none nums"
+                  className={cx(css({ flex: '1', minW: '0', bg: 'transparent', fontSize: '15', color: 'ink', outline: 'none' }), 'nums')}
                 />
                 {quickDates.map(q => (
                   <button
                     key={q.label}
                     type="button"
                     onClick={() => setDate(q.value)}
-                    className={[
-                      'h-7 px-2.5 rounded-full text-[12px] font-semibold border transition-colors',
-                      date === q.value ? 'bg-ink text-bg border-ink' : 'border-border text-muted hover:text-ink',
-                    ].join(' ')}
+                    className={css({ h: '7', px: '2.5', rounded: 'full', fontSize: '12', fontWeight: 'semibold', borderWidth: '1px', transition: 'colors' }, date === q.value ? { bg: 'ink', color: 'bg', borderColor: 'ink' } : { borderColor: 'border', color: 'muted', _hover: { color: 'ink' } })}
                   >
                     {q.label}
                   </button>
@@ -627,9 +614,9 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
             </div>
 
             {/* Save */}
-            <div className="px-5 mt-auto md:mt-6 pt-6 pb-5">
-              {warning && <p className="text-[12px] text-expense text-center mt-0 mb-3 nums">{warning}</p>}
-              {error && <p className="text-[13px] text-expense text-center mt-0 mb-3" role="alert">{error}</p>}
+            <div className={css({ px: '5', mt: 'auto', md: { mt: '6' }, pt: '6', pb: '5' })}>
+              {warning && <p className={cx(css({ fontSize: '12', color: 'expense', textAlign: 'center', mt: '0', mb: '3' }), 'nums')}>{warning}</p>}
+              {error && <p className={css({ fontSize: '13', color: 'expense', textAlign: 'center', mt: '0', mb: '3' })} role="alert">{error}</p>}
               <Button
                 type="submit"
                 variant={saveVariant}
@@ -638,7 +625,7 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
                   saving || success || digits === '' || accountId === null ||
                   (isTransfer ? toId === null : categoryId === '')
                 }
-                className="flex items-center justify-center gap-2"
+                className={css({ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2' })}
               >
                 {success && <Check size={18} strokeWidth={2.5} />}
                 {saveLabel}
@@ -646,14 +633,14 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
 
               {isEdit && (
                 confirmDelete ? (
-                  <div className="mt-3 flex items-center justify-center gap-2 slide-up">
-                    <span className="text-[13px] text-muted">
+                  <div className={cx(css({ mt: '3', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2' }), 'slide-up')}>
+                    <span className={css({ fontSize: '13', color: 'muted' })}>
                       {edit.kind === 'purchase' && installments > 1 ? `Excluir a compra e as ${installments} parcelas?` : 'Excluir de vez?'}
                     </span>
-                    <button type="button" onClick={() => setConfirmDelete(false)} className="h-8 px-3 rounded-full text-[12px] font-semibold text-muted hover:text-ink">
+                    <button type="button" onClick={() => setConfirmDelete(false)} className={css({ h: '8', px: '3', rounded: 'full', fontSize: '12', fontWeight: 'semibold', color: 'muted', _hover: { color: 'ink' } })}>
                       Cancelar
                     </button>
-                    <button type="button" onClick={() => void handleDelete()} className="h-8 px-3 rounded-full bg-ink text-bg text-[12px] font-semibold">
+                    <button type="button" onClick={() => void handleDelete()} className={css({ h: '8', px: '3', rounded: 'full', bg: 'ink', color: 'bg', fontSize: '12', fontWeight: 'semibold' })}>
                       Excluir
                     </button>
                   </div>
@@ -661,7 +648,7 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
                   <button
                     type="button"
                     onClick={() => setConfirmDelete(true)}
-                    className="mt-3 w-full h-10 rounded-xl flex items-center justify-center gap-1.5 text-[13px] font-semibold text-muted hover:text-ink hover:bg-border/40 transition-colors"
+                    className={css({ mt: '3', w: 'full', h: '10', rounded: 'xl', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1.5', fontSize: '13', fontWeight: 'semibold', color: 'muted', _hover: { color: 'ink', bg: 'border/40' }, transition: 'colors' })}
                   >
                     <Trash2 size={15} strokeWidth={1.75} />
                     Excluir {edit.kind === 'purchase' ? 'compra' : edit.kind === 'transfer' ? (initial.invoiceMonth ? 'pagamento' : 'transferência') : 'lançamento'}

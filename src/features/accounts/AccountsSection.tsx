@@ -9,6 +9,7 @@ import { AccountEditor } from './AccountEditor'
 import { AccountIcon } from './AccountIcon'
 import { ACCOUNT_KINDS } from '../../core/constants/domain'
 import { formatBalance } from '../../shared/utils/money'
+import { css, cx } from '../../../styled-system/css'
 
 type Editing = { mode: 'new' } | { mode: 'edit'; id: number } | { mode: 'delete'; id: number } | null
 
@@ -41,27 +42,27 @@ export function AccountsSection({ onOpenLoan, onNewLoan }: { onOpenLoan: (id: nu
   }
 
   return (
-    <section className="mt-6">
-      <div className="px-5 md:px-1 flex items-baseline justify-between mb-2">
-        <div className="text-[11px] font-semibold uppercase tracking-[.1em] text-muted">Contas</div>
+    <section className={css({ mt: '6' })}>
+      <div className={css({ px: '5', md: { px: '1' }, display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', mb: '2' })}>
+        <div className={css({ fontSize: '11', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: 'widest', color: 'muted' })}>Contas</div>
         {accounts.length > 0 && (
-          <div className="text-[12px] text-muted nums">Patrimônio <span className="font-semibold text-ink">{formatBalance(total)}</span></div>
+          <div className={cx(css({ fontSize: '12', color: 'muted' }), 'nums')}>Patrimônio <span className={css({ fontWeight: 'semibold', color: 'ink' })}>{formatBalance(total)}</span></div>
         )}
       </div>
 
-      <div className="mx-5 md:mx-0 bg-surface border border-border rounded-2xl overflow-hidden">
+      <div className={css({ mx: '5', md: { mx: '0' }, bg: 'surface', borderWidth: '1px', borderColor: 'border', rounded: '2xl', overflow: 'hidden' })}>
         {accounts.length === 0 && editing?.mode !== 'new' && (
-          <p className="m-0 px-5 pt-5 pb-2 text-[13px] text-muted leading-relaxed">
+          <p className={css({ m: '0', px: '5', pt: '5', pb: '2', fontSize: '13', color: 'muted', lineHeight: 'relaxed' })}>
             Nenhuma conta ainda. Cadastre cada banco, poupança ou carteira com o saldo que já tem.
           </p>
         )}
 
-        <ul className="m-0 p-0 list-none divide-y divide-border">
+        <ul className={css({ m: '0', p: '0', listStyle: 'none', '& > :not(:last-child)': { borderBottomWidth: '1px', borderColor: 'border' } })}>
           {accounts.map(a => {
             const used = usage?.get(a.id) ?? 0
             if (editing?.mode === 'edit' && editing.id === a.id) {
               return (
-                <li key={a.id} className="p-2">
+                <li key={a.id} className={css({ p: '2' })}>
                   <AccountEditor
                     title="Editar conta"
                     submitLabel="Salvar"
@@ -74,35 +75,35 @@ export function AccountsSection({ onOpenLoan, onNewLoan }: { onOpenLoan: (id: nu
             }
             const confirming = editing?.mode === 'delete' && editing.id === a.id
             return (
-              <li key={a.id} className={`flex items-center gap-3 pl-4 pr-2 min-h-16 py-2 ${a.archived ? 'opacity-60' : ''}`}>
+              <li key={a.id} className={css({ display: 'flex', alignItems: 'center', gap: '3', pl: '4', pr: '2', minH: '16', py: '2' }, a.archived ? { opacity: '0.6' } : {})}>
                 <AccountIcon account={a} />
-                <div className="flex-1 min-w-0">
-                  <div className="text-[15px] font-medium text-ink truncate">{a.name}</div>
-                  <div className="text-[12px] text-muted truncate">
+                <div className={css({ flex: '1', minW: '0' })}>
+                  <div className={css({ fontSize: '15', fontWeight: 'medium', color: 'ink', truncate: true })}>{a.name}</div>
+                  <div className={css({ fontSize: '12', color: 'muted', truncate: true })}>
                     {a.card ? `Cartão · fecha ${a.card.closingDay} · vence ${a.card.dueDay}` : a.kind === 'loan' ? 'Empréstimo · saldo devedor' : ACCOUNT_KINDS[a.kind].label}
                     {a.archived ? ' · arquivada' : ''}
                     {' · '}
-                    <span className={`nums font-semibold ${a.balance < 0 ? 'text-expense' : 'text-ink'}`}>{formatBalance(a.balance)}</span>
+                    <span className={cx(css({ fontWeight: 'semibold' }, a.balance < 0 ? { color: 'expense' } : { color: 'ink' }), 'nums')}>{formatBalance(a.balance)}</span>
                   </div>
                 </div>
                 {a.kind === 'loan' ? (
                   <button
                     onClick={() => { const l = loanOf(a.id); if (l) onOpenLoan(l.id as number) }}
-                    className="h-8 px-3 rounded-full border border-border text-[12px] font-semibold text-ink hover:bg-bg"
+                    className={css({ h: '8', px: '3', rounded: 'full', borderWidth: '1px', borderColor: 'border', fontSize: '12', fontWeight: 'semibold', color: 'ink', _hover: { bg: 'bg' } })}
                   >
                     Abrir
                   </button>
                 ) : confirming ? (
-                  <div className="flex items-center gap-1.5 slide-up">
-                    <button onClick={() => setEditing(null)} className="h-8 px-3 rounded-full text-[12px] font-semibold text-muted hover:text-ink">
+                  <div className={cx(css({ display: 'flex', alignItems: 'center', gap: '1.5' }), 'slide-up')}>
+                    <button onClick={() => setEditing(null)} className={css({ h: '8', px: '3', rounded: 'full', fontSize: '12', fontWeight: 'semibold', color: 'muted', _hover: { color: 'ink' } })}>
                       Cancelar
                     </button>
-                    <button onClick={() => void run(() => deleteAccount(a.id))} className="h-8 px-3 rounded-full bg-ink text-bg text-[12px] font-semibold">
+                    <button onClick={() => void run(() => deleteAccount(a.id))} className={css({ h: '8', px: '3', rounded: 'full', bg: 'ink', color: 'bg', fontSize: '12', fontWeight: 'semibold' })}>
                       Excluir
                     </button>
                   </div>
                 ) : (
-                  <div className="flex items-center shrink-0">
+                  <div className={css({ display: 'flex', alignItems: 'center', flexShrink: '0' })}>
                     <IconButton label={`Editar ${a.name}`} onClick={() => { setError(null); setEditing({ mode: 'edit', id: a.id }) }}>
                       <Pencil size={16} strokeWidth={1.75} />
                     </IconButton>
@@ -127,7 +128,7 @@ export function AccountsSection({ onOpenLoan, onNewLoan }: { onOpenLoan: (id: nu
           })}
         </ul>
 
-        <div className={`${accounts.length ? 'border-t border-border' : ''} p-2`}>
+        <div className={css(accounts.length ? { borderTopWidth: '1px', borderColor: 'border' } : {}, { p: '2' })}>
           {editing?.mode === 'new' ? (
             <AccountEditor
               title="Nova conta"
@@ -135,17 +136,17 @@ export function AccountsSection({ onOpenLoan, onNewLoan }: { onOpenLoan: (id: nu
               onCancel={() => setEditing(null)}
             />
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
+            <div className={css({ display: 'grid', gridTemplateColumns: 'repeat(1, minmax(0, 1fr))', sm: { gridTemplateColumns: 'repeat(2, minmax(0, 1fr))' }, gap: '1' })}>
               <button
                 onClick={() => { setError(null); setEditing({ mode: 'new' }) }}
-                className="w-full h-11 rounded-xl flex items-center justify-center gap-1.5 text-[14px] font-semibold text-ink hover:bg-bg transition-colors"
+                className={css({ w: 'full', h: '11', rounded: 'xl', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1.5', fontSize: '14', fontWeight: 'semibold', color: 'ink', _hover: { bg: 'bg' }, transition: 'colors' })}
               >
                 <Plus size={16} strokeWidth={2} />
                 Nova conta ou cartão
               </button>
               <button
                 onClick={onNewLoan}
-                className="w-full h-11 rounded-xl flex items-center justify-center gap-1.5 text-[14px] font-semibold text-ink hover:bg-bg transition-colors"
+                className={css({ w: 'full', h: '11', rounded: 'xl', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1.5', fontSize: '14', fontWeight: 'semibold', color: 'ink', _hover: { bg: 'bg' }, transition: 'colors' })}
               >
                 <Plus size={16} strokeWidth={2} />
                 Empréstimo ou financiamento
@@ -155,7 +156,7 @@ export function AccountsSection({ onOpenLoan, onNewLoan }: { onOpenLoan: (id: nu
         </div>
       </div>
 
-      <p className={`px-5 md:px-1 mt-2 mb-0 text-[12px] ${error ? 'text-ink' : 'text-muted'}`} role={error ? 'alert' : undefined}>
+      <p className={css({ px: '5', md: { px: '1' }, mt: '2', mb: '0', fontSize: '12' }, error ? { color: 'ink' } : { color: 'muted' })} role={error ? 'alert' : undefined}>
         {error ?? 'Contas com movimentações podem ser arquivadas, mas não excluídas — o histórico fica intacto.'}
       </p>
     </section>
@@ -171,7 +172,7 @@ function IconButton({ label, onClick, disabled, title, children }: {
       disabled={disabled}
       aria-label={label}
       title={title ?? label}
-      className="w-9 h-9 rounded-full flex items-center justify-center text-muted hover:text-ink hover:bg-bg transition-colors disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-muted disabled:cursor-not-allowed"
+      className={css({ w: '9', h: '9', rounded: 'full', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'muted', _hover: { color: 'ink', bg: 'bg' }, transition: 'colors', _disabled: { opacity: '0.3', _hover: { bg: 'transparent', color: 'muted' }, cursor: 'not-allowed' } })}
     >
       {children}
     </button>

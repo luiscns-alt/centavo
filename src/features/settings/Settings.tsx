@@ -11,6 +11,7 @@ import { ComponentsGallery } from './ComponentsGallery'
 import { CategoriesSection } from '../categories'
 import { AccountsSection } from '../accounts'
 import { todayISO } from '../../shared/utils/dates'
+import { css, cx } from '../../../styled-system/css'
 
 const formatLongDate = (iso: string) =>
   new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' })
@@ -22,22 +23,22 @@ const listPt = (items: string[]) => new Intl.ListFormat('pt-BR', { type: 'conjun
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="mt-6">
-      <div className="px-5 md:px-1 text-[11px] font-semibold uppercase tracking-[.1em] text-muted mb-2">{title}</div>
-      <div className="mx-5 md:mx-0 bg-surface border border-border rounded-2xl p-5 slide-up">{children}</div>
+    <section className={css({ mt: '6' })}>
+      <div className={css({ px: '5', md: { px: '1' }, fontSize: '11', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: 'widest', color: 'muted', mb: '2' })}>{title}</div>
+      <div className={cx(css({ mx: '5', md: { mx: '0' }, bg: 'surface', borderWidth: '1px', borderColor: 'border', rounded: '2xl', p: '5' }), 'slide-up')}>{children}</div>
     </section>
   )
 }
 
 function StatusLine({ icon, title, children }: { icon: ReactNode; title: string; children: ReactNode }) {
   return (
-    <div className="flex gap-3.5">
-      <div className="w-9 h-9 rounded-[10px] border border-border flex items-center justify-center text-ink shrink-0" aria-hidden>
+    <div className={css({ display: 'flex', gap: '3.5' })}>
+      <div className={css({ w: '9', h: '9', rounded: 'tile', borderWidth: '1px', borderColor: 'border', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'ink', flexShrink: '0' })} aria-hidden>
         {icon}
       </div>
-      <div className="min-w-0">
-        <div className="text-[15px] font-semibold text-ink leading-snug">{title}</div>
-        <div className="text-[13px] text-muted mt-0.5 leading-relaxed">{children}</div>
+      <div className={css({ minW: '0' })}>
+        <div className={css({ fontSize: '15', fontWeight: 'semibold', color: 'ink', lineHeight: 'snug' })}>{title}</div>
+        <div className={css({ fontSize: '13', color: 'muted', mt: '0.5', lineHeight: 'relaxed' })}>{children}</div>
       </div>
     </div>
   )
@@ -45,25 +46,25 @@ function StatusLine({ icon, title, children }: { icon: ReactNode; title: string;
 
 export function Settings({ onOpenLoan, onNewLoan }: { onOpenLoan: (id: number) => void; onNewLoan: () => void }) {
   return (
-    <div className="flex-1 overflow-y-auto pb-28 md:pb-12">
+    <div className={css({ flex: '1', overflowY: 'auto', pb: '28', md: { pb: '12' } })}>
       <MobileHeader title="Ajustes" />
-      <div className="md:max-w-[560px] md:mx-auto md:px-10 md:pt-8 pt-4">
-        <h1 className="hidden md:block text-[22px] font-semibold tracking-[-.01em] text-ink m-0 mb-6">Ajustes</h1>
+      <div className={css({ md: { maxW: '[560px]', mx: 'auto', px: '10', pt: '8' }, pt: '4' })}>
+        <h1 className={css({ display: 'none', md: { display: 'block' }, fontSize: '22', fontWeight: 'semibold', letterSpacing: 'title', color: 'ink', m: '0', mb: '6' })}>Ajustes</h1>
 
         <AccountsSection onOpenLoan={onOpenLoan} onNewLoan={onNewLoan} />
         <StorageSection />
         <BackupSection />
         <CategoriesSection />
 
-        <p className="px-5 md:px-1 mt-8 text-[12px] text-muted leading-relaxed">
+        <p className={css({ px: '5', md: { px: '1' }, mt: '8', fontSize: '12', color: 'muted', lineHeight: 'relaxed' })}>
           O centavo funciona offline e guarda tudo só neste aparelho — sem conta, sem servidor, sem banco conectado.
           {' '}As logos de bancos são marcas dos respectivos bancos e aparecem só para identificar as suas contas.
         </p>
 
         {import.meta.env.DEV && (
-          <details className="px-5 md:px-1 pt-6">
-            <summary className="text-[12px] text-muted cursor-pointer hover:text-ink">Galeria de componentes (dev)</summary>
-            <div className="mt-4 -mx-5 md:mx-0"><ComponentsGallery /></div>
+          <details className={css({ px: '5', md: { px: '1' }, pt: '6' })}>
+            <summary className={css({ fontSize: '12', color: 'muted', cursor: 'pointer', _hover: { color: 'ink' } })}>Galeria de componentes (dev)</summary>
+            <div className={css({ mt: '4', mx: '-5', md: { mx: '0' } })}><ComponentsGallery /></div>
           </details>
         )}
       </div>
@@ -103,7 +104,7 @@ function StorageSection() {
           'O navegador recusou. Instalar o centavo na tela inicial costuma resolver — enquanto isso, faça backups.'}
       </StatusLine>
       {status === 'not-persisted' && !denied && (
-        <Button variant="ghost" fullWidth className="mt-5" onClick={protect}>
+        <Button variant="ghost" fullWidth className={css({ mt: '5' })} onClick={protect}>
           Proteger dados
         </Button>
       )}
@@ -187,12 +188,12 @@ function BackupSection() {
         {lastBackupAt ? `Último backup neste aparelho: ${formatLongDate(lastBackupAt)}` : 'Nenhum backup feito neste aparelho.'}
       </StatusLine>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-5">
+      <div className={css({ display: 'grid', gridTemplateColumns: 'repeat(1, minmax(0, 1fr))', sm: { gridTemplateColumns: 'repeat(2, minmax(0, 1fr))' }, gap: '3', mt: '5' })}>
         <Button
           fullWidth
           onClick={handleExport}
           disabled={exporting || restore.step === 'restoring'}
-          className="flex items-center justify-center gap-2"
+          className={css({ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2' })}
         >
           <Download size={17} strokeWidth={2} />
           {exporting ? 'Gerando...' : 'Exportar'}
@@ -202,7 +203,7 @@ function BackupSection() {
           fullWidth
           onClick={() => fileInput.current?.click()}
           disabled={restore.step === 'restoring'}
-          className="flex items-center justify-center gap-2"
+          className={css({ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2' })}
         >
           <Upload size={17} strokeWidth={2} />
           Restaurar
@@ -212,16 +213,16 @@ function BackupSection() {
           type="file"
           accept="application/json,.json"
           onChange={handleFile}
-          className="hidden"
+          className={css({ display: 'none' })}
         />
       </div>
 
       {restore.step === 'confirm' && (
-        <div className="mt-5 bg-bg border border-border rounded-xl p-4 slide-up" role="alertdialog" aria-labelledby="restore-title">
-          <div id="restore-title" className="text-[15px] font-semibold text-ink">
+        <div className={cx(css({ mt: '5', bg: 'bg', borderWidth: '1px', borderColor: 'border', rounded: 'xl', p: '4' }), 'slide-up')} role="alertdialog" aria-labelledby="restore-title">
+          <div id="restore-title" className={css({ fontSize: '15', fontWeight: 'semibold', color: 'ink' })}>
             Restaurar backup{restore.backup.exportedAt ? ` de ${formatLongDate(restore.backup.exportedAt)}` : ''}?
           </div>
-          <p className="text-[13px] text-muted mt-1 leading-relaxed">
+          <p className={css({ fontSize: '13', color: 'muted', mt: '1', lineHeight: 'relaxed' })}>
             Ele tem {listPt([
               plural(restore.backup.accounts.length, 'conta', 'contas'),
               plural(restore.backup.transactions.length + restore.backup.transfers.length, 'lançamento', 'lançamentos'),
@@ -230,11 +231,11 @@ function BackupSection() {
             {counts && counts.transactions > 0 &&
               ` Os ${plural(counts.transactions, 'lançamento atual', 'lançamentos atuais')} serão substituídos.`}
           </p>
-          <div className="flex gap-3 mt-4">
-            <Button variant="ghost" className="flex-1" onClick={() => setRestore({ step: 'idle' })}>
+          <div className={css({ display: 'flex', gap: '3', mt: '4' })}>
+            <Button variant="ghost" className={css({ flex: '1' })} onClick={() => setRestore({ step: 'idle' })}>
               Cancelar
             </Button>
-            <Button className="flex-1" onClick={() => confirmRestore(restore.backup)}>
+            <Button className={css({ flex: '1' })} onClick={() => confirmRestore(restore.backup)}>
               Substituir dados
             </Button>
           </div>
@@ -242,22 +243,22 @@ function BackupSection() {
       )}
 
       {saved && (
-        <p className="text-[13px] text-ink mt-4" role="status">
+        <p className={css({ fontSize: '13', color: 'ink', mt: '4' })} role="status">
           {saved.location ? `Backup salvo em ${saved.location}` : 'Backup gerado'}
           {saved.shared ? ' e enviado pelo compartilhar.' : '.'}
           {!saved.shared && ' Envie uma cópia para fora do celular (Drive ou e-mail): desinstalar o app ou perder o aparelho apaga tudo.'}
         </p>
       )}
       {restore.step === 'restoring' && (
-        <p className="text-[13px] text-muted mt-4">Restaurando...</p>
+        <p className={css({ fontSize: '13', color: 'muted', mt: '4' })}>Restaurando...</p>
       )}
       {restore.step === 'done' && (
-        <p className="text-[13px] text-ink mt-4" role="status">
+        <p className={css({ fontSize: '13', color: 'ink', mt: '4' })} role="status">
           Backup restaurado: {plural(restore.count, 'lançamento', 'lançamentos')}.
         </p>
       )}
       {restore.step === 'error' && (
-        <p className="text-[13px] text-ink mt-4" role="alert">{restore.message}</p>
+        <p className={css({ fontSize: '13', color: 'ink', mt: '4' })} role="alert">{restore.message}</p>
       )}
     </Section>
   )

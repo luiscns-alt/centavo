@@ -12,6 +12,7 @@ import { PAYMENT_METHODS } from '../../core/constants/domain'
 import type { PaymentMethod } from '../../core/types'
 import { toISODate, MONTH_LONG, formatDayMonth } from '../../shared/utils/dates'
 import { formatBRL } from '../../shared/utils/money'
+import { css, cx } from '../../../styled-system/css'
 
 
 type Filter = 'all' | 'income' | 'expense' | 'transfer'
@@ -92,56 +93,53 @@ export function TransactionList({ nav, account, onAdd, onEdit, onOpenCard, onOpe
   const monthLc = MONTH_LONG[nav.month - 1]
 
   return (
-    <div className="flex-1 overflow-y-auto pb-28 md:pb-12">
+    <div className={css({ flex: '1', overflowY: 'auto', pb: '28', md: { pb: '12' } })}>
       <MobileHeader />
 
-      <div className="md:max-w-[680px] md:mx-auto md:px-10 md:pt-8">
+      <div className={css({ md: { maxW: '[680px]', mx: 'auto', px: '10', pt: '8' } })}>
         <ScreenHeader title="Lançamentos" nav={nav} filter={<AccountFilter value={account.selection} onChange={account.setSelection} />} />
 
         {rows.length > 0 && (
-          <div className="px-5 md:px-0 mt-2 md:mt-0 mb-2 flex items-center gap-2 flex-wrap">
-            <div className="inline-flex bg-border/70 rounded-full p-0.5 overflow-x-auto no-scrollbar max-w-full" role="tablist" aria-label="Filtrar lançamentos">
+          <div className={css({ px: '5', md: { px: '0', mt: '0' }, mt: '2', mb: '2', display: 'flex', alignItems: 'center', gap: '2', flexWrap: 'wrap' })}>
+            <div className={cx(css({ display: 'inline-flex', bg: 'border/70', rounded: 'full', p: '0.5', overflowX: 'auto', maxW: 'full' }), 'no-scrollbar')} role="tablist" aria-label="Filtrar lançamentos">
               {filters.map(f => (
                 <button
                   key={f.id}
                   role="tab"
                   aria-selected={active === f.id}
                   onClick={() => setFilter(f.id)}
-                  className={[
-                    'h-8 px-3.5 rounded-full text-[13px] font-semibold transition-colors whitespace-nowrap',
-                    active === f.id ? 'bg-surface text-ink shadow-sm' : 'text-muted hover:text-ink',
-                  ].join(' ')}
+                  className={css({ h: '8', px: '3.5', rounded: 'full', fontSize: '13', fontWeight: 'semibold', transition: 'colors', whiteSpace: 'nowrap' }, active === f.id ? { bg: 'surface', color: 'ink', shadow: 'sm' } : { color: 'muted', _hover: { color: 'ink' } })}
                 >
                   {f.label}
                 </button>
               ))}
             </div>
             {methodsHere.length > 1 && (
-              <label className="relative inline-flex items-center gap-1 h-9 pl-3 pr-2 rounded-full border border-border bg-surface text-[13px] font-semibold text-ink cursor-pointer">
+              <label className={css({ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: '1', h: '9', pl: '3', pr: '2', rounded: 'full', borderWidth: '1px', borderColor: 'border', bg: 'surface', fontSize: '13', fontWeight: 'semibold', color: 'ink', cursor: 'pointer' })}>
                 {method ? PAYMENT_METHODS[method] : 'Forma: todas'}
-                <ChevronDown size={14} strokeWidth={2} className="text-muted" />
+                <ChevronDown size={14} strokeWidth={2} className={css({ color: 'muted' })} />
                 <select
                   aria-label="Filtrar por forma de pagamento"
                   value={method}
                   onChange={e => setMethod(e.target.value as PaymentMethod | '')}
-                  className="absolute inset-0 opacity-0 cursor-pointer"
+                  className={css({ position: 'absolute', inset: '0', opacity: '0', cursor: 'pointer' })}
                 >
                   <option value="">Todas as formas</option>
                   {methodsHere.map(m => <option key={m} value={m}>{PAYMENT_METHODS[m]}</option>)}
                 </select>
               </label>
             )}
-            <span className="ml-auto text-[12px] text-muted nums whitespace-nowrap">
+            <span className={cx(css({ ml: 'auto', fontSize: '12', color: 'muted', whiteSpace: 'nowrap' }), 'nums')}>
               {visible.length} {visible.length === 1 ? 'item' : 'itens'}
             </span>
           </div>
         )}
 
-        <div className="px-5 md:px-0">
-          {loading && <div className="py-16 text-center text-muted opacity-30 text-[14px]">–</div>}
+        <div className={css({ px: '5', md: { px: '0' } })}>
+          {loading && <div className={css({ py: '16', textAlign: 'center', color: 'muted', opacity: '0.3', fontSize: '14' })}>–</div>}
 
           {!loading && rows.length === 0 && (
-            <div className="md:bg-surface md:border md:border-border md:rounded-2xl">
+            <div className={css({ md: { bg: 'surface', borderWidth: '1px', borderColor: 'border', rounded: '2xl' } })}>
               <EmptyState
                 title={`Nenhum lançamento em ${monthLc}`}
                 description="Tudo o que entrar, sair, mudar de conta ou cair na fatura do cartão aparece aqui."
@@ -152,10 +150,10 @@ export function TransactionList({ nav, account, onAdd, onEdit, onOpenCard, onOpe
           )}
 
           {!loading && rows.length > 0 && visible.length === 0 && (
-            <p className="text-[14px] text-muted text-center py-14">Nada desse tipo em {monthLc}.</p>
+            <p className={css({ fontSize: '14', color: 'muted', textAlign: 'center', py: '14' })}>Nada desse tipo em {monthLc}.</p>
           )}
 
-          <div className="flex flex-col gap-4 md:gap-5">
+          <div className={css({ display: 'flex', flexDirection: 'column', gap: '4', md: { gap: '5' } })}>
             {groups.map(g => {
               const inv = invoices.get(g.key)
               return (
@@ -163,14 +161,14 @@ export function TransactionList({ nav, account, onAdd, onEdit, onOpenCard, onOpe
                   {inv
                     ? <InvoiceHeader info={inv} total={-g.net} onOpen={() => onOpenCard(inv.card.id as number)} />
                     : (
-                      <div className="flex items-baseline justify-between pt-3 pb-1 md:px-1">
-                        <h2 className="m-0 text-[12px] font-semibold uppercase tracking-[.08em] text-muted">{dayLabel(g.key)}</h2>
-                        <span className="text-[12px] text-muted nums">
+                      <div className={css({ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', pt: '3', pb: '1', md: { px: '1' } })}>
+                        <h2 className={css({ m: '0', fontSize: '12', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: '[.08em]', color: 'muted' })}>{dayLabel(g.key)}</h2>
+                        <span className={cx(css({ fontSize: '12', color: 'muted' }), 'nums')}>
                           {g.net > 0 ? '+' : g.net < 0 ? '−' : ''}{formatBRL(Math.abs(g.net))}
                         </span>
                       </div>
                     )}
-                  <div className="md:bg-surface md:border md:border-border md:rounded-2xl md:px-5">
+                  <div className={css({ md: { bg: 'surface', borderWidth: '1px', borderColor: 'border', rounded: '2xl', px: '5' } })}>
                     {g.rows.map(row => (
                       <button
                         key={row.key}
@@ -179,7 +177,7 @@ export function TransactionList({ nav, account, onAdd, onEdit, onOpenCard, onOpe
                           if (loanId !== undefined) onOpenLoan(loanId)
                           else onEdit(targetOf(row))
                         }}
-                        className="block w-full text-left hover:bg-bg/60 transition-colors border-b border-border last:border-0"
+                        className={css({ display: 'block', w: 'full', textAlign: 'left', _hover: { bg: 'bg/60' }, transition: 'colors', borderBottomWidth: '1px', borderColor: 'border', _last: { borderWidth: '0' } })}
                         aria-label={`Editar ${row.kind === 'tx' ? (row.tx.description || row.category.name) : 'transferência'}`}
                       >
                         {row.kind === 'tx' ? (
@@ -217,13 +215,13 @@ export function TransactionList({ nav, account, onAdd, onEdit, onOpenCard, onOpe
 /** Card installments of the month sit under their invoice, listed on its due date */
 function InvoiceHeader({ info, total, onOpen }: { info: InvoiceGroupInfo; total: number; onOpen: () => void }) {
   return (
-    <button onClick={onOpen} className="w-full flex items-center gap-2 pt-3 pb-1.5 md:px-1 text-left group">
+    <button onClick={onOpen} className={cx(css({ w: 'full', display: 'flex', alignItems: 'center', gap: '2', pt: '3', pb: '1.5', md: { px: '1' }, textAlign: 'left' }), 'group')}>
       <AccountIcon account={info.card} size="inline" />
-      <h2 className="m-0 flex-1 min-w-0 truncate text-[12px] font-semibold uppercase tracking-[.08em] text-muted group-hover:text-ink">
+      <h2 className={css({ m: '0', flex: '1', minW: '0', truncate: true, fontSize: '12', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: '[.08em]', color: 'muted', _groupHover: { color: 'ink' } })}>
         Fatura {info.card.name} · vence {formatDayMonth(info.dueDate)}
       </h2>
-      <span className="text-[12px] text-muted nums">−{formatBRL(Math.abs(total))}</span>
-      <ChevronRight size={14} strokeWidth={2} className="text-muted" />
+      <span className={cx(css({ fontSize: '12', color: 'muted' }), 'nums')}>−{formatBRL(Math.abs(total))}</span>
+      <ChevronRight size={14} strokeWidth={2} className={css({ color: 'muted' })} />
     </button>
   )
 }
@@ -234,17 +232,17 @@ function TransferRow({ row, ids }: { row: Extract<LedgerRow, { kind: 'transfer' 
   const route = `${row.from?.name ?? '?'} → ${row.to?.name ?? '?'}`
   const isPayment = row.transfer.invoiceMonth !== undefined
   return (
-    <div className="flex items-center gap-3 py-3">
-      <div className="w-9 h-9 rounded-[10px] bg-border/60 flex items-center justify-center text-ink shrink-0" aria-hidden>
+    <div className={css({ display: 'flex', alignItems: 'center', gap: '3', py: '3' })}>
+      <div className={css({ w: '9', h: '9', rounded: 'tile', bg: 'border/60', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'ink', flexShrink: '0' })} aria-hidden>
         <ArrowLeftRight size={16} strokeWidth={1.75} />
       </div>
-      <div className="flex-1 min-w-0">
-        <div className="text-[15px] font-medium text-ink truncate leading-snug">
+      <div className={css({ flex: '1', minW: '0' })}>
+        <div className={css({ fontSize: '15', fontWeight: 'medium', color: 'ink', truncate: true, lineHeight: 'snug' })}>
           {row.transfer.description || (isPayment ? 'Pagamento de fatura' : 'Transferência')}
         </div>
-        <div className="text-[12px] text-muted truncate">{route}</div>
+        <div className={css({ fontSize: '12', color: 'muted', truncate: true })}>{route}</div>
       </div>
-      <div className="text-[15px] font-bold nums shrink-0 text-ink">
+      <div className={cx(css({ fontSize: '15', fontWeight: 'bold', flexShrink: '0', color: 'ink' }), 'nums')}>
         {delta > 0 ? '+' : delta < 0 ? '−' : ''}{formatBRL(row.transfer.amount)}
       </div>
     </div>

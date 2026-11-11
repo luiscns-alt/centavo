@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { bankById } from './banks/catalog'
 import type { Account } from '../../core/types'
+import { css } from '../../../styled-system/css'
 
 interface Props {
   account: Pick<Account, 'icon' | 'bankId'>
@@ -26,7 +27,7 @@ export function AccountIcon({ account, size = 36 }: Props) {
         height={16}
         decoding="async"
         onError={() => setFailed(logo)}
-        className="w-4 h-4 rounded-[4px] bg-white object-contain shrink-0"
+        className={css({ w: '4', h: '4', rounded: 'sm', bg: 'white', objectFit: 'contain', flexShrink: '0' })}
       />
     ) : (
       <span aria-hidden>{account.icon}</span>
@@ -36,7 +37,7 @@ export function AccountIcon({ account, size = 36 }: Props) {
   const box = { width: size, height: size }
   return logo ? (
     <div
-      className="rounded-[10px] bg-white border border-border flex items-center justify-center overflow-hidden shrink-0"
+      className={css({ rounded: 'tile', bg: 'white', borderWidth: '1px', borderColor: 'border', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: '0' })}
       style={box}
       aria-hidden
     >
@@ -48,13 +49,13 @@ export function AccountIcon({ account, size = 36 }: Props) {
         loading="lazy"
         decoding="async"
         onError={() => setFailed(logo)}
-        className="object-contain"
+        className={css({ objectFit: 'contain' })}
         style={{ width: size - 10, height: size - 10 }}
       />
     </div>
   ) : (
     <div
-      className="rounded-[10px] border border-border bg-bg flex items-center justify-center shrink-0"
+      className={css({ rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: '0' })}
       style={{ ...box, fontSize: Math.round(size * 0.45) }}
       aria-hidden
     >

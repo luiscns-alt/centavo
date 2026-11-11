@@ -15,6 +15,7 @@ import type { AnalysisView } from '../features/analytics'
 import { useAccounts, resolveSelection } from '../features/accounts'
 import { STORAGE_KEYS } from '../shared/constants/storageKeys'
 import { readLocal, writeLocal } from '../shared/utils/storage'
+import { css } from '../../styled-system/css'
 
 function readAnalysisView(): AnalysisView {
   return readLocal(STORAGE_KEYS.analysisView) === 'budgets' ? 'budgets' : 'compare'
@@ -123,10 +124,10 @@ export default function App() {
   const activeTab: Tab = overlay ? overlay.back : tab
 
   return (
-    <div className="flex min-h-svh">
+    <div className={css({ display: 'flex', minH: '[100svh]' })}>
       <SideNav active={activeTab} onChange={go} />
 
-      <main className="flex-1 flex flex-col min-h-svh min-w-0">
+      <main className={css({ flex: '1', display: 'flex', flexDirection: 'column', minH: '[100svh]', minW: '0' })}>
         {overlay?.kind === 'card' && (
           <CardView cardId={overlay.id} onBack={() => setOverlay(null)} onEdit={t => openEdit({ ...t, returnToCard: overlay.id })} />
         )}

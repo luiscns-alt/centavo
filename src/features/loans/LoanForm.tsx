@@ -11,6 +11,7 @@ import { ACCOUNT_METHODS, PAYMENT_METHODS, LOAN_TYPES } from '../../core/constan
 import type { LoanType, PaymentMethod, AmortizationSystem, RateUnit } from '../../core/types'
 import { todayISO, addMonths, dayIn, parseYM, formatMonthShortYear } from '../../shared/utils/dates'
 import { formatBRL } from '../../shared/utils/money'
+import { css, cx } from '../../../styled-system/css'
 
 const plusOneMonth = (iso: string) => dayIn(addMonths(parseYM(iso), 1), Number(iso.slice(8)))
 
@@ -91,52 +92,50 @@ export function LoanForm({ onCreated, onCancel }: Props) {
     }
   }
 
-  const input = 'h-11 px-3 rounded-[10px] border border-border bg-bg text-[15px] text-ink placeholder:text-muted outline-none focus:border-muted/60'
-
   return (
-    <div className="flex-1 overflow-y-auto pb-28 md:pb-12">
-      <div className="md:max-w-[560px] md:mx-auto md:px-10 md:pt-8">
-        <div className="flex items-center gap-2 px-3 md:px-0 h-14 md:h-auto md:mb-5">
-          <button onClick={onCancel} aria-label="Voltar" className="w-9 h-9 rounded-full flex items-center justify-center text-muted hover:text-ink hover:bg-border/60">
+    <div className={css({ flex: '1', overflowY: 'auto', pb: '28', md: { pb: '12' } })}>
+      <div className={css({ md: { maxW: '[560px]', mx: 'auto', px: '10', pt: '8' } })}>
+        <div className={css({ display: 'flex', alignItems: 'center', gap: '2', px: '3', md: { px: '0', h: 'auto', mb: '5' }, h: '14' })}>
+          <button onClick={onCancel} aria-label="Voltar" className={css({ w: '9', h: '9', rounded: 'full', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'muted', _hover: { color: 'ink', bg: 'border/60' } })}>
             <ChevronLeft size={20} strokeWidth={1.75} />
           </button>
-          <h1 className="m-0 text-[17px] md:text-[22px] font-semibold tracking-[-.01em] text-ink">Novo empréstimo ou financiamento</h1>
+          <h1 className={css({ m: '0', fontSize: '17', md: { fontSize: '22' }, fontWeight: 'semibold', letterSpacing: 'title', color: 'ink' })}>Novo empréstimo ou financiamento</h1>
         </div>
 
-        <div className="mx-5 md:mx-0 bg-surface border border-border rounded-2xl p-5 flex flex-col gap-5">
+        <div className={css({ mx: '5', md: { mx: '0' }, bg: 'surface', borderWidth: '1px', borderColor: 'border', rounded: '2xl', p: '5', display: 'flex', flexDirection: 'column', gap: '5' })}>
           <div>
             <FieldLabel>Nome</FieldLabel>
-            <input value={name} onChange={e => setName(e.target.value)} maxLength={30} placeholder="Ex.: Financiamento do carro" className={`w-full ${input}`} aria-label="Nome" />
+            <input value={name} onChange={e => setName(e.target.value)} maxLength={30} placeholder="Ex.: Financiamento do carro" className={css({ w: 'full' }, { h: '11', px: '3', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', fontSize: '15', color: 'ink', _placeholder: { color: 'muted' }, outline: 'none', _focus: { borderColor: 'muted/60' } })} aria-label="Nome" />
           </div>
           <div>
             <FieldLabel>Tipo</FieldLabel>
             <Choice label="Tipo" value={type} onChange={setType} options={(Object.keys(LOAN_TYPES) as LoanType[]).map(id => ({ id, label: LOAN_TYPES[id].label }))} />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div className="col-span-2 sm:col-span-1">
+          <div className={css({ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '3' })}>
+            <div className={css({ gridColumn: 'span 2 / span 2', sm: { gridColumn: 'span 1 / span 1' } })}>
               <FieldLabel>Valor financiado</FieldLabel>
               <MoneyInput label="Valor financiado" value={principal} onChange={setPrincipal} />
             </div>
-            <div className="col-span-2 sm:col-span-1">
+            <div className={css({ gridColumn: 'span 2 / span 2', sm: { gridColumn: 'span 1 / span 1' } })}>
               <FieldLabel>Prazo</FieldLabel>
-              <div className="h-11 px-3 rounded-[10px] border border-border bg-bg flex items-center gap-1.5 focus-within:border-muted/60">
-                <input inputMode="numeric" aria-label="Prazo em meses" placeholder="48" value={term} onChange={e => setTerm(e.target.value.replace(/\D/g, '').slice(0, 3))} className="flex-1 min-w-0 bg-transparent text-[15px] font-semibold nums text-ink placeholder:text-muted placeholder:font-normal outline-none" />
-                <span className="text-[13px] text-muted">meses</span>
+              <div className={css({ h: '11', px: '3', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', display: 'flex', alignItems: 'center', gap: '1.5', _focusWithin: { borderColor: 'muted/60' } })}>
+                <input inputMode="numeric" aria-label="Prazo em meses" placeholder="48" value={term} onChange={e => setTerm(e.target.value.replace(/\D/g, '').slice(0, 3))} className={cx(css({ flex: '1', minW: '0', bg: 'transparent', fontSize: '15', fontWeight: 'semibold', color: 'ink', _placeholder: { color: 'muted', fontWeight: 'normal' }, outline: 'none' }), 'nums')} />
+                <span className={css({ fontSize: '13', color: 'muted' })}>meses</span>
               </div>
             </div>
           </div>
 
           <div>
             <FieldLabel>Taxa de juros</FieldLabel>
-            <div className="flex items-center gap-2">
-              <div className="flex-1 h-11 px-3 rounded-[10px] border border-border bg-bg flex items-center gap-1.5 focus-within:border-muted/60">
-                <input inputMode="decimal" aria-label="Taxa de juros" placeholder="1,49" value={rateText} onChange={e => setRateText(e.target.value.replace(/[^\d,.]/g, '').slice(0, 10))} className="flex-1 min-w-0 bg-transparent text-[15px] font-semibold nums text-ink placeholder:text-muted placeholder:font-normal outline-none" />
-                <span className="text-[13px] text-muted">%</span>
+            <div className={css({ display: 'flex', alignItems: 'center', gap: '2' })}>
+              <div className={css({ flex: '1', h: '11', px: '3', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', display: 'flex', alignItems: 'center', gap: '1.5', _focusWithin: { borderColor: 'muted/60' } })}>
+                <input inputMode="decimal" aria-label="Taxa de juros" placeholder="1,49" value={rateText} onChange={e => setRateText(e.target.value.replace(/[^\d,.]/g, '').slice(0, 10))} className={cx(css({ flex: '1', minW: '0', bg: 'transparent', fontSize: '15', fontWeight: 'semibold', color: 'ink', _placeholder: { color: 'muted', fontWeight: 'normal' }, outline: 'none' }), 'nums')} />
+                <span className={css({ fontSize: '13', color: 'muted' })}>%</span>
               </div>
               <Choice label="Período da taxa" value={rateUnit} onChange={setRateUnit} options={[{ id: 'monthly', label: 'ao mês' }, { id: 'annual', label: 'ao ano' }]} />
             </div>
-            {sim && rateUnit === 'annual' && <p className="m-0 mt-1.5 text-[12px] text-muted nums">Equivale a {sim.monthly.replace('.', ',')}% ao mês (juros compostos).</p>}
+            {sim && rateUnit === 'annual' && <p className={cx(css({ m: '0', mt: '1.5', fontSize: '12', color: 'muted' }), 'nums')}>Equivale a {sim.monthly.replace('.', ',')}% ao mês (juros compostos).</p>}
           </div>
 
           <div>
@@ -144,14 +143,14 @@ export function LoanForm({ onCreated, onCancel }: Props) {
             <Choice label="Sistema" value={system} onChange={setSystem} options={[{ id: 'price', label: 'Price — parcelas iguais' }, { id: 'sac', label: 'SAC — parcelas decrescentes' }]} />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <label className="block min-w-0">
+          <div className={css({ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '3' })}>
+            <label className={css({ display: 'block', minW: '0' })}>
               <FieldLabel>Contratado em</FieldLabel>
-              <input type="date" value={startDate} onChange={e => { setStartDate(e.target.value); setFirstDue(null) }} className={`w-full nums ${input}`} />
+              <input type="date" value={startDate} onChange={e => { setStartDate(e.target.value); setFirstDue(null) }} className={cx(css({ w: 'full' }, { h: '11', px: '3', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', fontSize: '15', color: 'ink', _placeholder: { color: 'muted' }, outline: 'none', _focus: { borderColor: 'muted/60' } }), 'nums')} />
             </label>
-            <label className="block min-w-0">
+            <label className={css({ display: 'block', minW: '0' })}>
               <FieldLabel>1º vencimento</FieldLabel>
-              <input type="date" value={firstDueDate} onChange={e => setFirstDue(e.target.value)} className={`w-full nums ${input}`} />
+              <input type="date" value={firstDueDate} onChange={e => setFirstDue(e.target.value)} className={cx(css({ w: 'full' }, { h: '11', px: '3', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', fontSize: '15', color: 'ink', _placeholder: { color: 'muted' }, outline: 'none', _focus: { borderColor: 'muted/60' } }), 'nums')} />
             </label>
           </div>
 
@@ -159,27 +158,27 @@ export function LoanForm({ onCreated, onCancel }: Props) {
             <FieldLabel>Como o dinheiro foi liberado</FieldLabel>
             <Choice label="Liberação" value={release} onChange={setRelease} options={[{ id: 'direct', label: 'Pago direto ao vendedor' }, { id: 'deposit', label: 'Caiu na minha conta' }]} />
             {release === 'deposit' && (
-              <div className="-mx-5 mt-3">
+              <div className={css({ mx: '-5', mt: '3' })}>
                 <AccountChips label="Conta que recebeu" accounts={cash} value={releaseId} onChange={setReleaseAccount} />
               </div>
             )}
-            <p className="m-0 mt-1.5 text-[12px] text-muted">
+            <p className={css({ m: '0', mt: '1.5', fontSize: '12', color: 'muted' })}>
               {release === 'deposit' ? 'O valor entra na conta como transferência — não conta como receita.' : 'Imóvel ou veículo: nada entra na sua conta; só nasce a dívida.'}
             </p>
           </div>
 
           <div>
             <FieldLabel>Parcelas pagas com</FieldLabel>
-            <div className="-mx-5"><AccountChips label="Conta de pagamento" accounts={cash} value={payFromId} onChange={setPayFrom} /></div>
-            <div className="mt-2">
+            <div className={css({ mx: '-5' })}><AccountChips label="Conta de pagamento" accounts={cash} value={payFromId} onChange={setPayFrom} /></div>
+            <div className={css({ mt: '2' })}>
               <Choice label="Forma de pagamento" value={method} onChange={setMethod} options={ACCOUNT_METHODS.map(m => ({ id: m, label: PAYMENT_METHODS[m] }))} />
             </div>
           </div>
 
           <div>
             <FieldLabel>Categorias da parcela</FieldLabel>
-            <p className="m-0 mb-2 text-[12px] text-muted">A prestação inteira conta como despesa: a amortização numa categoria, os juros em outra.</p>
-            <div className="grid grid-cols-2 gap-3">
+            <p className={css({ m: '0', mb: '2', fontSize: '12', color: 'muted' })}>A prestação inteira conta como despesa: a amortização numa categoria, os juros em outra.</p>
+            <div className={css({ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '3' })}>
               <CategorySelect label="Amortização" value={principalCatId} onChange={setPrincipalCat} options={categories ?? []} />
               <CategorySelect label="Juros" value={interestCatId} onChange={setInterestCat} options={categories ?? []} />
             </div>
@@ -192,10 +191,10 @@ export function LoanForm({ onCreated, onCancel }: Props) {
         </div>
 
         {/* Live simulation */}
-        <section className="mx-5 md:mx-0 mt-4 bg-surface border border-border rounded-2xl p-5" aria-live="polite">
-          <div className="text-[11px] font-semibold uppercase tracking-[.1em] text-muted mb-2">Simulação</div>
+        <section className={css({ mx: '5', md: { mx: '0' }, mt: '4', bg: 'surface', borderWidth: '1px', borderColor: 'border', rounded: '2xl', p: '5' })} aria-live="polite">
+          <div className={css({ fontSize: '11', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: 'widest', color: 'muted', mb: '2' })}>Simulação</div>
           {sim ? (
-            <div className="grid grid-cols-2 gap-x-4 gap-y-3 nums">
+            <div className={cx(css({ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', columnGap: '4', rowGap: '3' }), 'nums')}>
               <Fig label={system === 'price' ? 'Parcela' : '1ª parcela'} value={formatBRL(sim.first.total)} strong />
               <Fig label={system === 'price' ? 'Última' : 'Última parcela'} value={formatBRL(sim.last.total)} />
               <Fig label="Total de juros" value={formatBRL(sim.interest)} />
@@ -204,16 +203,16 @@ export function LoanForm({ onCreated, onCancel }: Props) {
               <Fig label="Termina em" value={formatMonthShortYear(sim.last.dueDate)} />
             </div>
           ) : (
-            <p className="m-0 text-[13px] text-muted">Preencha valor, taxa e prazo para ver as parcelas.</p>
+            <p className={css({ m: '0', fontSize: '13', color: 'muted' })}>Preencha valor, taxa e prazo para ver as parcelas.</p>
           )}
         </section>
 
-        <div className="mx-5 md:mx-0 mt-4">
-          {error && <p className="m-0 mb-3 text-[13px] text-expense text-center" role="alert">{error}</p>}
+        <div className={css({ mx: '5', md: { mx: '0' }, mt: '4' })}>
+          {error && <p className={css({ m: '0', mb: '3', fontSize: '13', color: 'expense', textAlign: 'center' })} role="alert">{error}</p>}
           <button
             onClick={() => void submit()}
             disabled={busy || !sim || !name.trim()}
-            className="w-full h-12 rounded-xl bg-ink text-bg text-[15px] font-bold disabled:opacity-40 hover:opacity-90"
+            className={css({ w: 'full', h: '12', rounded: 'xl', bg: 'ink', color: 'bg', fontSize: '15', fontWeight: 'bold', _disabled: { opacity: '0.4' }, _hover: { opacity: '0.9' } })}
           >
             {busy ? 'Salvando...' : 'Cadastrar empréstimo'}
           </button>
@@ -225,9 +224,9 @@ export function LoanForm({ onCreated, onCancel }: Props) {
 
 function Fig({ label, value, strong = false }: { label: string; value: string; strong?: boolean }) {
   return (
-    <div className="min-w-0">
-      <div className="text-[11px] font-semibold uppercase tracking-[.08em] text-muted">{label}</div>
-      <div className={`truncate ${strong ? 'text-[17px] font-bold' : 'text-[15px] font-semibold'} text-ink`}>{value}</div>
+    <div className={css({ minW: '0' })}>
+      <div className={css({ fontSize: '11', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: '[.08em]', color: 'muted' })}>{label}</div>
+      <div className={css({ truncate: true }, strong ? { fontSize: '17', fontWeight: 'bold' } : { fontSize: '15', fontWeight: 'semibold' }, { color: 'ink' })}>{value}</div>
     </div>
   )
 }
@@ -236,12 +235,12 @@ function CategorySelect({ label, value, onChange, options }: {
   label: string; value: number | null; onChange: (id: number) => void; options: { id?: number; name: string; icon: string }[]
 }) {
   return (
-    <label className="block min-w-0">
-      <span className="block text-[12px] text-muted mb-1">{label}</span>
+    <label className={css({ display: 'block', minW: '0' })}>
+      <span className={css({ display: 'block', fontSize: '12', color: 'muted', mb: '1' })}>{label}</span>
       <select
         value={value ?? ''}
         onChange={e => onChange(Number(e.target.value))}
-        className="w-full h-11 px-2.5 rounded-[10px] border border-border bg-bg text-[14px] text-ink outline-none focus:border-muted/60"
+        className={css({ w: 'full', h: '11', px: '2.5', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', fontSize: '14', color: 'ink', outline: 'none', _focus: { borderColor: 'muted/60' } })}
       >
         {options.map(c => <option key={c.id} value={c.id}>{c.icon} {c.name}</option>)}
       </select>

@@ -9,6 +9,7 @@ import { ACCOUNT_KINDS, EDITABLE_KINDS } from '../../core/constants/domain'
 import type { AccountKind } from '../../core/types'
 import { todayISO } from '../../shared/utils/dates'
 import { firstGrapheme } from '../../shared/utils/text'
+import { css, cx } from '../../../styled-system/css'
 
 interface Props {
   initial?: AccountInput
@@ -127,34 +128,34 @@ export function AccountEditor({ initial, submitLabel = 'Criar conta', title, onS
 
   return (
     <div
-      className="bg-surface border border-border rounded-xl p-4 slide-up"
+      className={cx(css({ bg: 'surface', borderWidth: '1px', borderColor: 'border', rounded: 'xl', p: '4' }), 'slide-up')}
       onKeyDown={e => {
         if (e.key === 'Escape' && onCancel) { e.stopPropagation(); onCancel() }
         if (e.key === 'Enter' && (e.target as HTMLElement).tagName === 'INPUT') { e.preventDefault(); e.stopPropagation(); void submit() }
       }}
     >
       {(title || onCancel) && (
-        <div className="flex items-center justify-between mb-3">
-          <div className="text-[15px] font-semibold text-ink">{title}</div>
+        <div className={css({ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: '3' })}>
+          <div className={css({ fontSize: '15', fontWeight: 'semibold', color: 'ink' })}>{title}</div>
           {onCancel && (
-            <button type="button" onClick={onCancel} aria-label="Cancelar" className="w-8 h-8 -mr-1 rounded-full flex items-center justify-center text-muted hover:text-ink hover:bg-bg">
+            <button type="button" onClick={onCancel} aria-label="Cancelar" className={css({ w: '8', h: '8', mr: '-1', rounded: 'full', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'muted', _hover: { color: 'ink', bg: 'bg' } })}>
               <X size={18} strokeWidth={1.75} />
             </button>
           )}
         </div>
       )}
 
-      <div className="flex items-start gap-2">
+      <div className={css({ display: 'flex', alignItems: 'flex-start', gap: '2' })}>
         {/* Icon: the bank logo when linked (✕ to remove), otherwise an editable emoji */}
         {bank ? (
-          <div className="relative shrink-0">
+          <div className={css({ position: 'relative', flexShrink: '0' })}>
             <AccountIcon account={{ icon: shownIcon, bankId: bank.id }} size={44} />
             <button
               type="button"
               onClick={unlink}
               aria-label={`Remover logo do ${bank.name}`}
               title="Usar emoji em vez da logo"
-              className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-ink text-bg flex items-center justify-center"
+              className={css({ position: 'absolute', top: '-1.5', right: '-1.5', w: '5', h: '5', rounded: 'full', bg: 'ink', color: 'bg', display: 'flex', alignItems: 'center', justifyContent: 'center' })}
             >
               <X size={11} strokeWidth={3} />
             </button>
@@ -164,11 +165,11 @@ export function AccountEditor({ initial, submitLabel = 'Criar conta', title, onS
             aria-label="Emoji da conta"
             value={shownIcon}
             onChange={e => setIcon(firstGrapheme(e.target.value.replace(shownIcon, '')) || firstGrapheme(e.target.value))}
-            className="w-11 h-11 shrink-0 rounded-[10px] border border-border bg-bg text-center text-[20px] outline-none focus:border-muted/60"
+            className={css({ w: '11', h: '11', flexShrink: '0', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', textAlign: 'center', fontSize: '20', outline: 'none', _focus: { borderColor: 'muted/60' } })}
           />
         )}
 
-        <div className="relative flex-1 min-w-0">
+        <div className={css({ position: 'relative', flex: '1', minW: '0' })}>
           <input
             autoFocus
             role="combobox"
@@ -184,11 +185,11 @@ export function AccountEditor({ initial, submitLabel = 'Criar conta', title, onS
             onKeyDown={onNameKeyDown}
             onFocus={() => setListOpen(true)}
             onBlur={() => setListOpen(false)}
-            className="w-full h-11 px-3 rounded-[10px] border border-border bg-bg text-[15px] text-ink placeholder:text-muted outline-none focus:border-muted/60"
+            className={css({ w: 'full', h: '11', px: '3', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', fontSize: '15', color: 'ink', _placeholder: { color: 'muted' }, outline: 'none', _focus: { borderColor: 'muted/60' } })}
           />
           {bank && (
-            <div className="mt-1 text-[12px] text-muted">
-              Banco: <span className="font-semibold text-ink">{bank.name}</span>
+            <div className={css({ mt: '1', fontSize: '12', color: 'muted' })}>
+              Banco: <span className={css({ fontWeight: 'semibold', color: 'ink' })}>{bank.name}</span>
               {bank.compe && <span className="nums"> · {bank.compe}</span>}
             </div>
           )}
@@ -198,7 +199,7 @@ export function AccountEditor({ initial, submitLabel = 'Criar conta', title, onS
               id={listId}
               role="listbox"
               aria-label="Bancos conhecidos"
-              className="absolute z-20 left-0 right-0 top-12 m-0 p-1 list-none bg-surface border border-border rounded-xl shadow-lg slide-up"
+              className={cx(css({ position: 'absolute', zIndex: '20', left: '0', right: '0', top: '12', m: '0', p: '1', listStyle: 'none', bg: 'surface', borderWidth: '1px', borderColor: 'border', rounded: 'xl', shadow: 'lg' }), 'slide-up')}
             >
               {suggestions.map((b, i) => (
                 <li
@@ -209,11 +210,11 @@ export function AccountEditor({ initial, submitLabel = 'Criar conta', title, onS
                   // mousedown so the input's blur doesn't close the list before the click lands
                   onMouseDown={e => { e.preventDefault(); pick(b) }}
                   onMouseEnter={() => setHighlight(i)}
-                  className={`flex items-center gap-2.5 h-11 px-2 rounded-lg cursor-pointer ${i === highlight ? 'bg-bg' : ''}`}
+                  className={css({ display: 'flex', alignItems: 'center', gap: '2.5', h: '11', px: '2', rounded: 'lg', cursor: 'pointer' }, i === highlight ? { bg: 'bg' } : {})}
                 >
                   <AccountIcon account={{ icon: b.kind ? ACCOUNT_KINDS[b.kind].icon : '🏦', bankId: b.id }} size={28} />
-                  <span className="flex-1 text-[14px] font-medium text-ink truncate">{b.name}</span>
-                  {b.compe && <span className="text-[12px] text-muted nums">{b.compe}</span>}
+                  <span className={css({ flex: '1', fontSize: '14', fontWeight: 'medium', color: 'ink', truncate: true })}>{b.name}</span>
+                  {b.compe && <span className={cx(css({ fontSize: '12', color: 'muted' }), 'nums')}>{b.compe}</span>}
                 </li>
               ))}
             </ul>
@@ -221,7 +222,7 @@ export function AccountEditor({ initial, submitLabel = 'Criar conta', title, onS
         </div>
       </div>
 
-      <div className="mt-3 flex flex-wrap gap-1.5" role="radiogroup" aria-label="Tipo de conta">
+      <div className={css({ mt: '3', display: 'flex', flexWrap: 'wrap', gap: '1.5' })} role="radiogroup" aria-label="Tipo de conta">
         {EDITABLE_KINDS.map(k => (
           <button
             key={k}
@@ -229,10 +230,7 @@ export function AccountEditor({ initial, submitLabel = 'Criar conta', title, onS
             role="radio"
             aria-checked={kind === k}
             onClick={() => setKind(k)}
-            className={[
-              'h-8 px-3 rounded-full border text-[12px] font-semibold transition-colors',
-              kind === k ? 'bg-ink border-ink text-bg' : 'border-border text-muted hover:text-ink',
-            ].join(' ')}
+            className={css({ h: '8', px: '3', rounded: 'full', borderWidth: '1px', fontSize: '12', fontWeight: 'semibold', transition: 'colors' }, kind === k ? { bg: 'ink', borderColor: 'ink', color: 'bg' } : { borderColor: 'border', color: 'muted', _hover: { color: 'ink' } })}
           >
             {ACCOUNT_KINDS[k].label}
           </button>
@@ -240,12 +238,12 @@ export function AccountEditor({ initial, submitLabel = 'Criar conta', title, onS
       </div>
 
       {isCredit && (
-        <div className="mt-4">
-          <div className="text-[11px] font-semibold uppercase tracking-[.1em] text-muted mb-1.5">Banco do cartão</div>
+        <div className={css({ mt: '4' })}>
+          <div className={css({ fontSize: '11', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: 'widest', color: 'muted', mb: '1.5' })}>Banco do cartão</div>
           {bankAccounts.length === 0 ? (
-            <p className="m-0 text-[13px] text-muted">Cadastre primeiro a conta do banco — o cartão fica vinculado a ela.</p>
+            <p className={css({ m: '0', fontSize: '13', color: 'muted' })}>Cadastre primeiro a conta do banco — o cartão fica vinculado a ela.</p>
           ) : (
-            <div className="flex flex-wrap gap-1.5" role="radiogroup" aria-label="Conta do banco">
+            <div className={css({ display: 'flex', flexWrap: 'wrap', gap: '1.5' })} role="radiogroup" aria-label="Conta do banco">
               {bankAccounts.map(a => (
                 <button
                   key={a.id}
@@ -253,10 +251,7 @@ export function AccountEditor({ initial, submitLabel = 'Criar conta', title, onS
                   role="radio"
                   aria-checked={bankAccountId === a.id}
                   onClick={() => setBankAccountId(a.id as number)}
-                  className={[
-                    'flex items-center gap-1.5 h-8 px-3 rounded-full border text-[12px] font-semibold transition-colors',
-                    bankAccountId === a.id ? 'bg-ink border-ink text-bg' : 'border-border text-muted hover:text-ink',
-                  ].join(' ')}
+                  className={css({ display: 'flex', alignItems: 'center', gap: '1.5', h: '8', px: '3', rounded: 'full', borderWidth: '1px', fontSize: '12', fontWeight: 'semibold', transition: 'colors' }, bankAccountId === a.id ? { bg: 'ink', borderColor: 'ink', color: 'bg' } : { borderColor: 'border', color: 'muted', _hover: { color: 'ink' } })}
                 >
                   <AccountIcon account={a} size="inline" />
                   {a.name}
@@ -264,49 +259,49 @@ export function AccountEditor({ initial, submitLabel = 'Criar conta', title, onS
               ))}
             </div>
           )}
-          <p className="mt-1.5 mb-3 text-[12px] text-muted">
+          <p className={css({ mt: '1.5', mb: '3', fontSize: '12', color: 'muted' })}>
             A fatura é paga por padrão a partir desta conta.
             {initial?.card && ' Mudar os dias vale só para compras novas — faturas já lançadas não mudam.'}
           </p>
 
-          <div className="grid grid-cols-3 gap-2">
+          <div className={css({ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '2' })}>
             <DayField label="Fecha dia" value={closingDay} onChange={setClosingDay} />
             <DayField label="Vence dia" value={dueDay} onChange={setDueDay} />
-            <label className="block min-w-0">
-              <span className="block text-[11px] font-semibold uppercase tracking-[.08em] text-muted mb-1">Limite</span>
+            <label className={css({ display: 'block', minW: '0' })}>
+              <span className={css({ display: 'block', fontSize: '11', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: '[.08em]', color: 'muted', mb: '1' })}>Limite</span>
               <input
                 inputMode="numeric"
                 placeholder="opcional"
                 value={fmt(limitDigits)}
                 onChange={e => setLimitDigits(e.target.value.replace(/\D/g, '').replace(/^0+/, '').slice(0, 11))}
-                className="w-full h-11 px-2.5 rounded-[10px] border border-border bg-bg text-[14px] font-semibold nums text-ink placeholder:text-muted placeholder:font-normal outline-none focus:border-muted/60"
+                className={cx(css({ w: 'full', h: '11', px: '2.5', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', fontSize: '14', fontWeight: 'semibold', color: 'ink', _placeholder: { color: 'muted', fontWeight: 'normal' }, outline: 'none', _focus: { borderColor: 'muted/60' } }), 'nums')}
               />
             </label>
           </div>
         </div>
       )}
 
-      <div className="mt-4 text-[11px] font-semibold uppercase tracking-[.1em] text-muted mb-1.5">
+      <div className={css({ mt: '4', fontSize: '11', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: 'widest', color: 'muted', mb: '1.5' })}>
         {isCredit ? 'Já devo neste cartão' : 'Saldo inicial'}
       </div>
-      <div className="flex items-center gap-2">
+      <div className={css({ display: 'flex', alignItems: 'center', gap: '2' })}>
         {!isCredit && <button
           type="button"
           onClick={() => setNegative(n => !n)}
           aria-label={negative ? 'Saldo negativo — tocar para positivo' : 'Saldo positivo — tocar para negativo'}
-          className="w-11 h-11 shrink-0 rounded-[10px] border border-border bg-bg text-[18px] font-bold text-ink"
+          className={css({ w: '11', h: '11', flexShrink: '0', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', fontSize: '18', fontWeight: 'bold', color: 'ink' })}
         >
           {negative ? '−' : '+'}
         </button>}
-        <div className="flex-1 min-w-0 h-11 px-3 rounded-[10px] border border-border bg-bg flex items-center gap-1.5 focus-within:border-muted/60">
-          <span className="text-[14px] font-semibold text-muted">R$</span>
+        <div className={css({ flex: '1', minW: '0', h: '11', px: '3', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', display: 'flex', alignItems: 'center', gap: '1.5', _focusWithin: { borderColor: 'muted/60' } })}>
+          <span className={css({ fontSize: '14', fontWeight: 'semibold', color: 'muted' })}>R$</span>
           <input
             inputMode="numeric"
             aria-label="Saldo inicial"
             placeholder="0,00"
             value={fmt(digits)}
             onChange={e => setDigits(e.target.value.replace(/\D/g, '').replace(/^0+/, '').slice(0, 11))}
-            className="flex-1 min-w-0 bg-transparent text-[15px] font-semibold nums text-ink placeholder:text-muted outline-none"
+            className={cx(css({ flex: '1', minW: '0', bg: 'transparent', fontSize: '15', fontWeight: 'semibold', color: 'ink', _placeholder: { color: 'muted' }, outline: 'none' }), 'nums')}
           />
         </div>
         <input
@@ -314,24 +309,24 @@ export function AccountEditor({ initial, submitLabel = 'Criar conta', title, onS
           aria-label="Data do saldo inicial"
           value={openingDate}
           onChange={e => setOpeningDate(e.target.value)}
-          className="w-[150px] shrink-0 h-11 px-2.5 rounded-[10px] border border-border bg-bg text-[14px] nums text-ink outline-none focus:border-muted/60"
+          className={cx(css({ w: '[150px]', flexShrink: '0', h: '11', px: '2.5', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', fontSize: '14', color: 'ink', outline: 'none', _focus: { borderColor: 'muted/60' } }), 'nums')}
         />
       </div>
-      <p className="mt-1.5 mb-0 text-[12px] text-muted leading-relaxed">
+      <p className={css({ mt: '1.5', mb: '0', fontSize: '12', color: 'muted', lineHeight: 'relaxed' })}>
         {isCredit
           ? 'Faturas e parcelas que já existiam nesta data. Entra como dívida no patrimônio, não como despesa.'
           : 'Quanto já havia na conta nesta data. Entra no patrimônio, não nas receitas.'}
       </p>
 
-      <div className="mt-4 flex items-center gap-3">
-        <p className={`flex-1 m-0 text-[12px] ${error ? 'text-expense' : 'text-muted'}`} role={error ? 'alert' : undefined}>
+      <div className={css({ mt: '4', display: 'flex', alignItems: 'center', gap: '3' })}>
+        <p className={css({ flex: '1', m: '0', fontSize: '12' }, error ? { color: 'expense' } : { color: 'muted' })} role={error ? 'alert' : undefined}>
           {error ?? ''}
         </p>
         <button
           type="button"
           onClick={() => void submit()}
           disabled={busy || name.trim() === '' || (isCredit && (!closingDay || !dueDay || bankAccountId === null))}
-          className="h-10 px-5 rounded-full bg-ink text-bg text-[14px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+          className={css({ h: '10', px: '5', rounded: 'full', bg: 'ink', color: 'bg', fontSize: '14', fontWeight: 'semibold', transition: 'opacity', _hover: { opacity: '0.9' }, _disabled: { opacity: '0.4', cursor: 'not-allowed' } })}
         >
           {busy ? 'Salvando...' : submitLabel}
         </button>
@@ -342,8 +337,8 @@ export function AccountEditor({ initial, submitLabel = 'Criar conta', title, onS
 
 function DayField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   return (
-    <label className="block min-w-0">
-      <span className="block text-[11px] font-semibold uppercase tracking-[.08em] text-muted mb-1">{label}</span>
+    <label className={css({ display: 'block', minW: '0' })}>
+      <span className={css({ display: 'block', fontSize: '11', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: '[.08em]', color: 'muted', mb: '1' })}>{label}</span>
       <input
         inputMode="numeric"
         placeholder="1–31"
@@ -352,7 +347,7 @@ function DayField({ label, value, onChange }: { label: string; value: string; on
           const d = e.target.value.replace(/\D/g, '').slice(0, 2)
           onChange(d === '' ? '' : String(Math.min(31, Math.max(1, Number(d)))))
         }}
-        className="w-full h-11 px-2.5 rounded-[10px] border border-border bg-bg text-[15px] font-semibold nums text-ink placeholder:text-muted placeholder:font-normal outline-none focus:border-muted/60"
+        className={cx(css({ w: 'full', h: '11', px: '2.5', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', fontSize: '15', fontWeight: 'semibold', color: 'ink', _placeholder: { color: 'muted', fontWeight: 'normal' }, outline: 'none', _focus: { borderColor: 'muted/60' } }), 'nums')}
       />
     </label>
   )

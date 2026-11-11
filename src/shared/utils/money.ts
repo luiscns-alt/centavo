@@ -3,6 +3,8 @@
  * floats (see core/decimal.ts for rates).
  */
 
+import { css } from '../../../styled-system/css'
+
 const brl = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
 const plain = new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 const MINUS = '−' // U+2212, the same width as "+" in tabular numbers
@@ -25,9 +27,11 @@ export const formatAmount = (centavos: number): string => plain.format(centavos 
 export const formatAmountDelta = (centavos: number): string =>
   `${centavos > 0 ? '+' : centavos < 0 ? MINUS : ''}${formatAmount(Math.abs(centavos))}`
 
-/** Text color for a signed amount: income green, expense red, zero muted */
-export const toneClass = (centavos: number): 'text-income' | 'text-expense' | 'text-muted' =>
-  centavos > 0 ? 'text-income' : centavos < 0 ? 'text-expense' : 'text-muted'
+const TONE = { income: css({ color: 'income' }), expense: css({ color: 'expense' }), muted: css({ color: 'muted' }) }
+
+/** Text color class for a signed amount: income green, expense vinho, zero muted */
+export const toneClass = (centavos: number): string =>
+  centavos > 0 ? TONE.income : centavos < 0 ? TONE.expense : TONE.muted
 
 /**
  * Parse a user-typed amount into integer centavos, or null if invalid.

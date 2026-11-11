@@ -4,11 +4,12 @@ import { TransactionRow } from '../transactions'
 import { Badge } from '../../shared/ui/Badge'
 import { AlertCard } from '../../shared/ui/AlertCard'
 import { MonthSelector } from '../../shared/ui/MonthSelector'
+import { css } from '../../../styled-system/css'
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-surface rounded-xl p-5 border border-border">
-      <div className="text-[10px] font-semibold uppercase tracking-[.1em] text-muted mb-4">
+    <div className={css({ bg: 'surface', rounded: 'xl', p: '5', borderWidth: '1px', borderColor: 'border' })}>
+      <div className={css({ fontSize: '10', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: 'widest', color: 'muted', mb: '4' })}>
         {title}
       </div>
       {children}
@@ -36,19 +37,19 @@ export function ComponentsGallery() {
   }
 
   return (
-    <div className="flex-1 bg-bg overflow-y-auto pb-24">
+    <div className={css({ flex: '1', bg: 'bg', overflowY: 'auto', pb: '24' })}>
       {/* Header */}
-      <div className="px-5 pt-5 pb-4 border-b border-border">
-        <div className="text-[10px] font-semibold uppercase tracking-[.1em] text-muted">
+      <div className={css({ px: '5', pt: '5', pb: '4', borderBottomWidth: '1px', borderColor: 'border' })}>
+        <div className={css({ fontSize: '10', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: 'widest', color: 'muted' })}>
           Components
         </div>
       </div>
 
-      <div className="px-5 pt-5 grid grid-cols-1 gap-4">
+      <div className={css({ px: '5', pt: '5', display: 'grid', gridTemplateColumns: 'repeat(1, minmax(0, 1fr))', gap: '4' })}>
 
         {/* BUTTONS */}
         <Section title="Buttons">
-          <div className="flex flex-col gap-3">
+          <div className={css({ display: 'flex', flexDirection: 'column', gap: '3' })}>
             <Button variant="primary" fullWidth>Salvar lançamento</Button>
             <Button variant="ghost" fullWidth>Cancelar</Button>
             <Button variant="income" fullWidth>+ Receita</Button>
@@ -83,12 +84,12 @@ export function ComponentsGallery() {
 
         {/* BADGES */}
         <Section title="Badges">
-          <div className="flex flex-wrap gap-2 mb-4">
+          <div className={css({ display: 'flex', flexWrap: 'wrap', gap: '2', mb: '4' })}>
             <Badge variant="income">✏️ Receita</Badge>
             <Badge variant="expense">✏️ Despesa</Badge>
             <Badge variant="neutral">abril 2026</Badge>
           </div>
-          <div className="flex flex-col gap-3">
+          <div className={css({ display: 'flex', flexDirection: 'column', gap: '3' })}>
             <AlertCard
               variant="positive"
               title="Saldo positivo"
@@ -104,7 +105,7 @@ export function ComponentsGallery() {
 
         {/* MONTH SELECTOR */}
         <Section title="Month Selector">
-          <div className="border border-border rounded-xl overflow-hidden">
+          <div className={css({ borderWidth: '1px', borderColor: 'border', rounded: 'xl', overflow: 'hidden' })}>
             <MonthSelector
               year={year}
               month={month}

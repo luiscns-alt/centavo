@@ -9,6 +9,7 @@ import { MobileHeader } from '../../shared/ui/MobileHeader'
 import { BudgetHomeCard } from '../budgets'
 import { todayISO, formatDayMonth, formatMonthName } from '../../shared/utils/dates'
 import { formatBRL, formatBalance } from '../../shared/utils/money'
+import { css, cx } from '../../../styled-system/css'
 
 const MonthSection = lazy(() => import('./MonthSection'))
 
@@ -45,21 +46,21 @@ export function HomeScreen({ nav, account, onAdd, onOpenCompare, onOpenBudgets, 
   const payCard = data?.alerts.find(a => a.kind === 'invoice_overdue' || a.kind === 'invoice_due')
 
   return (
-    <div className="flex-1 overflow-y-auto pb-28 md:pb-12">
+    <div className={css({ flex: '1', overflowY: 'auto', pb: '28', md: { pb: '12' } })}>
       <MobileHeader />
 
-      <div className="md:max-w-[560px] lg:max-w-[1040px] md:mx-auto md:px-10 md:pt-8">
-        <div className="hidden md:flex items-center gap-3 mb-6">
-          <h1 className="text-[22px] font-semibold tracking-[-.01em] text-ink m-0">Início</h1>
+      <div className={css({ md: { maxW: '[560px]', mx: 'auto', px: '10', pt: '8' }, lg: { maxW: '[1040px]' } })}>
+        <div className={css({ display: 'none', md: { display: 'flex' }, alignItems: 'center', gap: '3', mb: '6' })}>
+          <h1 className={css({ fontSize: '22', fontWeight: 'semibold', letterSpacing: 'title', color: 'ink', m: '0' })}>Início</h1>
           <AccountFilter value={account.selection} onChange={account.setSelection} />
         </div>
-        <div className="md:hidden flex justify-center empty:hidden pb-1">
+        <div className={css({ md: { display: 'none' }, display: 'flex', justifyContent: 'center', _empty: { display: 'none' }, pb: '1' })}>
           <AccountFilter value={account.selection} onChange={account.setSelection} />
         </div>
 
-        <div className="lg:grid lg:grid-cols-[1fr_1fr] lg:gap-6 lg:items-start">
+        <div className={css({ lg: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6', alignItems: 'flex-start' } })}>
           {/* ── Left: hero, actions, attention, cards ── */}
-          <div className="flex flex-col gap-4 md:gap-5">
+          <div className={css({ display: 'flex', flexDirection: 'column', gap: '4', md: { gap: '5' } })}>
             <Hero data={data} stale={stale} />
             <QuickActions onAdd={onAdd} pay={payCard?.target.screen === 'card' ? () => onOpenCard((payCard.target as { id: number }).id) : null} />
             {data && <Attention alerts={data.alerts} onOpen={openAlert} />}
@@ -67,7 +68,7 @@ export function HomeScreen({ nav, account, onAdd, onOpenCompare, onOpenBudgets, 
           </div>
 
           {/* ── Right: budgets, accounts and loans ── */}
-          <div className="mt-4 md:mt-5 lg:mt-0 flex flex-col gap-4 md:gap-5">
+          <div className={css({ mt: '4', md: { mt: '5', gap: '5' }, lg: { mt: '0' }, display: 'flex', flexDirection: 'column', gap: '4' })}>
             {data && <BudgetHomeCard budgets={data.budgets} onOpen={onOpenBudgets} />}
             {/* Metas: a block reserved here once goals exist (data.goals) */}
             {data && <AccountsCard
@@ -84,7 +85,7 @@ export function HomeScreen({ nav, account, onAdd, onOpenCompare, onOpenBudgets, 
 
         {/* ── Below the fold: the selected month ── */}
         <LazyMount minHeight={600}>
-          <Suspense fallback={<div className="h-[600px]" />}>
+          <Suspense fallback={<div className={css({ h: '[600px]' })} />}>
             <MonthSection nav={nav} accountIds={account.ids} onAdd={() => onAdd()} onOpenCompare={onOpenCompare} />
           </Suspense>
         </LazyMount>
@@ -105,17 +106,17 @@ function Hero({ data, stale }: { data?: HomeSummary; stale: boolean }) {
   const month = data ? formatMonthName(data.month) : ''
 
   return (
-    <section className="md:bg-surface md:border md:border-border md:rounded-2xl" aria-busy={loading || stale}>
-      <div className="px-5 md:px-8 pt-5 md:pt-8 pb-5 md:pb-7 text-center" style={{ filter: 'url(#paper-grain)' }}>
-        <div className="text-[11px] font-semibold uppercase tracking-[.1em] text-muted mb-3">Disponível hoje</div>
-        <div className={`font-serif text-[44px] md:text-[52px] leading-none nums ${loading ? 'text-muted opacity-30' : total < 0 ? 'text-expense' : 'text-ink'}`}>
+    <section className={css({ md: { bg: 'surface', borderWidth: '1px', borderColor: 'border', rounded: '2xl' } })} aria-busy={loading || stale}>
+      <div className={css({ px: '5', md: { px: '8', pt: '8', pb: '7' }, pt: '5', pb: '5', textAlign: 'center' })} style={{ filter: 'url(#paper-grain)' }}>
+        <div className={css({ fontSize: '11', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: 'widest', color: 'muted', mb: '3' })}>Disponível hoje</div>
+        <div className={cx(css({ fontFamily: 'serif', fontSize: '44', md: { fontSize: '52' }, lineHeight: 'none' }, loading ? { color: 'muted', opacity: '0.3' } : total < 0 ? { color: 'expense' } : { color: 'ink' }), 'nums')}>
           {loading ? '–' : formatBalance(total)}
         </div>
         {data && (
-          <div className="mt-4 text-[13px] nums">
-            <span className="text-muted">Sobra prevista em {month}: </span>
-            <span className={`font-semibold ${free < 0 ? 'text-expense' : 'text-ink'}`}>{formatBalance(free)}</span>
-            {parts.length > 0 && <div className="text-[12px] text-muted mt-0.5">depois de {parts.join(' e ')}</div>}
+          <div className={cx(css({ mt: '4', fontSize: '13' }), 'nums')}>
+            <span className={css({ color: 'muted' })}>Sobra prevista em {month}: </span>
+            <span className={css({ fontWeight: 'semibold' }, free < 0 ? { color: 'expense' } : { color: 'ink' })}>{formatBalance(free)}</span>
+            {parts.length > 0 && <div className={css({ fontSize: '12', color: 'muted', mt: '0.5' })}>depois de {parts.join(' e ')}</div>}
           </div>
         )}
       </div>
@@ -130,23 +131,23 @@ function QuickActions({ onAdd, pay }: { onAdd: (mode?: QuickAction) => void; pay
     { id: 'transfer' as const, label: 'Transferir', Icon: ArrowLeftRight },
   ]
   return (
-    <div className={`mx-5 md:mx-0 grid ${pay ? 'grid-cols-4' : 'grid-cols-3'} gap-2`} role="group" aria-label="Atalhos">
+    <div className={css({ mx: '5', md: { mx: '0' }, display: 'grid' }, pay ? { gridTemplateColumns: 'repeat(4, minmax(0, 1fr))' } : { gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }, { gap: '2' })} role="group" aria-label="Atalhos">
       {actions.map(({ id, label, Icon }) => (
         <button
           key={id}
           onClick={() => onAdd(id)}
-          className="h-[68px] rounded-2xl bg-surface border border-border flex flex-col items-center justify-center gap-1.5 text-[12px] font-semibold text-ink hover:bg-bg transition-colors"
+          className={css({ h: '[68px]', rounded: '2xl', bg: 'surface', borderWidth: '1px', borderColor: 'border', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1.5', fontSize: '12', fontWeight: 'semibold', color: 'ink', _hover: { bg: 'bg' }, transition: 'colors' })}
         >
-          <span className="w-7 h-7 rounded-full bg-border/70 flex items-center justify-center" aria-hidden><Icon size={15} strokeWidth={2} /></span>
+          <span className={css({ w: '7', h: '7', rounded: 'full', bg: 'border/70', display: 'flex', alignItems: 'center', justifyContent: 'center' })} aria-hidden><Icon size={15} strokeWidth={2} /></span>
           {label}
         </button>
       ))}
       {pay && (
         <button
           onClick={pay}
-          className="h-[68px] rounded-2xl bg-ink text-bg flex flex-col items-center justify-center gap-1.5 text-[12px] font-semibold hover:opacity-90 transition-opacity"
+          className={css({ h: '[68px]', rounded: '2xl', bg: 'ink', color: 'bg', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1.5', fontSize: '12', fontWeight: 'semibold', _hover: { opacity: '0.9' }, transition: 'opacity' })}
         >
-          <span className="w-7 h-7 rounded-full bg-bg/15 flex items-center justify-center" aria-hidden><CreditCard size={15} strokeWidth={2} /></span>
+          <span className={css({ w: '7', h: '7', rounded: 'full', bg: 'bg/15', display: 'flex', alignItems: 'center', justifyContent: 'center' })} aria-hidden><CreditCard size={15} strokeWidth={2} /></span>
           Pagar fatura
         </button>
       )}
@@ -161,54 +162,54 @@ const ALERT_ICON: Record<HomeAlert['kind'], typeof Clock> = {
 
 function Attention({ alerts, onOpen }: { alerts: HomeAlert[]; onOpen: (a: HomeAlert) => void }) {
   if (alerts.length === 0) {
-    return <p className="mx-5 md:mx-0 my-0 text-[13px] text-muted text-center">Tudo em dia — nada vencido nem estourado.</p>
+    return <p className={css({ mx: '5', md: { mx: '0' }, my: '0', fontSize: '13', color: 'muted', textAlign: 'center' })}>Tudo em dia — nada vencido nem estourado.</p>
   }
   const shown = alerts.slice(0, 3)
   return (
-    <section className="mx-5 md:mx-0 bg-surface border border-border rounded-2xl" aria-label="Atenção">
-      <div className="px-5 md:px-6 pt-4 pb-1 text-[11px] font-semibold uppercase tracking-[.1em] text-muted">Atenção</div>
-      <ul className="m-0 p-0 list-none px-2 md:px-3 pb-2">
+    <section className={css({ mx: '5', md: { mx: '0' }, bg: 'surface', borderWidth: '1px', borderColor: 'border', rounded: '2xl' })} aria-label="Atenção">
+      <div className={css({ px: '5', md: { px: '6' }, pt: '4', pb: '1', fontSize: '11', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: 'widest', color: 'muted' })}>Atenção</div>
+      <ul className={css({ m: '0', p: '0', listStyle: 'none', px: '2', md: { px: '3' }, pb: '2' })}>
         {shown.map((a, i) => {
           const Icon = ALERT_ICON[a.kind]
           const strong = a.severity >= 3
           return (
             <li key={i}>
-              <button onClick={() => onOpen(a)} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left hover:bg-bg/60 transition-colors">
-                <Icon size={16} strokeWidth={2} className={`shrink-0 ${strong ? 'text-expense' : 'text-ink'}`} aria-hidden />
-                <span className={`flex-1 min-w-0 text-[14px] leading-snug ${strong ? 'text-expense font-semibold' : 'text-ink font-medium'}`}>{a.title}</span>
-                <span className="text-[13px] font-semibold nums text-ink shrink-0">{formatBRL(a.amount)}</span>
-                <ChevronRight size={15} strokeWidth={1.75} className="text-muted shrink-0" />
+              <button onClick={() => onOpen(a)} className={css({ w: 'full', display: 'flex', alignItems: 'center', gap: '3', px: '3', py: '2.5', rounded: 'xl', textAlign: 'left', _hover: { bg: 'bg/60' }, transition: 'colors' })}>
+                <Icon size={16} strokeWidth={2} className={css({ flexShrink: '0' }, strong ? { color: 'expense' } : { color: 'ink' })} aria-hidden />
+                <span className={css({ flex: '1', minW: '0', fontSize: '14', lineHeight: 'snug' }, strong ? { color: 'expense', fontWeight: 'semibold' } : { color: 'ink', fontWeight: 'medium' })}>{a.title}</span>
+                <span className={cx(css({ fontSize: '13', fontWeight: 'semibold', color: 'ink', flexShrink: '0' }), 'nums')}>{formatBRL(a.amount)}</span>
+                <ChevronRight size={15} strokeWidth={1.75} className={css({ color: 'muted', flexShrink: '0' })} />
               </button>
             </li>
           )
         })}
       </ul>
-      {alerts.length > 3 && <p className="px-5 md:px-6 pb-3 m-0 text-[12px] text-muted">e mais {alerts.length - 3}</p>}
+      {alerts.length > 3 && <p className={css({ px: '5', md: { px: '6' }, pb: '3', m: '0', fontSize: '12', color: 'muted' })}>e mais {alerts.length - 3}</p>}
     </section>
   )
 }
 
 function CardsBlock({ cards, onOpen }: { cards: HomeSummary['cards']; onOpen: (id: number) => void }) {
   return (
-    <section className="mx-5 md:mx-0 bg-surface border border-border rounded-2xl">
-      <div className="flex items-baseline justify-between gap-3 px-5 md:px-6 pt-5">
-        <div className="text-[11px] font-semibold uppercase tracking-[.1em] text-muted">Cartões</div>
-        <div className="text-[12px] text-muted nums"><span className="font-semibold text-ink">{formatBRL(cards.toPay)}</span> a pagar</div>
+    <section className={css({ mx: '5', md: { mx: '0' }, bg: 'surface', borderWidth: '1px', borderColor: 'border', rounded: '2xl' })}>
+      <div className={css({ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '3', px: '5', md: { px: '6' }, pt: '5' })}>
+        <div className={css({ fontSize: '11', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: 'widest', color: 'muted' })}>Cartões</div>
+        <div className={cx(css({ fontSize: '12', color: 'muted' }), 'nums')}><span className={css({ fontWeight: 'semibold', color: 'ink' })}>{formatBRL(cards.toPay)}</span> a pagar</div>
       </div>
-      <ul className="m-0 p-0 list-none mt-2 px-2 md:px-3 pb-2">
+      <ul className={css({ m: '0', p: '0', listStyle: 'none', mt: '2', px: '2', md: { px: '3' }, pb: '2' })}>
         {cards.items.map(c => (
           <li key={c.id}>
-            <button onClick={() => onOpen(c.id)} className="w-full flex items-center gap-3 px-3 h-14 rounded-xl text-left hover:bg-bg/60 transition-colors">
+            <button onClick={() => onOpen(c.id)} className={css({ w: 'full', display: 'flex', alignItems: 'center', gap: '3', px: '3', h: '14', rounded: 'xl', textAlign: 'left', _hover: { bg: 'bg/60' }, transition: 'colors' })}>
               <AccountIcon account={c} />
-              <div className="flex-1 min-w-0">
-                <div className="text-[15px] font-medium text-ink truncate">{c.name}</div>
-                <div className={`text-[12px] truncate nums ${c.overdue ? 'text-expense font-semibold' : 'text-muted'}`}>
+              <div className={css({ flex: '1', minW: '0' })}>
+                <div className={css({ fontSize: '15', fontWeight: 'medium', color: 'ink', truncate: true })}>{c.name}</div>
+                <div className={cx(css({ fontSize: '12', truncate: true }, c.overdue ? { color: 'expense', fontWeight: 'semibold' } : { color: 'muted' }), 'nums')}>
                   {c.remaining > 0 ? `${c.overdue ? 'Venceu' : 'Vence'} ${formatDayMonth(c.dueDate)}` : 'Nada a pagar agora'}
                   {c.available != null && ` · disp. ${formatBalance(c.available)}`}
                 </div>
               </div>
-              <div className="text-[15px] font-bold nums shrink-0 text-ink">{formatBRL(c.remaining)}</div>
-              <ChevronRight size={16} strokeWidth={1.75} className="text-muted shrink-0" />
+              <div className={cx(css({ fontSize: '15', fontWeight: 'bold', flexShrink: '0', color: 'ink' }), 'nums')}>{formatBRL(c.remaining)}</div>
+              <ChevronRight size={16} strokeWidth={1.75} className={css({ color: 'muted', flexShrink: '0' })} />
             </button>
           </li>
         ))}

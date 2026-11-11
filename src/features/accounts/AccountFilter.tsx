@@ -2,6 +2,7 @@ import { ChevronDown } from 'lucide-react'
 import { useAccounts } from './useAccounts'
 import { groupByBank } from './accountSelection'
 import { AccountIcon } from './AccountIcon'
+import { css } from '../../../styled-system/css'
 
 /** Account filter state owned by App and passed to the month-based screens */
 export interface AccountScope {
@@ -29,15 +30,15 @@ export function AccountFilter({ value, onChange }: Props) {
   const label = !current ? 'Todas as contas' : m?.[1] === 'b' ? `${current.name} (tudo)` : current.name
 
   return (
-    <label className="relative inline-flex items-center gap-1.5 h-9 pl-3 pr-2.5 rounded-full border border-border bg-surface text-[13px] font-semibold text-ink hover:bg-bg transition-colors cursor-pointer focus-within:outline-2 focus-within:outline-ink">
+    <label className={css({ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: '1.5', h: '9', pl: '3', pr: '2.5', rounded: 'full', borderWidth: '1px', borderColor: 'border', bg: 'surface', fontSize: '13', fontWeight: 'semibold', color: 'ink', _hover: { bg: 'bg' }, transition: 'colors', cursor: 'pointer', _focusWithin: { outlineWidth: '2px', outlineStyle: 'solid', outlineColor: 'ink' } })}>
       {current ? <AccountIcon account={current} size="inline" /> : <span aria-hidden>∑</span>}
-      <span className="max-w-[160px] truncate">{label}</span>
-      <ChevronDown size={14} strokeWidth={2} className="text-muted" />
+      <span className={css({ maxW: '[160px]', truncate: true })}>{label}</span>
+      <ChevronDown size={14} strokeWidth={2} className={css({ color: 'muted' })} />
       <select
         aria-label="Filtrar por conta"
         value={value}
         onChange={e => onChange(e.target.value)}
-        className="absolute inset-0 opacity-0 cursor-pointer"
+        className={css({ position: 'absolute', inset: '0', opacity: '0', cursor: 'pointer' })}
       >
         <option value="">Todas as contas</option>
         {groups.map(({ bank, cards }) =>

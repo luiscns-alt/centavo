@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest'
+import { css } from '../../../styled-system/css'
 import { formatAmount, formatAmountDelta, formatBRL, formatBalance, formatDelta, toneClass } from './money'
 
 // Intl uses a no-break space after "R$"
@@ -15,6 +16,6 @@ describe('money', () => {
   it('plain amounts and tone', () => {
     expect(formatAmount(123456)).toBe('1.234,56')
     expect(formatAmountDelta(-123456)).toBe('−1.234,56')
-    expect([toneClass(1), toneClass(-1), toneClass(0)]).toEqual(['text-income', 'text-expense', 'text-muted'])
+    expect([toneClass(1), toneClass(-1), toneClass(0)]).toEqual([css({ color: 'income' }), css({ color: 'expense' }), css({ color: 'muted' })])
   })
 })
