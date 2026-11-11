@@ -43,4 +43,5 @@ src/
 - Types: persisted entities in `core/types/`; a feature's own types stay in the feature (exported via its index); component `Props` stay next to the component.
 - No `enum` (`erasableSyntaxOnly`): use `as const` objects + derived unions. Typed literal comparisons (`t.type === 'expense'`) are fine; constants are for lists and labels.
 - Dates and money: never re-implement month names or BRL formatting — use `shared/utils/dates` and `shared/utils/money`. localStorage only through `shared/utils/storage` with keys from `STORAGE_KEYS`.
-- Rules live in `eslint-rules/architecture.js` (`architecture/boundaries`, `architecture/no-ui-writes`).
+- Styling: Tailwind v4 through the official `@tailwindcss/vite`; components with states use `cva` (`shared/ui/variants.ts`); colors only from the `@theme` tokens (lint `architecture/tailwind-colors`).
+- Rules live in `eslint-rules/architecture.js` (`architecture/boundaries`, `architecture/no-ui-writes`, `architecture/tailwind-colors`).

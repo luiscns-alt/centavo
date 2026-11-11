@@ -8,6 +8,7 @@ import { createCardPurchase, deleteCardPurchase, updateCardPurchase, invoiceFor,
 import { addTransaction, createTransfer, deleteTransaction, deleteTransfer, updateTransaction, updateTransfer } from './ledger'
 import { requestPersistentStorageOnce } from '../../core/storage'
 import { Button } from '../../shared/ui/Button'
+import { chip } from '../../shared/ui/variants'
 import { CategoryEditor } from '../categories'
 import { RefundDetail, RefundPanel } from './RefundPanel'
 import { ACCOUNT_METHODS, PAYMENT_METHODS } from '../../core/constants/domain'
@@ -288,9 +289,6 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
   }
 
   const activeColor = isTransfer ? 'text-ink' : mode === 'expense' ? 'text-expense' : 'text-income'
-  const chipActive = mode === 'expense'
-    ? 'bg-expense-light border-expense text-expense'
-    : 'bg-income-light border-income text-income'
   const saveVariant = isTransfer ? 'primary' : mode === 'expense' ? 'solid-expense' : 'solid-income'
   const display = formatDigits(digits)
   const amountSize = display.length > 12 ? 'text-[34px]' : display.length > 9 ? 'text-[40px]' : 'text-[48px]'
@@ -344,7 +342,7 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
     <button
       type="button"
       onClick={() => setCreatingAccount(side)}
-      className="flex items-center gap-1 h-9 px-3.5 rounded-full border border-dashed border-muted/50 text-[13px] font-medium text-muted whitespace-nowrap hover:text-ink hover:border-muted transition-colors"
+      className={chip({ add: true })}
     >
       <Plus size={14} strokeWidth={2} />
       Nova conta
@@ -561,10 +559,7 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
                         type="button"
                         aria-pressed={selected}
                         onClick={() => { setCategoryId(cat.id ?? ''); setError(null) }}
-                        className={[
-                          'flex items-center gap-1.5 h-9 px-3.5 rounded-full border text-[13px] font-medium whitespace-nowrap transition-colors',
-                          selected ? chipActive : 'bg-surface border-border text-muted hover:text-ink hover:border-muted/40',
-                        ].join(' ')}
+                        className={chip({ selected, tone: mode === 'expense' ? 'expense' : 'income' })}
                       >
                         {cat.parentId != null && <span className="text-muted -mr-0.5" aria-hidden>↳</span>}
                         <span aria-hidden>{cat.icon}</span>
@@ -576,7 +571,7 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
                     <button
                       type="button"
                       onClick={() => setCreatingCategory(true)}
-                      className="flex items-center gap-1 h-9 px-3.5 rounded-full border border-dashed border-muted/50 text-[13px] font-medium text-muted whitespace-nowrap hover:text-ink hover:border-muted transition-colors"
+                      className={chip({ add: true })}
                     >
                       <Plus size={14} strokeWidth={2} />
                       Nova

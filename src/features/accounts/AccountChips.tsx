@@ -1,4 +1,5 @@
 import { AccountIcon } from './AccountIcon'
+import { chip } from '../../shared/ui/variants'
 import type { Account } from '../../core/types'
 
 interface Props {
@@ -24,14 +25,7 @@ export function AccountChips({ accounts, value, onChange, disabledId, label }: P
             role="radio"
             aria-checked={selected}
             onClick={() => onChange(id)}
-            className={[
-              'flex items-center gap-1.5 h-9 px-3.5 rounded-full border text-[13px] font-medium whitespace-nowrap transition-colors',
-              selected
-                ? 'bg-ink border-ink text-bg'
-                : id === disabledId
-                  ? 'bg-surface border-border text-muted opacity-50'
-                  : 'bg-surface border-border text-muted hover:text-ink hover:border-muted/40',
-            ].join(' ')}
+            className={chip({ selected, dimmed: !selected && id === disabledId })}
           >
             <AccountIcon account={a} size="inline" />
             <span>{a.name}</span>

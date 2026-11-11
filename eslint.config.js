@@ -24,7 +24,7 @@ export default defineConfig([
   {
     files: ['src/**/*.{ts,tsx}'],
     plugins: { architecture },
-    rules: { 'architecture/boundaries': 'error' },
+    rules: { 'architecture/boundaries': 'error', 'architecture/tailwind-colors': 'error' },
   },
   {
     // Screens and hooks read with useLiveQuery but never write

@@ -1,3 +1,5 @@
+import { chip } from './variants'
+
 /** Cash-register style money field: digits fill from the right ("1250" → "12,50"); value in centavos */
 export function MoneyInput({ value, onChange, label, placeholder = '0,00', className = '' }: {
   value: number | null
@@ -46,10 +48,7 @@ export function Choice<T extends string>({ value, options, onChange, label }: {
           role="radio"
           aria-checked={value === o.id}
           onClick={() => onChange(o.id)}
-          className={[
-            'h-8 px-3 rounded-full border text-[12px] font-semibold transition-colors',
-            value === o.id ? 'bg-ink border-ink text-bg' : 'border-border text-muted hover:text-ink',
-          ].join(' ')}
+          className={chip({ size: 'sm', selected: value === o.id })}
         >
           {o.label}
         </button>

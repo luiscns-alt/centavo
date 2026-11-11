@@ -1,3 +1,16 @@
+import { cva } from 'class-variance-authority'
+
+/** Income green, expense vinho; a refund is money back for an expense — neutral ink, never green */
+const tile = cva('w-9 h-9 rounded-[10px] flex items-center justify-center text-[16px] shrink-0', {
+  variants: { type: { income: 'bg-income-light', expense: 'bg-expense-light', refund: 'bg-border/60' } },
+})
+const amountTone = cva('text-[15px] font-bold nums shrink-0', {
+  variants: { type: { income: 'text-income', expense: 'text-expense', refund: 'text-ink' } },
+})
+const row = cva('flex items-center gap-3 py-3', {
+  variants: { bordered: { true: 'border-b border-border last:border-0', false: '' } },
+})
+
 interface TransactionRowProps {
   icon: string
   /** refund: money back for an expense — neutral ink '+', never income green */
@@ -10,16 +23,9 @@ interface TransactionRowProps {
 }
 
 export function TransactionRow({ icon, type, title, subtitle, amount, bordered = true }: TransactionRowProps) {
-  const isIncome = type === 'income'
-  const tile = isIncome ? 'bg-income-light' : type === 'refund' ? 'bg-border/60' : 'bg-expense-light'
-  const tone = isIncome ? 'text-income' : type === 'refund' ? 'text-ink' : 'text-expense'
-
   return (
-    <div className={`flex items-center gap-3 py-3 ${bordered ? 'border-b border-border last:border-0' : ''}`}>
-      <div
-        className={`w-9 h-9 rounded-[10px] flex items-center justify-center text-[16px] shrink-0 ${tile}`}
-        aria-hidden
-      >
+    <div className={row({ bordered })}>
+      <div className={tile({ type })} aria-hidden>
         {icon}
       </div>
 
@@ -28,7 +34,7 @@ export function TransactionRow({ icon, type, title, subtitle, amount, bordered =
         {subtitle && <div className="text-[12px] text-muted truncate">{subtitle}</div>}
       </div>
 
-      <div className={`text-[15px] font-bold nums shrink-0 ${tone}`}>
+      <div className={amountTone({ type })}>
         {type === 'expense' ? '−' : '+'}{amount}
       </div>
     </div>

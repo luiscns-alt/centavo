@@ -48,21 +48,11 @@
 - **Expense light (backgrounds):** `#F9EEF0`
 - **Dark mode:** Invert surfaces — `#1A1816` bg, `#2A2724` surface, `#F7F5F1` text, `#9B948F` muted, `#3A3532` border. Reduce income/expense saturation ~15% for dark backgrounds.
 
-### Tailwind Color Extension
-```js
-// tailwind.config.js — extend.colors
-{
-  bg: '#F7F5F1',
-  ink: '#1A1816',
-  muted: '#6B6560',
-  border: '#E8E4DF',
-  surface: '#FFFFFF',
-  income: '#2D6A4F',
-  'income-light': '#EBF5F0',
-  expense: '#9B2335',
-  'expense-light': '#F9EEF0',
-}
-```
+### Color tokens (Tailwind v4)
+Tokens live in `src/index.css` › `@theme` as `--color-*` (bg, surface, ink, muted, border, income, income-light, expense, expense-light), with dark values swapped under `prefers-color-scheme: dark`. Use them as utilities (`text-expense`, `bg-ink/55`). The lint rule `architecture/tailwind-colors` rejects arbitrary colors (`text-[#…]`), Tailwind palette colors (`bg-red-500`, `text-black`) and unknown color names (typos); `white`, `transparent` and `current` are allowed.
+
+### Variants
+Components with states use `cva` (class-variance-authority): `button` and `chip` in `src/shared/ui/variants.ts`, plus local ones in `BudgetBar` and `TransactionRow`. A variant that doesn't exist is a type error.
 
 ## Spacing
 - **Base unit:** 8px
