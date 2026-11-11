@@ -12,11 +12,11 @@
     "test:watch": "vitest",
     "build:android": "tsc -b && vite build --mode android",
     "android:setup": "npm run build:android && npx cap add android && node scripts/android-debug-setup.mjs",
-    "apk:debug": "node scripts/apk-debug.mjs"
+    "apk:debug": "node scripts/apk-debug.mjs",
+    "prepare": "panda codegen"
   },
   "dependencies": {
     "@capacitor/core": "^8.4.0",
-    "class-variance-authority": "^0.7.1",
     "dexie": "^4.4.2",
     "dexie-react-hooks": "^4.4.0",
     "lucide-react": "^1.8.0",
@@ -28,6 +28,10 @@
     "@capacitor/android": "^8.4.0",
     "@capacitor/cli": "^8.4.0",
     "@eslint/js": "^9.39.4",
+    "@pandacss/dev": "^2.0.0",
+    "@pandacss/preset-base": "^2.0.0",
+    "@pandacss/preset-panda": "^2.0.0",
+    "@pandacss/vite": "^2.0.0",
     "@tailwindcss/vite": "^4.2.2",
     "@types/node": "^24.12.2",
     "@types/react": "^19.2.14",

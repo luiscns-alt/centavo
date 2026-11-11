@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Panda CSS layers (prefixed, declared after Tailwind's so migrated components win). The Vite plugin injects the generated CSS. */
+@layer panda_reset, panda_base, panda_tokens, panda_recipes, panda_utilities;
+
 @theme {
   /* Colors — light (default). Dark values are swapped in below via the same variables. */
   --color-bg: #F7F5F1;

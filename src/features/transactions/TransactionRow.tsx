@@ -1,15 +1,21 @@
-import { cva } from 'class-variance-authority'
+import { css, cva } from '../../../styled-system/css'
 
 /** Income green, expense vinho; a refund is money back for an expense — neutral ink, never green */
-const tile = cva('w-9 h-9 rounded-[10px] flex items-center justify-center text-[16px] shrink-0', {
-  variants: { type: { income: 'bg-income-light', expense: 'bg-expense-light', refund: 'bg-border/60' } },
+const tile = cva({
+  base: { w: '9', h: '9', rounded: 'tile', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16', flexShrink: '0' },
+  variants: { type: { income: { bg: 'income.light' }, expense: { bg: 'expense.light' }, refund: { bg: 'border/60' } } },
 })
-const amountTone = cva('text-[15px] font-bold nums shrink-0', {
-  variants: { type: { income: 'text-income', expense: 'text-expense', refund: 'text-ink' } },
+const amountTone = cva({
+  base: { fontSize: '15', fontWeight: 'bold', flexShrink: '0', fontVariantNumeric: 'tabular-nums lining-nums' },
+  variants: { type: { income: { color: 'income' }, expense: { color: 'expense' }, refund: { color: 'ink' } } },
 })
-const row = cva('flex items-center gap-3 py-3', {
-  variants: { bordered: { true: 'border-b border-border last:border-0', false: '' } },
+const row = cva({
+  base: { display: 'flex', alignItems: 'center', gap: '3', py: '3' },
+  variants: { bordered: { true: { borderBottomWidth: '1px', borderColor: 'border', _last: { borderBottomWidth: '0' } }, false: {} } },
 })
+const body = css({ flex: '1', minW: '0' })
+const titleText = css({ fontSize: '15', fontWeight: 'medium', color: 'ink', truncate: true, lineHeight: 'snug' })
+const subtitleText = css({ fontSize: '12', color: 'muted', truncate: true })
 
 interface TransactionRowProps {
   icon: string
@@ -29,9 +35,9 @@ export function TransactionRow({ icon, type, title, subtitle, amount, bordered =
         {icon}
       </div>
 
-      <div className="flex-1 min-w-0">
-        <div className="text-[15px] font-medium text-ink truncate leading-snug">{title}</div>
-        {subtitle && <div className="text-[12px] text-muted truncate">{subtitle}</div>}
+      <div className={body}>
+        <div className={titleText}>{title}</div>
+        {subtitle && <div className={subtitleText}>{subtitle}</div>}
       </div>
 
       <div className={amountTone({ type })}>

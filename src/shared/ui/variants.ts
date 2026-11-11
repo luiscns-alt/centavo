@@ -1,51 +1,64 @@
 /**
- * Typed style variants for the shared building blocks (class-variance-authority). A variant name
- * that doesn't exist is a type error; color classes inside are checked by the lint rule
- * architecture/tailwind-colors against the theme tokens in index.css.
+ * Typed style variants of the shared building blocks — Panda CSS atomic recipes. Every color,
+ * size and radius is a theme token (strictTokens): a typo or an off-palette color doesn't compile,
+ * and a variant that doesn't exist is a type error.
  */
-import { cva, type VariantProps } from 'class-variance-authority'
+import { cva, type RecipeVariantProps } from '../../../styled-system/css'
 
 /** Action button — full-size (forms, dialogs) */
-export const button = cva('py-4 px-5 rounded-xl text-[15px] font-bold transition-opacity disabled:opacity-40 disabled:cursor-not-allowed', {
+export const button = cva({
+  base: {
+    py: '4', px: '5', rounded: 'xl', fontSize: '15', fontWeight: 'bold',
+    transitionProperty: 'opacity', transitionDuration: 'normal',
+    _hover: { opacity: '0.9' },
+    _disabled: { opacity: '0.4', cursor: 'not-allowed', _hover: { opacity: '0.4' } },
+  },
   variants: {
     variant: {
-      primary: 'bg-ink text-bg hover:opacity-90',
-      ghost: 'bg-surface text-ink border border-border hover:bg-bg',
-      income: 'bg-income-light text-income hover:opacity-90',
-      expense: 'bg-expense-light text-expense hover:opacity-90',
-      'solid-income': 'bg-income text-white hover:opacity-90',
-      'solid-expense': 'bg-expense text-white hover:opacity-90',
+      primary: { bg: 'ink', color: 'bg' },
+      ghost: { bg: 'surface', color: 'ink', borderWidth: '1px', borderColor: 'border', _hover: { bg: 'bg', opacity: '1' } },
+      income: { bg: 'income.light', color: 'income' },
+      expense: { bg: 'expense.light', color: 'expense' },
+      'solid-income': { bg: 'income', color: 'white' },
+      'solid-expense': { bg: 'expense', color: 'white' },
     },
-    fullWidth: { true: 'w-full', false: '' },
+    fullWidth: { true: { w: 'full' }, false: {} },
   },
   defaultVariants: { variant: 'primary', fullWidth: false },
 })
-export type ButtonVariants = VariantProps<typeof button>
+export type ButtonVariants = RecipeVariantProps<typeof button>
 
 /**
  * Pill chip used by pickers (categories, accounts, choices). Color only when the choice has a
  * financial direction (income/expense); everything else is neutral ink.
  */
-export const chip = cva('flex items-center rounded-full border whitespace-nowrap transition-colors', {
+export const chip = cva({
+  base: {
+    display: 'flex', alignItems: 'center', rounded: 'full', borderWidth: '1px', whiteSpace: 'nowrap',
+    transitionProperty: 'colors', transitionDuration: 'normal',
+  },
   variants: {
     size: {
-      md: 'h-9 px-3.5 text-[13px] font-medium',
-      sm: 'h-8 px-3 text-[12px] font-semibold',
+      md: { h: '9', px: '3.5', fontSize: '13', fontWeight: 'medium' },
+      sm: { h: '8', px: '3', fontSize: '12', fontWeight: 'semibold' },
     },
-    tone: { neutral: '', income: '', expense: '' },
-    selected: { true: '', false: '' },
+    tone: { neutral: {}, income: {}, expense: {} },
+    selected: { true: {}, false: {} },
     /** The "+ Nova" chip that opens an editor */
-    add: { true: 'gap-1 border-dashed border-muted/50 text-muted hover:text-ink hover:border-muted', false: '' },
-    dimmed: { true: 'opacity-50', false: '' },
+    add: {
+      true: { gap: '1', borderStyle: 'dashed', borderColor: 'muted/50', color: 'muted', _hover: { color: 'ink', borderColor: 'muted' } },
+      false: {},
+    },
+    dimmed: { true: { opacity: '0.5' }, false: {} },
   },
   compoundVariants: [
-    { add: false, size: 'md', class: 'gap-1.5' },
-    { add: false, selected: false, class: 'border-border text-muted hover:text-ink' },
-    { add: false, selected: false, size: 'md', class: 'bg-surface hover:border-muted/40' },
-    { selected: true, tone: 'neutral', class: 'bg-ink border-ink text-bg' },
-    { selected: true, tone: 'income', class: 'bg-income-light border-income text-income' },
-    { selected: true, tone: 'expense', class: 'bg-expense-light border-expense text-expense' },
+    { add: false, size: 'md', css: { gap: '1.5' } },
+    { add: false, selected: false, css: { borderColor: 'border', color: 'muted', _hover: { color: 'ink' } } },
+    { add: false, selected: false, size: 'md', css: { bg: 'surface', _hover: { borderColor: 'muted/40' } } },
+    { selected: true, tone: 'neutral', css: { bg: 'ink', borderColor: 'ink', color: 'bg' } },
+    { selected: true, tone: 'income', css: { bg: 'income.light', borderColor: 'income', color: 'income' } },
+    { selected: true, tone: 'expense', css: { bg: 'expense.light', borderColor: 'expense', color: 'expense' } },
   ],
   defaultVariants: { size: 'md', tone: 'neutral', selected: false, add: false, dimmed: false },
 })
-export type ChipVariants = VariantProps<typeof chip>
+export type ChipVariants = RecipeVariantProps<typeof chip>

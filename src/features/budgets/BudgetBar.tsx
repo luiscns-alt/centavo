@@ -1,15 +1,25 @@
-import { cva } from 'class-variance-authority'
+import { css, cva, cx } from '../../../styled-system/css'
 import type { BudgetStatus } from './budgets'
 
-const track = cva('relative rounded-full bg-border overflow-hidden', {
-  variants: { thin: { true: 'h-1', false: 'h-1.5' } },
+const track = cva({
+  base: { position: 'relative', rounded: 'full', bg: 'border', overflow: 'hidden' },
+  variants: { thin: { true: { h: '1' }, false: { h: '1.5' } } },
 })
-/** Fill below the limit: neutral ink while ok, vinho from 80% on */
-const fill = cva('absolute inset-y-0 left-0 bar-grow', {
+/** Fill below the limit: neutral ink while ok, vinho from 80% on (`bar-grow` = entry animation, index.css) */
+const fill = cva({
+  base: { position: 'absolute', insetY: '0', left: '0' },
   variants: {
-    status: { none: 'rounded-full bg-ink/55', ok: 'rounded-full bg-ink/55', warning: 'rounded-full bg-expense', over: 'bg-expense' },
+    status: {
+      none: { rounded: 'full', bg: 'ink/55' },
+      ok: { rounded: 'full', bg: 'ink/55' },
+      warning: { rounded: 'full', bg: 'expense' },
+      over: { bg: 'expense' },
+    },
   },
 })
+/** Striped overflow past the limit (`bar-hatch`, index.css) */
+const overflow = css({ position: 'absolute', insetY: '0', right: '0' })
+const paceTick = css({ position: 'absolute', insetY: '0', w: '0.5', bg: 'surface' })
 
 /**
  * Spending against a limit. No traffic-light colors (DESIGN.md › Orçamentos):
@@ -34,14 +44,14 @@ export function BudgetBar({ spent, limit, status, pace, thin = false }: {
     <div className={track({ thin })} aria-hidden>
       {over ? (
         <>
-          <div className={fill({ status: 'over' })} style={{ width: `${limitPct}%` }} />
-          <div className="absolute inset-y-0 right-0 bar-hatch" style={{ left: `calc(${limitPct}% + 2px)` }} />
+          <div className={cx(fill({ status: 'over' }), 'bar-grow')} style={{ width: `${limitPct}%` }} />
+          <div className={cx(overflow, 'bar-hatch')} style={{ left: `calc(${limitPct}% + 2px)` }} />
         </>
       ) : (
-        <div className={fill({ status })} style={{ width: `${fillPct}%` }} />
+        <div className={cx(fill({ status }), 'bar-grow')} style={{ width: `${fillPct}%` }} />
       )}
       {pace != null && !over && limit > 0 && pace > 0 && pace < limit && (
-        <div className="absolute inset-y-0 w-0.5 bg-surface" style={{ left: `${(pace / limit) * 100}%` }} />
+        <div className={paceTick} style={{ left: `${(pace / limit) * 100}%` }} />
       )}
     </div>
   )

@@ -52,7 +52,7 @@
 Tokens live in `src/index.css` › `@theme` as `--color-*` (bg, surface, ink, muted, border, income, income-light, expense, expense-light), with dark values swapped under `prefers-color-scheme: dark`. Use them as utilities (`text-expense`, `bg-ink/55`). The lint rule `architecture/tailwind-colors` rejects arbitrary colors (`text-[#…]`), Tailwind palette colors (`bg-red-500`, `text-black`) and unknown color names (typos); `white`, `transparent` and `current` are allowed.
 
 ### Variants
-Components with states use `cva` (class-variance-authority): `button` and `chip` in `src/shared/ui/variants.ts`, plus local ones in `BudgetBar` and `TransactionRow`. A variant that doesn't exist is a type error.
+Components with states use Panda CSS atomic recipes (`cva` from `styled-system/css`): `button` and `chip` in `src/shared/ui/variants.ts`, plus local ones in `BudgetBar` and `TransactionRow`. A variant that doesn't exist, or a color that isn't a token, is a type error (`strictTokens`).
 
 ## Spacing
 - **Base unit:** 8px

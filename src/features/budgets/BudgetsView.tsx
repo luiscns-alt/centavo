@@ -318,7 +318,7 @@ function Editor({ line, month, onDone }: { line: Pick<BudgetLine, 'category' | '
   return (
     <div className="rounded-xl border border-border bg-bg/60 p-3">
       <FieldLabel>Limite de {line.category.name}</FieldLabel>
-      <MoneyInput value={amount} onChange={setAmount} label={`Limite mensal de ${line.category.name}`} className="bg-surface" />
+      <MoneyInput value={amount} onChange={setAmount} label={`Limite mensal de ${line.category.name}`} onSurface />
       <div className="mt-3">
         <Choice
           label="Vale para"

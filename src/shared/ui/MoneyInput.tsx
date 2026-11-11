@@ -1,17 +1,38 @@
+import type { ReactNode } from 'react'
+import { css, cx } from '../../../styled-system/css'
 import { chip } from './variants'
 
+const field = css({
+  h: '11', px: '3', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg',
+  display: 'flex', alignItems: 'center', gap: '1.5',
+  _focusWithin: { borderColor: 'muted/60' },
+})
+const fieldOnSurface = css({ bg: 'surface' })
+const currency = css({ fontSize: '14', fontWeight: 'semibold', color: 'muted' })
+const input = css({
+  flex: '1', minW: '0', bg: 'transparent', fontSize: '15', fontWeight: 'semibold', color: 'ink', outline: 'none',
+  fontVariantNumeric: 'tabular-nums lining-nums',
+  _placeholder: { color: 'muted', fontWeight: 'normal' },
+})
+const fieldLabel = css({
+  fontSize: '11', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: 'widest', color: 'muted', mb: '1.5',
+})
+
 /** Cash-register style money field: digits fill from the right ("1250" → "12,50"); value in centavos */
-export function MoneyInput({ value, onChange, label, placeholder = '0,00', className = '' }: {
+export function MoneyInput({ value, onChange, label, placeholder = '0,00', onSurface = false, className }: {
   value: number | null
   onChange: (centavos: number | null) => void
   label: string
   placeholder?: string
+  /** Inside a white card (the default sits on the page background) */
+  onSurface?: boolean
+  /** Layout only (flex, width) — never colors */
   className?: string
 }) {
   const display = value === null ? '' : new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(value / 100)
   return (
-    <div className={`h-11 px-3 rounded-[10px] border border-border bg-bg flex items-center gap-1.5 focus-within:border-muted/60 ${className}`}>
-      <span className="text-[14px] font-semibold text-muted">R$</span>
+    <div className={cx(field, onSurface && fieldOnSurface, className)}>
+      <span className={currency}>R$</span>
       <input
         inputMode="numeric"
         aria-label={label}
@@ -21,16 +42,14 @@ export function MoneyInput({ value, onChange, label, placeholder = '0,00', class
           const d = e.target.value.replace(/\D/g, '').replace(/^0+/, '').slice(0, 12)
           onChange(d === '' ? null : Number(d))
         }}
-        className="flex-1 min-w-0 bg-transparent text-[15px] font-semibold nums text-ink placeholder:text-muted placeholder:font-normal outline-none"
+        className={input}
       />
     </div>
   )
 }
 
 /** Small uppercase field label */
-export const FieldLabel = ({ children }: { children: React.ReactNode }) => (
-  <div className="text-[11px] font-semibold uppercase tracking-[.1em] text-muted mb-1.5">{children}</div>
-)
+export const FieldLabel = ({ children }: { children: ReactNode }) => <div className={fieldLabel}>{children}</div>
 
 /** Neutral single-choice chips (ink when selected) */
 export function Choice<T extends string>({ value, options, onChange, label }: {
@@ -40,7 +59,7 @@ export function Choice<T extends string>({ value, options, onChange, label }: {
   label: string
 }) {
   return (
-    <div className="flex flex-wrap gap-1.5" role="radiogroup" aria-label={label}>
+    <div className={css({ display: 'flex', flexWrap: 'wrap', gap: '1.5' })} role="radiogroup" aria-label={label}>
       {options.map(o => (
         <button
           key={o.id}

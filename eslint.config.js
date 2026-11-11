@@ -7,7 +7,7 @@ import { defineConfig, globalIgnores } from 'eslint/config'
 import architecture from './eslint-rules/architecture.js'
 
 export default defineConfig([
-  globalIgnores(['dist', 'android']),
+  globalIgnores(['dist', 'android', 'styled-system']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [

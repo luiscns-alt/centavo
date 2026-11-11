@@ -43,5 +43,10 @@ src/
 - Types: persisted entities in `core/types/`; a feature's own types stay in the feature (exported via its index); component `Props` stay next to the component.
 - No `enum` (`erasableSyntaxOnly`): use `as const` objects + derived unions. Typed literal comparisons (`t.type === 'expense'`) are fine; constants are for lists and labels.
 - Dates and money: never re-implement month names or BRL formatting — use `shared/utils/dates` and `shared/utils/money`. localStorage only through `shared/utils/storage` with keys from `STORAGE_KEYS`.
-- Styling: Tailwind v4 through the official `@tailwindcss/vite`; components with states use `cva` (`shared/ui/variants.ts`); colors only from the `@theme` tokens (lint `architecture/tailwind-colors`).
+- Styling — **migration to Panda CSS in progress** (branch `feat/panda-css`, config in `panda.config.ts`):
+  - Migrated files use only Panda (`css`, `cva`, `cx` from `styled-system/css`; tokens only, `strictTokens`). Never add Tailwind classes to them; a parent may pass `className` for layout only (margins, flex), never colors.
+  - Not-yet-migrated files keep Tailwind v4 (`@tailwindcss/vite`), colors only from the `@theme` tokens (lint `architecture/tailwind-colors`).
+  - Panda tokens point at the CSS variables of `src/index.css` until Tailwind is removed; Tailwind's preflight is the only reset meanwhile.
+  - Migrated so far: `shared/ui/variants.ts` (button, chip), `Button`, `MoneyInput`/`FieldLabel`/`Choice`, `BudgetBar`, `TransactionRow`.
+  - `styled-system/` is generated (`npm install` runs `panda codegen`) and gitignored.
 - Rules live in `eslint-rules/architecture.js` (`architecture/boundaries`, `architecture/no-ui-writes`, `architecture/tailwind-colors`).
