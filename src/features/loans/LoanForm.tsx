@@ -12,7 +12,7 @@ import type { LoanType, PaymentMethod, AmortizationSystem, RateUnit } from '../.
 import { todayISO, addMonths, dayIn, parseYM, formatMonthShortYear } from '../../shared/utils/dates'
 import { formatBRL } from '../../shared/utils/money'
 import { css, cx } from '../../../styled-system/css'
-import { nums } from '../../shared/ui/atoms'
+import { nums, pbScreen } from '../../shared/ui/atoms'
 
 const plusOneMonth = (iso: string) => dayIn(addMonths(parseYM(iso), 1), Number(iso.slice(8)))
 
@@ -94,7 +94,7 @@ export function LoanForm({ onCreated, onCancel }: Props) {
   }
 
   return (
-    <div className={css({ flex: '1', overflowY: 'auto', pb: '28', md: { pb: '12' } })}>
+    <div className={cx(pbScreen, css({ flex: '1', overflowY: 'auto' }))}>
       <div className={css({ md: { maxW: '[560px]', mx: 'auto', px: '10', pt: '8' } })}>
         <div className={css({ display: 'flex', alignItems: 'center', gap: '2', px: '3', md: { px: '0', h: 'auto', mb: '5' }, h: '14' })}>
           <button onClick={onCancel} aria-label="Voltar" className={css({ w: '9', h: '9', rounded: 'full', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'muted', _hover: { color: 'ink', bg: 'border/60' } })}>

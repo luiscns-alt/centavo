@@ -4,7 +4,8 @@ import { MobileHeader } from '../../shared/ui/MobileHeader'
 import type { MonthNav } from '../../shared/ui/MonthSelector'
 import { AccountFilter, type AccountScope } from '../accounts'
 import { ScreenHeader } from '../../shared/ui/ScreenHeader'
-import { css } from '../../../styled-system/css'
+import { css, cx } from '../../../styled-system/css'
+import { pbScreen } from '../../shared/ui/atoms'
 
 /** Views inside the Análises tab */
 export type AnalysisView = 'compare' | 'budgets'
@@ -26,7 +27,7 @@ interface Props {
 /** Análises tab: Comparativo (per account filter) and Orçamentos (always global) */
 export function Analyses({ view, onView, nav, account, onAdd, onOpenCard }: Props) {
   return (
-    <div className={css({ flex: '1', overflowY: 'auto', pb: '28', md: { pb: '12' } })}>
+    <div className={cx(pbScreen, css({ flex: '1', overflowY: 'auto' }))}>
       <MobileHeader title="Análises" />
       <div className={css({ md: { maxW: '[760px]', mx: 'auto', px: '10', pt: '8' } })}>
         <ScreenHeader title="Análises" nav={nav} filter={view === 'compare' ? <AccountFilter value={account.selection} onChange={account.setSelection} /> : undefined} />

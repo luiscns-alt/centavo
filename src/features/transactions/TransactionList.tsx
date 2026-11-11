@@ -13,7 +13,7 @@ import type { PaymentMethod } from '../../core/types'
 import { toISODate, MONTH_LONG, formatDayMonth } from '../../shared/utils/dates'
 import { formatBRL } from '../../shared/utils/money'
 import { css, cx } from '../../../styled-system/css'
-import { noScrollbar, nums, slideUp } from '../../shared/ui/atoms'
+import { noScrollbar, nums, pbScreen, slideUp } from '../../shared/ui/atoms'
 
 
 type Filter = 'all' | 'income' | 'expense' | 'transfer'
@@ -94,7 +94,7 @@ export function TransactionList({ nav, account, onAdd, onEdit, onOpenCard, onOpe
   const monthLc = MONTH_LONG[nav.month - 1]
 
   return (
-    <div className={css({ flex: '1', overflowY: 'auto', pb: '28', md: { pb: '12' } })}>
+    <div className={cx(pbScreen, css({ flex: '1', overflowY: 'auto' }))}>
       <MobileHeader />
 
       <div className={css({ md: { maxW: '[680px]', mx: 'auto', px: '10', pt: '8' } })}>

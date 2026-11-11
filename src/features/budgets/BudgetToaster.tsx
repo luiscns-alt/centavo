@@ -90,7 +90,7 @@ export function BudgetToaster({ onOpen }: { onOpen: () => void }) {
   if (!toast) return null
   const Icon = toast.level === 'over' ? OctagonAlert : AlertTriangle
   return (
-    <div className={css({ position: 'fixed', insetX: '0', bottom: '24', md: { bottom: '6' }, zIndex: '50', display: 'flex', justifyContent: 'center', px: '4', pointerEvents: 'none' })}>
+    <div className={css({ position: 'fixed', insetX: '0', bottom: '[calc(6rem + var(--safe-bottom))]', md: { bottom: '[calc(1.5rem + var(--safe-bottom))]' }, zIndex: '50', display: 'flex', justifyContent: 'center', px: '4', pointerEvents: 'none' })}>
       <div role="status" className={cx(css({ pointerEvents: 'auto', maxW: '[440px]', w: 'full', bg: 'ink', color: 'bg', rounded: '2xl', shadow: 'lg', px: '4', py: '3', display: 'flex', alignItems: 'center', gap: '3' }), toastIn)}>
         <Icon size={18} strokeWidth={2} className={css({ flexShrink: '0' })} aria-hidden />
         <p className={css({ flex: '1', m: '0', fontSize: '13', lineHeight: 'snug' })}>{toast.text}</p>

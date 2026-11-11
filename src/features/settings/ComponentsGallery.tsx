@@ -37,7 +37,7 @@ export function ComponentsGallery() {
   }
 
   return (
-    <div className={css({ flex: '1', bg: 'bg', overflowY: 'auto', pb: '24' })}>
+    <div className={css({ flex: '1', bg: 'bg', overflowY: 'auto', pb: '[calc(6rem + var(--safe-bottom))]' })}>
       {/* Header */}
       <div className={css({ px: '5', pt: '5', pb: '4', borderBottomWidth: '1px', borderColor: 'border' })}>
         <div className={css({ fontSize: '10', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: 'widest', color: 'muted' })}>

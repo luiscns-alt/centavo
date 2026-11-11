@@ -18,7 +18,7 @@ import { formatBRL } from '../../shared/utils/money'
 import { STORAGE_KEYS } from '../../shared/constants/storageKeys'
 import { readLocal, writeLocal } from '../../shared/utils/storage'
 import { css, cx } from '../../../styled-system/css'
-import { noScrollbar, nums, slideUp } from '../../shared/ui/atoms'
+import { noScrollbar, nums, pbFormEnd, slideUp } from '../../shared/ui/atoms'
 
 type Mode = 'expense' | 'income' | 'transfer'
 
@@ -615,7 +615,7 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
             </div>
 
             {/* Save */}
-            <div className={css({ px: '5', mt: 'auto', md: { mt: '6' }, pt: '6', pb: '5' })}>
+            <div className={cx(css({ px: '5', mt: 'auto', md: { mt: '6' }, pt: '6' }), pbFormEnd)}>
               {warning && <p className={cx(css({ fontSize: '12', color: 'expense', textAlign: 'center', mt: '0', mb: '3' }), nums)}>{warning}</p>}
               {error && <p className={css({ fontSize: '13', color: 'expense', textAlign: 'center', mt: '0', mb: '3' })} role="alert">{error}</p>}
               <Button

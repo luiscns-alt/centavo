@@ -12,7 +12,7 @@ import { CategoriesSection } from '../categories'
 import { AccountsSection } from '../accounts'
 import { todayISO } from '../../shared/utils/dates'
 import { css, cx } from '../../../styled-system/css'
-import { slideUp } from '../../shared/ui/atoms'
+import { pbScreen, slideUp } from '../../shared/ui/atoms'
 
 const formatLongDate = (iso: string) =>
   new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' })
@@ -47,7 +47,7 @@ function StatusLine({ icon, title, children }: { icon: ReactNode; title: string;
 
 export function Settings({ onOpenLoan, onNewLoan }: { onOpenLoan: (id: number) => void; onNewLoan: () => void }) {
   return (
-    <div className={css({ flex: '1', overflowY: 'auto', pb: '28', md: { pb: '12' } })}>
+    <div className={cx(pbScreen, css({ flex: '1', overflowY: 'auto' }))}>
       <MobileHeader title="Ajustes" />
       <div className={css({ md: { maxW: '[560px]', mx: 'auto', px: '10', pt: '8' }, pt: '4' })}>
         <h1 className={css({ display: 'none', md: { display: 'block' }, fontSize: '22', fontWeight: 'semibold', letterSpacing: 'title', color: 'ink', m: '0', mb: '6' })}>Ajustes</h1>

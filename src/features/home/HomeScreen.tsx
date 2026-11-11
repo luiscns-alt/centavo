@@ -10,7 +10,7 @@ import { BudgetHomeCard } from '../budgets'
 import { todayISO, formatDayMonth, formatMonthName } from '../../shared/utils/dates'
 import { formatBRL, formatBalance } from '../../shared/utils/money'
 import { css, cx } from '../../../styled-system/css'
-import { nums } from '../../shared/ui/atoms'
+import { nums, pbScreen } from '../../shared/ui/atoms'
 
 const MonthSection = lazy(() => import('./MonthSection'))
 
@@ -47,7 +47,7 @@ export function HomeScreen({ nav, account, onAdd, onOpenCompare, onOpenBudgets, 
   const payCard = data?.alerts.find(a => a.kind === 'invoice_overdue' || a.kind === 'invoice_due')
 
   return (
-    <div className={css({ flex: '1', overflowY: 'auto', pb: '28', md: { pb: '12' } })}>
+    <div className={cx(pbScreen, css({ flex: '1', overflowY: 'auto' }))}>
       <MobileHeader />
 
       <div className={css({ md: { maxW: '[560px]', mx: 'auto', px: '10', pt: '8' }, lg: { maxW: '[1040px]' } })}>

@@ -11,7 +11,7 @@ import type { PaymentMethod, PrepaymentMode } from '../../core/types'
 import { todayISO, formatDate, formatDayMonthNumeric, formatMonthShortYear } from '../../shared/utils/dates'
 import { formatBRL } from '../../shared/utils/money'
 import { css, cx } from '../../../styled-system/css'
-import { barGrow, nums, slideUp } from '../../shared/ui/atoms'
+import { barGrow, nums, pbScreen, slideUp } from '../../shared/ui/atoms'
 
 
 type Panel = null | 'pay' | 'prepay' | 'adjust'
@@ -54,7 +54,7 @@ export function LoanView({ loanId, onBack }: Props) {
   }
 
   return (
-    <div className={css({ flex: '1', overflowY: 'auto', pb: '28', md: { pb: '12' } })}>
+    <div className={cx(pbScreen, css({ flex: '1', overflowY: 'auto' }))}>
       <div className={css({ md: { maxW: '[720px]', mx: 'auto', px: '10', pt: '8' } })}>
 
         {/* Header */}

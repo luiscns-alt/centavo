@@ -12,8 +12,20 @@ export const nums = css({ fontVariantNumeric: 'tabular-nums lining-nums' })
 /** Horizontal scrollers without a visible scrollbar. */
 export const noScrollbar = css({ scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none' } })
 
-/** Bottom nav clears the iOS home indicator / Android gesture bar. */
-export const pbSafe = css({ pb: '[max(12px, env(safe-area-inset-bottom))]' })
+/*
+ * Bottom edge — `--safe-bottom` (panda.config.ts › globalCss) is the height of the system navigation
+ * (Android 3-button or gesture bar, iOS home indicator), 0 in a browser tab. Everything that touches
+ * the bottom of the screen adds it, otherwise the last lines or buttons end up under the system bar.
+ */
+
+/** Bottom nav clears the system navigation. */
+export const pbSafe = css({ pb: '[max(12px, var(--safe-bottom))]' })
+
+/** Screen content: room for the bottom nav (mobile) + the system navigation (Android tablets too). */
+export const pbScreen = css({ pb: '[calc(7rem + var(--safe-bottom))]', md: { pb: '[calc(3rem + var(--safe-bottom))]' } })
+
+/** Last block of a screen without the bottom nav (transaction form): 1.25rem above the system bar. */
+export const pbFormEnd = css({ pb: '[calc(1.25rem + var(--safe-bottom))]' })
 
 /** Raised + button in the mobile bottom nav. */
 export const fabShadow = css({ boxShadow: 'fab' })

@@ -51,6 +51,15 @@ export default defineConfig({
     utilities: 'panda_utilities',
   },
   globalCss: {
+    // System bar insets (status bar, notch, Android 3-button/gesture bar, iOS home indicator); 0 in a
+    // browser tab. In the APK, Capacitor's SystemBars injects --safe-area-inset-* (exact on every
+    // Android WebView); env() is the fallback for the browser/PWA and before the first injection.
+    ':root': {
+      '--safe-top': 'var(--safe-area-inset-top, env(safe-area-inset-top, 0px))',
+      '--safe-right': 'var(--safe-area-inset-right, env(safe-area-inset-right, 0px))',
+      '--safe-bottom': 'var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px))',
+      '--safe-left': 'var(--safe-area-inset-left, env(safe-area-inset-left, 0px))',
+    },
     html: {
       fontFamily: 'sans',
       bg: 'bg',
@@ -61,12 +70,12 @@ export default defineConfig({
       _osDark: { colorScheme: 'dark' },
     },
     // Edge-to-edge (Android app, installed PWA): keep content clear of the status bar and notches.
-    // 0 in a normal browser tab. The bottom inset is handled by the bottom nav (atoms.pbSafe).
+    // The bottom inset is handled where content meets the bottom edge (atoms: pbSafe, pbScreen…).
     body: {
       margin: '0',
-      padding: '[env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left)]',
+      padding: '[var(--safe-top) var(--safe-right) 0 var(--safe-left)]',
     },
-    '#root': { minHeight: '100svh', display: 'flex', flexDirection: 'column', bg: 'bg' },
+    '#root': { minHeight: '[calc(100svh - var(--safe-top))]', display: 'flex', flexDirection: 'column', bg: 'bg' },
     '::selection': { bg: 'border', color: 'ink' },
     // Keyboard focus: a quiet ink ring instead of the browser's default outline
     ':focus': { outline: 'none' },

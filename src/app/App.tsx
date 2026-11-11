@@ -124,10 +124,10 @@ export default function App() {
   const activeTab: Tab = overlay ? overlay.back : tab
 
   return (
-    <div className={css({ display: 'flex', minH: '[100svh]' })}>
+    <div className={css({ display: 'flex', minH: '[calc(100svh - var(--safe-top))]' })}>
       <SideNav active={activeTab} onChange={go} />
 
-      <main className={css({ flex: '1', display: 'flex', flexDirection: 'column', minH: '[100svh]', minW: '0' })}>
+      <main className={css({ flex: '1', display: 'flex', flexDirection: 'column', minH: '[calc(100svh - var(--safe-top))]', minW: '0' })}>
         {overlay?.kind === 'card' && (
           <CardView cardId={overlay.id} onBack={() => setOverlay(null)} onEdit={t => openEdit({ ...t, returnToCard: overlay.id })} />
         )}

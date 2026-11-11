@@ -9,7 +9,7 @@ import type { EditTarget } from '../transactions'
 import { todayISO, formatDayMonthNumeric, formatMonthAbbr, formatMonthName } from '../../shared/utils/dates'
 import { formatBRL } from '../../shared/utils/money'
 import { css, cx } from '../../../styled-system/css'
-import { barGrow, noScrollbar, nums, slideUp } from '../../shared/ui/atoms'
+import { barGrow, noScrollbar, nums, pbScreen, slideUp } from '../../shared/ui/atoms'
 
 
 const STATUS: Record<InvoiceStatus, { label: string; tone: string }> = {
@@ -51,7 +51,7 @@ export function CardView({ cardId, onBack, onEdit }: Props) {
   const usedPct = limit ? Math.min(100, Math.max(0, Math.round((debt / limit) * 100))) : null
 
   return (
-    <div className={css({ flex: '1', overflowY: 'auto', pb: '28', md: { pb: '12' } })}>
+    <div className={cx(pbScreen, css({ flex: '1', overflowY: 'auto' }))}>
       <div className={css({ md: { maxW: '[680px]', mx: 'auto', px: '10', pt: '8' } })}>
 
         {/* Header */}

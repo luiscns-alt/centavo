@@ -9,7 +9,7 @@ interface Props {
 export function SideNav({ active, onChange }: Props) {
   const AddIcon = ADD_ITEM.Icon
   return (
-    <nav className={css({ display: 'none', md: { display: 'flex' }, w: '[232px]', h: '[100svh]', borderRightWidth: '1px', borderColor: 'border', flexDirection: 'column', bg: 'surface', flexShrink: '0', position: 'sticky', top: '0' })}>
+    <nav className={css({ display: 'none', md: { display: 'flex' }, w: '[232px]', h: '[calc(100svh - var(--safe-top))]', pb: '[var(--safe-bottom)]', borderRightWidth: '1px', borderColor: 'border', flexDirection: 'column', bg: 'surface', flexShrink: '0', position: 'sticky', top: '0' })}>
       {/* Logo */}
       <div className={css({ px: '6', pt: '7', pb: '6' })}>
         <span className={css({ fontSize: '17', fontWeight: 'semibold', letterSpacing: 'title', color: 'ink' })}>centavo</span>
