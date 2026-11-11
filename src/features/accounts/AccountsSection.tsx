@@ -10,6 +10,7 @@ import { AccountIcon } from './AccountIcon'
 import { ACCOUNT_KINDS } from '../../core/constants/domain'
 import { formatBalance } from '../../shared/utils/money'
 import { css, cx } from '../../../styled-system/css'
+import { nums, slideUp } from '../../shared/ui/atoms'
 
 type Editing = { mode: 'new' } | { mode: 'edit'; id: number } | { mode: 'delete'; id: number } | null
 
@@ -46,7 +47,7 @@ export function AccountsSection({ onOpenLoan, onNewLoan }: { onOpenLoan: (id: nu
       <div className={css({ px: '5', md: { px: '1' }, display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', mb: '2' })}>
         <div className={css({ fontSize: '11', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: 'widest', color: 'muted' })}>Contas</div>
         {accounts.length > 0 && (
-          <div className={cx(css({ fontSize: '12', color: 'muted' }), 'nums')}>Patrimônio <span className={css({ fontWeight: 'semibold', color: 'ink' })}>{formatBalance(total)}</span></div>
+          <div className={cx(css({ fontSize: '12', color: 'muted' }), nums)}>Patrimônio <span className={css({ fontWeight: 'semibold', color: 'ink' })}>{formatBalance(total)}</span></div>
         )}
       </div>
 
@@ -83,7 +84,7 @@ export function AccountsSection({ onOpenLoan, onNewLoan }: { onOpenLoan: (id: nu
                     {a.card ? `Cartão · fecha ${a.card.closingDay} · vence ${a.card.dueDay}` : a.kind === 'loan' ? 'Empréstimo · saldo devedor' : ACCOUNT_KINDS[a.kind].label}
                     {a.archived ? ' · arquivada' : ''}
                     {' · '}
-                    <span className={cx(css({ fontWeight: 'semibold' }, a.balance < 0 ? { color: 'expense' } : { color: 'ink' }), 'nums')}>{formatBalance(a.balance)}</span>
+                    <span className={cx(css({ fontWeight: 'semibold' }, a.balance < 0 ? { color: 'expense' } : { color: 'ink' }), nums)}>{formatBalance(a.balance)}</span>
                   </div>
                 </div>
                 {a.kind === 'loan' ? (
@@ -94,7 +95,7 @@ export function AccountsSection({ onOpenLoan, onNewLoan }: { onOpenLoan: (id: nu
                     Abrir
                   </button>
                 ) : confirming ? (
-                  <div className={cx(css({ display: 'flex', alignItems: 'center', gap: '1.5' }), 'slide-up')}>
+                  <div className={cx(css({ display: 'flex', alignItems: 'center', gap: '1.5' }), slideUp)}>
                     <button onClick={() => setEditing(null)} className={css({ h: '8', px: '3', rounded: 'full', fontSize: '12', fontWeight: 'semibold', color: 'muted', _hover: { color: 'ink' } })}>
                       Cancelar
                     </button>

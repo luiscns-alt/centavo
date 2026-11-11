@@ -10,6 +10,7 @@ import type { AccountKind } from '../../core/types'
 import { todayISO } from '../../shared/utils/dates'
 import { firstGrapheme } from '../../shared/utils/text'
 import { css, cx } from '../../../styled-system/css'
+import { nums, slideUp } from '../../shared/ui/atoms'
 
 interface Props {
   initial?: AccountInput
@@ -128,7 +129,7 @@ export function AccountEditor({ initial, submitLabel = 'Criar conta', title, onS
 
   return (
     <div
-      className={cx(css({ bg: 'surface', borderWidth: '1px', borderColor: 'border', rounded: 'xl', p: '4' }), 'slide-up')}
+      className={cx(css({ bg: 'surface', borderWidth: '1px', borderColor: 'border', rounded: 'xl', p: '4' }), slideUp)}
       onKeyDown={e => {
         if (e.key === 'Escape' && onCancel) { e.stopPropagation(); onCancel() }
         if (e.key === 'Enter' && (e.target as HTMLElement).tagName === 'INPUT') { e.preventDefault(); e.stopPropagation(); void submit() }
@@ -190,7 +191,7 @@ export function AccountEditor({ initial, submitLabel = 'Criar conta', title, onS
           {bank && (
             <div className={css({ mt: '1', fontSize: '12', color: 'muted' })}>
               Banco: <span className={css({ fontWeight: 'semibold', color: 'ink' })}>{bank.name}</span>
-              {bank.compe && <span className="nums"> · {bank.compe}</span>}
+              {bank.compe && <span className={nums}> · {bank.compe}</span>}
             </div>
           )}
 
@@ -199,7 +200,7 @@ export function AccountEditor({ initial, submitLabel = 'Criar conta', title, onS
               id={listId}
               role="listbox"
               aria-label="Bancos conhecidos"
-              className={cx(css({ position: 'absolute', zIndex: '20', left: '0', right: '0', top: '12', m: '0', p: '1', listStyle: 'none', bg: 'surface', borderWidth: '1px', borderColor: 'border', rounded: 'xl', shadow: 'lg' }), 'slide-up')}
+              className={cx(css({ position: 'absolute', zIndex: '20', left: '0', right: '0', top: '12', m: '0', p: '1', listStyle: 'none', bg: 'surface', borderWidth: '1px', borderColor: 'border', rounded: 'xl', shadow: 'lg' }), slideUp)}
             >
               {suggestions.map((b, i) => (
                 <li
@@ -214,7 +215,7 @@ export function AccountEditor({ initial, submitLabel = 'Criar conta', title, onS
                 >
                   <AccountIcon account={{ icon: b.kind ? ACCOUNT_KINDS[b.kind].icon : '🏦', bankId: b.id }} size={28} />
                   <span className={css({ flex: '1', fontSize: '14', fontWeight: 'medium', color: 'ink', truncate: true })}>{b.name}</span>
-                  {b.compe && <span className={cx(css({ fontSize: '12', color: 'muted' }), 'nums')}>{b.compe}</span>}
+                  {b.compe && <span className={cx(css({ fontSize: '12', color: 'muted' }), nums)}>{b.compe}</span>}
                 </li>
               ))}
             </ul>
@@ -274,7 +275,7 @@ export function AccountEditor({ initial, submitLabel = 'Criar conta', title, onS
                 placeholder="opcional"
                 value={fmt(limitDigits)}
                 onChange={e => setLimitDigits(e.target.value.replace(/\D/g, '').replace(/^0+/, '').slice(0, 11))}
-                className={cx(css({ w: 'full', h: '11', px: '2.5', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', fontSize: '14', fontWeight: 'semibold', color: 'ink', _placeholder: { color: 'muted', fontWeight: 'normal' }, outline: 'none', _focus: { borderColor: 'muted/60' } }), 'nums')}
+                className={cx(css({ w: 'full', h: '11', px: '2.5', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', fontSize: '14', fontWeight: 'semibold', color: 'ink', _placeholder: { color: 'muted', fontWeight: 'normal' }, outline: 'none', _focus: { borderColor: 'muted/60' } }), nums)}
               />
             </label>
           </div>
@@ -301,7 +302,7 @@ export function AccountEditor({ initial, submitLabel = 'Criar conta', title, onS
             placeholder="0,00"
             value={fmt(digits)}
             onChange={e => setDigits(e.target.value.replace(/\D/g, '').replace(/^0+/, '').slice(0, 11))}
-            className={cx(css({ flex: '1', minW: '0', bg: 'transparent', fontSize: '15', fontWeight: 'semibold', color: 'ink', _placeholder: { color: 'muted' }, outline: 'none' }), 'nums')}
+            className={cx(css({ flex: '1', minW: '0', bg: 'transparent', fontSize: '15', fontWeight: 'semibold', color: 'ink', _placeholder: { color: 'muted' }, outline: 'none' }), nums)}
           />
         </div>
         <input
@@ -309,7 +310,7 @@ export function AccountEditor({ initial, submitLabel = 'Criar conta', title, onS
           aria-label="Data do saldo inicial"
           value={openingDate}
           onChange={e => setOpeningDate(e.target.value)}
-          className={cx(css({ w: '[150px]', flexShrink: '0', h: '11', px: '2.5', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', fontSize: '14', color: 'ink', outline: 'none', _focus: { borderColor: 'muted/60' } }), 'nums')}
+          className={cx(css({ w: '[150px]', flexShrink: '0', h: '11', px: '2.5', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', fontSize: '14', color: 'ink', outline: 'none', _focus: { borderColor: 'muted/60' } }), nums)}
         />
       </div>
       <p className={css({ mt: '1.5', mb: '0', fontSize: '12', color: 'muted', lineHeight: 'relaxed' })}>
@@ -347,7 +348,7 @@ function DayField({ label, value, onChange }: { label: string; value: string; on
           const d = e.target.value.replace(/\D/g, '').slice(0, 2)
           onChange(d === '' ? '' : String(Math.min(31, Math.max(1, Number(d)))))
         }}
-        className={cx(css({ w: 'full', h: '11', px: '2.5', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', fontSize: '15', fontWeight: 'semibold', color: 'ink', _placeholder: { color: 'muted', fontWeight: 'normal' }, outline: 'none', _focus: { borderColor: 'muted/60' } }), 'nums')}
+        className={cx(css({ w: 'full', h: '11', px: '2.5', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', fontSize: '15', fontWeight: 'semibold', color: 'ink', _placeholder: { color: 'muted', fontWeight: 'normal' }, outline: 'none', _focus: { borderColor: 'muted/60' } }), nums)}
       />
     </label>
   )

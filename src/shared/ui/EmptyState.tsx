@@ -1,5 +1,6 @@
 import { Plus } from 'lucide-react'
 import { css, cx } from '../../../styled-system/css'
+import { slideUp } from './atoms'
 
 const wrap = css({ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', py: '14', px: '6' })
 const lines = css({ w: '14', mb: '5', display: 'flex', flexDirection: 'column', gap: '1.5' })
@@ -22,7 +23,7 @@ interface EmptyStateProps {
 
 export function EmptyState({ title, description, actionLabel, onAction }: EmptyStateProps) {
   return (
-    <div className={cx(wrap, 'slide-up')}>
+    <div className={cx(wrap, slideUp)}>
       {/* Ledger lines — a quiet nod to the empty notebook page */}
       <div className={lines} aria-hidden>
         <span className={line} />

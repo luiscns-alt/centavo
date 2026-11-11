@@ -18,6 +18,7 @@ import { formatBRL } from '../../shared/utils/money'
 import { STORAGE_KEYS } from '../../shared/constants/storageKeys'
 import { readLocal, writeLocal } from '../../shared/utils/storage'
 import { css, cx } from '../../../styled-system/css'
+import { noScrollbar, nums, slideUp } from '../../shared/ui/atoms'
 
 type Mode = 'expense' | 'income' | 'transfer'
 
@@ -352,7 +353,7 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
 
   return (
     <div className={css({ flex: '1', display: 'flex', flexDirection: 'column', md: { alignItems: 'center', justifyContent: 'flex-start', px: '10', py: '12' } })}>
-      <div className={cx(css({ flex: '1', md: { flex: 'none', maxW: '[480px]', bg: 'surface', rounded: '2xl', borderWidth: '1px', borderColor: 'border' }, w: 'full', bg: 'bg', display: 'flex', flexDirection: 'column' }), 'slide-up')}>
+      <div className={cx(css({ flex: '1', md: { flex: 'none', maxW: '[480px]', bg: 'surface', rounded: '2xl', borderWidth: '1px', borderColor: 'border' }, w: 'full', bg: 'bg', display: 'flex', flexDirection: 'column' }), slideUp)}>
 
         {/* Header */}
         <div className={css({ display: 'flex', alignItems: 'center', gap: '2', px: '3', md: { px: '4' }, h: '14', borderBottomWidth: '1px', borderColor: 'border' })}>
@@ -417,7 +418,7 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
                   placeholder="0,00"
                   value={display}
                   onChange={e => handleAmount(e.target.value)}
-                  className={cx(css(display.length > 12 ? { fontSize: '34' } : display.length > 9 ? { fontSize: '40' } : { fontSize: '48' }, { fontWeight: 'bold', lineHeight: 'none', letterSpacing: '[-.02em]', bg: 'transparent', outline: 'none', textAlign: 'left', _placeholder: { color: 'current', opacity: '0.3' } }), 'nums')}
+                  className={cx(css(display.length > 12 ? { fontSize: '34' } : display.length > 9 ? { fontSize: '40' } : { fontSize: '48' }, { fontWeight: 'bold', lineHeight: 'none', letterSpacing: '[-.02em]', bg: 'transparent', outline: 'none', textAlign: 'left', _placeholder: { color: 'current', opacity: '0.3' } }), nums)}
                   style={{ width: `${Math.max(display.length || 4, 4) + 0.5}ch` }}
                 />
               </div>
@@ -449,7 +450,7 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
             {!isTransfer && !isCard && (
               <div className={css({ pt: '5' })}>
                 <SectionTitle>{mode === 'expense' ? 'Pago com' : 'Recebido por'}</SectionTitle>
-                <div className={cx(css({ display: 'flex', gap: '2', overflowX: 'auto', px: '5', pb: '1', md: { flexWrap: 'wrap' } }), 'no-scrollbar')} role="radiogroup" aria-label="Forma de pagamento">
+                <div className={cx(css({ display: 'flex', gap: '2', overflowX: 'auto', px: '5', pb: '1', md: { flexWrap: 'wrap' } }), noScrollbar)} role="radiogroup" aria-label="Forma de pagamento">
                   {ACCOUNT_METHODS.map(m => (
                     <button
                       key={m}
@@ -480,7 +481,7 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
                     >
                       <Minus size={16} strokeWidth={2} />
                     </button>
-                    <span className={cx(css({ w: '12', textAlign: 'center', fontSize: '15', fontWeight: 'bold', color: 'ink' }), 'nums')} aria-live="polite">{installments}×</span>
+                    <span className={cx(css({ w: '12', textAlign: 'center', fontSize: '15', fontWeight: 'bold', color: 'ink' }), nums)} aria-live="polite">{installments}×</span>
                     <button
                       type="button"
                       aria-label="Mais parcelas"
@@ -491,7 +492,7 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
                       <Plus size={16} strokeWidth={2} />
                     </button>
                   </div>
-                  <p className={cx(css({ m: '0', flex: '1', fontSize: '12', color: 'muted', lineHeight: 'snug' }), 'nums')}>
+                  <p className={cx(css({ m: '0', flex: '1', fontSize: '12', color: 'muted', lineHeight: 'snug' }), nums)}>
                     {preview ? (
                       <>
                         {installments > 1 && (
@@ -540,7 +541,7 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
             {!isTransfer && (
               <div className={css({ pt: '5' })}>
                 <SectionTitle>Categoria</SectionTitle>
-                <div className={cx(css({ display: 'flex', gap: '2', overflowX: 'auto', px: '5', pb: '1', md: { flexWrap: 'wrap', overflow: 'visible' } }), 'no-scrollbar')}>
+                <div className={cx(css({ display: 'flex', gap: '2', overflowX: 'auto', px: '5', pb: '1', md: { flexWrap: 'wrap', overflow: 'visible' } }), noScrollbar)}>
                   {categories?.map(cat => {
                     const selected = categoryId === cat.id
                     return (
@@ -598,7 +599,7 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
                   onChange={e => setDate(e.target.value)}
                   required
                   aria-label={isCard ? 'Data da compra' : 'Data'}
-                  className={cx(css({ flex: '1', minW: '0', bg: 'transparent', fontSize: '15', color: 'ink', outline: 'none' }), 'nums')}
+                  className={cx(css({ flex: '1', minW: '0', bg: 'transparent', fontSize: '15', color: 'ink', outline: 'none' }), nums)}
                 />
                 {quickDates.map(q => (
                   <button
@@ -615,7 +616,7 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
 
             {/* Save */}
             <div className={css({ px: '5', mt: 'auto', md: { mt: '6' }, pt: '6', pb: '5' })}>
-              {warning && <p className={cx(css({ fontSize: '12', color: 'expense', textAlign: 'center', mt: '0', mb: '3' }), 'nums')}>{warning}</p>}
+              {warning && <p className={cx(css({ fontSize: '12', color: 'expense', textAlign: 'center', mt: '0', mb: '3' }), nums)}>{warning}</p>}
               {error && <p className={css({ fontSize: '13', color: 'expense', textAlign: 'center', mt: '0', mb: '3' })} role="alert">{error}</p>}
               <Button
                 type="submit"
@@ -633,7 +634,7 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
 
               {isEdit && (
                 confirmDelete ? (
-                  <div className={cx(css({ mt: '3', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2' }), 'slide-up')}>
+                  <div className={cx(css({ mt: '3', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2' }), slideUp)}>
                     <span className={css({ fontSize: '13', color: 'muted' })}>
                       {edit.kind === 'purchase' && installments > 1 ? `Excluir a compra e as ${installments} parcelas?` : 'Excluir de vez?'}
                     </span>

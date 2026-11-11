@@ -10,6 +10,7 @@ import { BudgetHomeCard } from '../budgets'
 import { todayISO, formatDayMonth, formatMonthName } from '../../shared/utils/dates'
 import { formatBRL, formatBalance } from '../../shared/utils/money'
 import { css, cx } from '../../../styled-system/css'
+import { nums } from '../../shared/ui/atoms'
 
 const MonthSection = lazy(() => import('./MonthSection'))
 
@@ -109,11 +110,11 @@ function Hero({ data, stale }: { data?: HomeSummary; stale: boolean }) {
     <section className={css({ md: { bg: 'surface', borderWidth: '1px', borderColor: 'border', rounded: '2xl' } })} aria-busy={loading || stale}>
       <div className={css({ px: '5', md: { px: '8', pt: '8', pb: '7' }, pt: '5', pb: '5', textAlign: 'center' })} style={{ filter: 'url(#paper-grain)' }}>
         <div className={css({ fontSize: '11', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: 'widest', color: 'muted', mb: '3' })}>Disponível hoje</div>
-        <div className={cx(css({ fontFamily: 'serif', fontSize: '44', md: { fontSize: '52' }, lineHeight: 'none' }, loading ? { color: 'muted', opacity: '0.3' } : total < 0 ? { color: 'expense' } : { color: 'ink' }), 'nums')}>
+        <div className={cx(css({ fontFamily: 'serif', fontSize: '44', md: { fontSize: '52' }, lineHeight: 'none' }, loading ? { color: 'muted', opacity: '0.3' } : total < 0 ? { color: 'expense' } : { color: 'ink' }), nums)}>
           {loading ? '–' : formatBalance(total)}
         </div>
         {data && (
-          <div className={cx(css({ mt: '4', fontSize: '13' }), 'nums')}>
+          <div className={cx(css({ mt: '4', fontSize: '13' }), nums)}>
             <span className={css({ color: 'muted' })}>Sobra prevista em {month}: </span>
             <span className={css({ fontWeight: 'semibold' }, free < 0 ? { color: 'expense' } : { color: 'ink' })}>{formatBalance(free)}</span>
             {parts.length > 0 && <div className={css({ fontSize: '12', color: 'muted', mt: '0.5' })}>depois de {parts.join(' e ')}</div>}
@@ -177,7 +178,7 @@ function Attention({ alerts, onOpen }: { alerts: HomeAlert[]; onOpen: (a: HomeAl
               <button onClick={() => onOpen(a)} className={css({ w: 'full', display: 'flex', alignItems: 'center', gap: '3', px: '3', py: '2.5', rounded: 'xl', textAlign: 'left', _hover: { bg: 'bg/60' }, transition: 'colors' })}>
                 <Icon size={16} strokeWidth={2} className={css({ flexShrink: '0' }, strong ? { color: 'expense' } : { color: 'ink' })} aria-hidden />
                 <span className={css({ flex: '1', minW: '0', fontSize: '14', lineHeight: 'snug' }, strong ? { color: 'expense', fontWeight: 'semibold' } : { color: 'ink', fontWeight: 'medium' })}>{a.title}</span>
-                <span className={cx(css({ fontSize: '13', fontWeight: 'semibold', color: 'ink', flexShrink: '0' }), 'nums')}>{formatBRL(a.amount)}</span>
+                <span className={cx(css({ fontSize: '13', fontWeight: 'semibold', color: 'ink', flexShrink: '0' }), nums)}>{formatBRL(a.amount)}</span>
                 <ChevronRight size={15} strokeWidth={1.75} className={css({ color: 'muted', flexShrink: '0' })} />
               </button>
             </li>
@@ -194,7 +195,7 @@ function CardsBlock({ cards, onOpen }: { cards: HomeSummary['cards']; onOpen: (i
     <section className={css({ mx: '5', md: { mx: '0' }, bg: 'surface', borderWidth: '1px', borderColor: 'border', rounded: '2xl' })}>
       <div className={css({ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '3', px: '5', md: { px: '6' }, pt: '5' })}>
         <div className={css({ fontSize: '11', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: 'widest', color: 'muted' })}>Cartões</div>
-        <div className={cx(css({ fontSize: '12', color: 'muted' }), 'nums')}><span className={css({ fontWeight: 'semibold', color: 'ink' })}>{formatBRL(cards.toPay)}</span> a pagar</div>
+        <div className={cx(css({ fontSize: '12', color: 'muted' }), nums)}><span className={css({ fontWeight: 'semibold', color: 'ink' })}>{formatBRL(cards.toPay)}</span> a pagar</div>
       </div>
       <ul className={css({ m: '0', p: '0', listStyle: 'none', mt: '2', px: '2', md: { px: '3' }, pb: '2' })}>
         {cards.items.map(c => (
@@ -203,12 +204,12 @@ function CardsBlock({ cards, onOpen }: { cards: HomeSummary['cards']; onOpen: (i
               <AccountIcon account={c} />
               <div className={css({ flex: '1', minW: '0' })}>
                 <div className={css({ fontSize: '15', fontWeight: 'medium', color: 'ink', truncate: true })}>{c.name}</div>
-                <div className={cx(css({ fontSize: '12', truncate: true }, c.overdue ? { color: 'expense', fontWeight: 'semibold' } : { color: 'muted' }), 'nums')}>
+                <div className={cx(css({ fontSize: '12', truncate: true }, c.overdue ? { color: 'expense', fontWeight: 'semibold' } : { color: 'muted' }), nums)}>
                   {c.remaining > 0 ? `${c.overdue ? 'Venceu' : 'Vence'} ${formatDayMonth(c.dueDate)}` : 'Nada a pagar agora'}
                   {c.available != null && ` · disp. ${formatBalance(c.available)}`}
                 </div>
               </div>
-              <div className={cx(css({ fontSize: '15', fontWeight: 'bold', flexShrink: '0', color: 'ink' }), 'nums')}>{formatBRL(c.remaining)}</div>
+              <div className={cx(css({ fontSize: '15', fontWeight: 'bold', flexShrink: '0', color: 'ink' }), nums)}>{formatBRL(c.remaining)}</div>
               <ChevronRight size={16} strokeWidth={1.75} className={css({ color: 'muted', flexShrink: '0' })} />
             </button>
           </li>

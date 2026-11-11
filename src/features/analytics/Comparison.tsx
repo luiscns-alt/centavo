@@ -12,6 +12,7 @@ import { formatBRL, formatAmount, formatAmountDelta, formatDelta, toneClass } fr
 import { STORAGE_KEYS } from '../../shared/constants/storageKeys'
 import { readLocal, writeLocal } from '../../shared/utils/storage'
 import { css, cx } from '../../../styled-system/css'
+import { nums } from '../../shared/ui/atoms'
 
 type Period = 6 | 12
 
@@ -144,7 +145,7 @@ function Summary({ points, loading }: { points: MonthPoint[]; loading: boolean }
           className={css({ bg: 'surface', borderWidth: '1px', borderColor: 'border', rounded: '2xl', px: '4', py: '3.5' }, i === 2 ? { gridColumn: 'span 2 / span 2', sm: { gridColumn: 'span 1 / span 1' } } : {})}
         >
           <div className={css({ fontSize: '11', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: '[.08em]', color: 'muted' })}>{t.label}</div>
-          <div className={cx(css({ mt: '1', fontSize: '17', fontWeight: 'bold', color: 'ink', truncate: true }), 'nums')}>{loading ? '–' : t.value}</div>
+          <div className={cx(css({ mt: '1', fontSize: '17', fontWeight: 'bold', color: 'ink', truncate: true }), nums)}>{loading ? '–' : t.value}</div>
           <div className={css({ fontSize: '12', color: 'muted', truncate: true })}>{t.sub}</div>
         </div>
       ))}
@@ -165,7 +166,7 @@ function MonthTable({ points }: { points: MonthPoint[] }) {
   return (
     <section className={css({ mx: '5', md: { mx: '0' }, mt: '4', bg: 'surface', borderWidth: '1px', borderColor: 'border', rounded: '2xl', overflowX: 'auto' })}>
       <div className={css({ pl: '3', md: { pl: '5' }, pr: '3', pt: '3', fontSize: '11', color: 'muted' })}>Valores em R$</div>
-      <table className={cx(css({ w: 'full', fontSize: '13', md: { fontSize: '14' }, borderCollapse: 'collapse' }), 'nums')}>
+      <table className={cx(css({ w: 'full', fontSize: '13', md: { fontSize: '14' }, borderCollapse: 'collapse' }), nums)}>
         <caption className={css({ srOnly: true })}>Entradas, saídas e saldo por mês, em reais</caption>
         <thead>
           <tr className={css({ fontSize: '11', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: '[.08em]', color: 'muted' })}>

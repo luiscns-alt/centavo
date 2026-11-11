@@ -11,7 +11,7 @@
  * ledger modules (features/<name>/ledger.ts, core/ledger/base.ts).
  */
 import path from 'node:path'
-import tailwindColors from './tailwind-colors.js'
+import rawColors from './raw-colors.js'
 
 function layerOf(abs) {
   const m = /[\\/]src[\\/](.*)$/.exec(abs)
@@ -75,4 +75,4 @@ const noUiWrites = {
   },
 }
 
-export default { rules: { boundaries, 'no-ui-writes': noUiWrites, 'tailwind-colors': tailwindColors } }
+export default { rules: { boundaries, 'no-ui-writes': noUiWrites, 'raw-colors': rawColors } }

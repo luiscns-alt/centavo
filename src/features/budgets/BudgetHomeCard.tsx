@@ -3,6 +3,7 @@ import type { HomeSummary } from '../home'
 import { BudgetBar } from './BudgetBar'
 import { formatBRL } from '../../shared/utils/money'
 import { css, cx } from '../../../styled-system/css'
+import { nums } from '../../shared/ui/atoms'
 
 /** Início: this month's budgets — only when at least one budget exists */
 export function BudgetHomeCard({ budgets, onOpen }: { budgets: HomeSummary['budgets']; onOpen: () => void }) {
@@ -14,10 +15,10 @@ export function BudgetHomeCard({ budgets, onOpen }: { budgets: HomeSummary['budg
       <div className={css({ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '3' })}>
         <div>
           <div className={css({ fontSize: '11', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: 'widest', color: 'muted' })}>Orçamentos do mês</div>
-          <div className={cx(css({ mt: '1', fontSize: '20', fontWeight: 'bold', lineHeight: 'tight' }, over ? { color: 'expense' } : { color: 'ink' }), 'nums')}>
+          <div className={cx(css({ mt: '1', fontSize: '20', fontWeight: 'bold', lineHeight: 'tight' }, over ? { color: 'expense' } : { color: 'ink' }), nums)}>
             {over ? '−' : ''}{formatBRL(Math.abs(budgets.remaining))}
           </div>
-          <div className={cx(css({ fontSize: '12', color: 'muted', mt: '0.5' }), 'nums')}>{over ? 'acima' : 'restam'} de {formatBRL(budgets.budgeted)} orçados</div>
+          <div className={cx(css({ fontSize: '12', color: 'muted', mt: '0.5' }), nums)}>{over ? 'acima' : 'restam'} de {formatBRL(budgets.budgeted)} orçados</div>
         </div>
         <span className={css({ fontSize: '12', color: 'muted', whiteSpace: 'nowrap', pt: '0.5' })}>
           {budgets.alertCount === 0 ? 'Tudo dentro' : `${budgets.alertCount} ${budgets.alertCount === 1 ? 'alerta' : 'alertas'}`}

@@ -11,6 +11,7 @@ import type { PaymentMethod, PrepaymentMode } from '../../core/types'
 import { todayISO, formatDate, formatDayMonthNumeric, formatMonthShortYear } from '../../shared/utils/dates'
 import { formatBRL } from '../../shared/utils/money'
 import { css, cx } from '../../../styled-system/css'
+import { barGrow, nums, slideUp } from '../../shared/ui/atoms'
 
 
 type Panel = null | 'pay' | 'prepay' | 'adjust'
@@ -64,7 +65,7 @@ export function LoanView({ loanId, onBack }: Props) {
           <AccountIcon account={account} size={36} />
           <div className={css({ minW: '0' })}>
             <h1 className={css({ m: '0', fontSize: '17', md: { fontSize: '22' }, fontWeight: 'semibold', letterSpacing: 'title', color: 'ink', truncate: true })}>{account.name}</h1>
-            <div className={cx(css({ fontSize: '12', color: 'muted', truncate: true }), 'nums')}>
+            <div className={cx(css({ fontSize: '12', color: 'muted', truncate: true }), nums)}>
               {LOAN_TYPES[loan.type].label} · {loan.system === 'price' ? 'Price' : 'SAC'} · {loan.rate.value.replace('.', ',')}% {loan.rate.unit === 'monthly' ? 'a.m.' : `a.a. (${monthlyRatePercent(loan.rate).replace('.', ',')}% a.m.)`}
             </div>
           </div>
@@ -74,15 +75,15 @@ export function LoanView({ loanId, onBack }: Props) {
         <section className={css({ mx: '5', md: { mx: '0' }, bg: 'surface', borderWidth: '1px', borderColor: 'border', rounded: '2xl', p: '5' })}>
           <div className={css({ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '3' })}>
             <span className={css({ fontSize: '11', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: 'widest', color: 'muted' })}>Saldo devedor</span>
-            <span className={cx(css({ fontSize: '12', color: 'muted' }), 'nums')}>{summary.paidInstallments} de {summary.paidInstallments + summary.remainingInstallments} parcelas pagas</span>
+            <span className={cx(css({ fontSize: '12', color: 'muted' }), nums)}>{summary.paidInstallments} de {summary.paidInstallments + summary.remainingInstallments} parcelas pagas</span>
           </div>
-          <div className={cx(css({ mt: '1', fontFamily: 'serif', fontSize: '36', lineHeight: 'none', color: 'ink' }), 'nums')}>{settled ? 'Quitado' : formatBRL(summary.outstanding)}</div>
+          <div className={cx(css({ mt: '1', fontFamily: 'serif', fontSize: '36', lineHeight: 'none', color: 'ink' }), nums)}>{settled ? 'Quitado' : formatBRL(summary.outstanding)}</div>
           <div className={css({ mt: '3', h: '1.5', rounded: 'full', bg: 'border', overflow: 'hidden' })}>
-            <div className={cx(css({ h: 'full', rounded: 'full', bg: 'ink' }), 'bar-grow')} style={{ width: `${progress}%` }} />
+            <div className={cx(css({ h: 'full', rounded: 'full', bg: 'ink' }), barGrow)} style={{ width: `${progress}%` }} />
           </div>
-          <div className={cx(css({ mt: '1.5', fontSize: '12', color: 'muted' }), 'nums')}>{progress}% de {formatBRL(loan.principal)} amortizado</div>
+          <div className={cx(css({ mt: '1.5', fontSize: '12', color: 'muted' }), nums)}>{progress}% de {formatBRL(loan.principal)} amortizado</div>
 
-          <div className={cx(css({ mt: '4', display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', lg: { gridTemplateColumns: 'repeat(4, minmax(0, 1fr))' }, gap: '3' }), 'nums')}>
+          <div className={cx(css({ mt: '4', display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', lg: { gridTemplateColumns: 'repeat(4, minmax(0, 1fr))' }, gap: '3' }), nums)}>
             <Fig label="Próxima" value={summary.next ? formatBRL(summary.next.total) : '—'} sub={summary.next ? `${summary.next.status === 'overdue' ? 'venceu' : 'vence'} ${formatDayMonthNumeric(summary.next.dueDate)}` : ''} danger={summary.next?.status === 'overdue'} />
             <Fig label="Termina em" value={summary.endDate ? formatMonthShortYear(summary.endDate) : '—'} sub={`${summary.remainingInstallments} restantes`} />
             <Fig label="Juros pagos" value={formatBRL(summary.interestPaid)} />
@@ -90,8 +91,8 @@ export function LoanView({ loanId, onBack }: Props) {
           </div>
           {summary.saved && summary.saved.interest > 0 && (
             <p className={css({ m: '0', mt: '3', fontSize: '13', color: 'ink' })}>
-              As antecipações já economizaram <span className={cx(css({ fontWeight: 'bold' }), 'nums')}>{formatBRL(summary.saved.interest)}</span> em juros
-              {summary.saved.months > 0 && <> e <span className={cx(css({ fontWeight: 'bold' }), 'nums')}>{summary.saved.months}</span> {summary.saved.months === 1 ? 'mês' : 'meses'}</>}.
+              As antecipações já economizaram <span className={cx(css({ fontWeight: 'bold' }), nums)}>{formatBRL(summary.saved.interest)}</span> em juros
+              {summary.saved.months > 0 && <> e <span className={cx(css({ fontWeight: 'bold' }), nums)}>{summary.saved.months}</span> {summary.saved.months === 1 ? 'mês' : 'meses'}</>}.
             </p>
           )}
 
@@ -187,8 +188,8 @@ function PayPanel({ data, next, onDone }: { data: LoanSchedule; next: ScheduleRo
   }
 
   return (
-    <div className={cx(css({ mt: '4', mx: '-5', pt: '4', borderTopWidth: '1px', borderColor: 'border' }), 'slide-up')}>
-      <div className={cx(css({ px: '5', display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '2' }), 'nums')}>
+    <div className={cx(css({ mt: '4', mx: '-5', pt: '4', borderTopWidth: '1px', borderColor: 'border' }), slideUp)}>
+      <div className={cx(css({ px: '5', display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '2' }), nums)}>
         <Fig label="Amortização" value={formatBRL(next.principal)} />
         <Fig label="Juros" value={formatBRL(next.interest)} />
         <Fig label="Total" value={formatBRL(next.total)} sub={next.fees ? `inclui ${formatBRL(next.fees)} de encargos` : undefined} />
@@ -199,7 +200,7 @@ function PayPanel({ data, next, onDone }: { data: LoanSchedule; next: ScheduleRo
         <Choice label="Forma de pagamento" value={method} onChange={setMethod} options={ACCOUNT_METHODS.map(m => ({ id: m, label: PAYMENT_METHODS[m] }))} />
       </div>
       <div className={css({ px: '5', mt: '3', display: 'flex', alignItems: 'center', gap: '2' })}>
-        <input type="date" aria-label="Data do pagamento" value={date} onChange={e => setDate(e.target.value)} className={cx(css({ flex: '1', h: '11', px: '3', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', fontSize: '14', color: 'ink', outline: 'none' }), 'nums')} />
+        <input type="date" aria-label="Data do pagamento" value={date} onChange={e => setDate(e.target.value)} className={cx(css({ flex: '1', h: '11', px: '3', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', fontSize: '14', color: 'ink', outline: 'none' }), nums)} />
         <button onClick={() => void pay()} disabled={fromId === null} className={css({ h: '11', px: '5', rounded: 'xl', bg: 'ink', color: 'bg', fontSize: '14', fontWeight: 'bold', _disabled: { opacity: '0.4' } })}>
           Pagar {formatBRL(next.total)}
         </button>
@@ -266,7 +267,7 @@ function PrepayPanel({ data, onDone }: { data: LoanSchedule; onDone: () => void 
   const err = compare && !compare.term.ok ? compare.term.error : null
 
   return (
-    <div className={cx(css({ mt: '4', mx: '-5', px: '5', pt: '4', borderTopWidth: '1px', borderColor: 'border' }), 'slide-up')}>
+    <div className={cx(css({ mt: '4', mx: '-5', px: '5', pt: '4', borderTopWidth: '1px', borderColor: 'border' }), slideUp)}>
       <div className={css({ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '3' })}>
         <div>
           <FieldLabel>Valor</FieldLabel>
@@ -274,7 +275,7 @@ function PrepayPanel({ data, onDone }: { data: LoanSchedule; onDone: () => void 
         </div>
         <label className={css({ display: 'block' })}>
           <FieldLabel>Data</FieldLabel>
-          <input type="date" value={date} onChange={e => setDate(e.target.value)} className={cx(css({ w: 'full', h: '11', px: '3', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', fontSize: '14', color: 'ink', outline: 'none' }), 'nums')} />
+          <input type="date" value={date} onChange={e => setDate(e.target.value)} className={cx(css({ w: 'full', h: '11', px: '3', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', fontSize: '14', color: 'ink', outline: 'none' }), nums)} />
         </label>
       </div>
       {payoff !== null && (
@@ -331,8 +332,8 @@ function ModeCard({ active, onClick, title, saved, lines }: { active: boolean; o
     >
       <div className={css({ fontSize: '13', fontWeight: 'semibold', color: 'ink' })}>{title}</div>
       <div className={css({ mt: '1', fontSize: '12', color: 'muted' })}>economia de juros</div>
-      <div className={cx(css({ fontSize: '16', fontWeight: 'bold', color: 'ink' }), 'nums')}>{formatBRL(Math.max(0, saved))}</div>
-      {lines.filter(Boolean).map(l => <div key={l} className={cx(css({ fontSize: '12', color: 'muted' }), 'nums')}>{l}</div>)}
+      <div className={cx(css({ fontSize: '16', fontWeight: 'bold', color: 'ink' }), nums)}>{formatBRL(Math.max(0, saved))}</div>
+      {lines.filter(Boolean).map(l => <div key={l} className={cx(css({ fontSize: '12', color: 'muted' }), nums)}>{l}</div>)}
     </button>
   )
 }
@@ -352,11 +353,11 @@ function AdjustPanel({ data, onDone }: { data: LoanSchedule; onDone: () => void 
     }
   }
   return (
-    <div className={cx(css({ mt: '4', mx: '-5', px: '5', pt: '4', borderTopWidth: '1px', borderColor: 'border' }), 'slide-up')}>
+    <div className={cx(css({ mt: '4', mx: '-5', px: '5', pt: '4', borderTopWidth: '1px', borderColor: 'border' }), slideUp)}>
       <FieldLabel>Saldo devedor no extrato do banco</FieldLabel>
       <div className={css({ display: 'flex', alignItems: 'center', gap: '2' })}>
         <MoneyInput label="Saldo devedor" value={balance} onChange={setBalance} className={css({ flex: '1' })} />
-        <input type="date" aria-label="Data do extrato" value={date} onChange={e => setDate(e.target.value)} className={cx(css({ w: '[150px]', h: '11', px: '2.5', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', fontSize: '14', color: 'ink', outline: 'none' }), 'nums')} />
+        <input type="date" aria-label="Data do extrato" value={date} onChange={e => setDate(e.target.value)} className={cx(css({ w: '[150px]', h: '11', px: '2.5', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', fontSize: '14', color: 'ink', outline: 'none' }), nums)} />
       </div>
       <p className={css({ mt: '1.5', mb: '0', fontSize: '12', color: 'muted' })}>Use quando o banco mostrar um saldo diferente (seguros, arredondamentos). Nenhum dinheiro se move; as parcelas futuras são recalculadas.</p>
       <div className={css({ mt: '3', display: 'flex', gap: '2' })}>
@@ -390,12 +391,12 @@ function ScheduleTable({ data }: { data: LoanSchedule }) {
         return (
           <details key={year} open={year === openYear} className={cx(css({ borderTopWidth: '1px', borderColor: 'border' }), 'group')}>
             <summary className={css({ display: 'flex', alignItems: 'center', gap: '3', px: '5', py: '3', cursor: 'pointer', userSelect: 'none' })}>
-              <span className={cx(css({ fontSize: '15', fontWeight: 'semibold', color: 'ink' }), 'nums')}>{year}</span>
-              <span className={cx(css({ fontSize: '12', color: 'muted' }), 'nums')}>{rows.length} parcelas{paid ? ` · ${paid} pagas` : ''}</span>
-              <span className={cx(css({ ml: 'auto', fontSize: '13', fontWeight: 'semibold', color: 'ink' }), 'nums')}>{formatBRL(rows.reduce((s, r) => s + r.total, 0))}</span>
+              <span className={cx(css({ fontSize: '15', fontWeight: 'semibold', color: 'ink' }), nums)}>{year}</span>
+              <span className={cx(css({ fontSize: '12', color: 'muted' }), nums)}>{rows.length} parcelas{paid ? ` · ${paid} pagas` : ''}</span>
+              <span className={cx(css({ ml: 'auto', fontSize: '13', fontWeight: 'semibold', color: 'ink' }), nums)}>{formatBRL(rows.reduce((s, r) => s + r.total, 0))}</span>
             </summary>
             <div className={css({ overflowX: 'auto' })}>
-              <table className={cx(css({ w: 'full', fontSize: '13', borderCollapse: 'collapse' }), 'nums')}>
+              <table className={cx(css({ w: 'full', fontSize: '13', borderCollapse: 'collapse' }), nums)}>
                 <thead>
                   <tr className={css({ fontSize: '11', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: '[.06em]', color: 'muted' })}>
                     <th scope="col" className={css({ textAlign: 'left', fontWeight: 'semibold', pl: '5', pr: '1.5', py: '2' })}>Nº</th>

@@ -8,6 +8,7 @@ import type { PaymentMethod } from '../../core/types'
 import { formatBRL, formatDelta, toneClass } from '../../shared/utils/money'
 import { MONTH_LONG } from '../../shared/utils/dates'
 import { css, cx } from '../../../styled-system/css'
+import { barGrow, nums } from '../../shared/ui/atoms'
 
 
 interface Props {
@@ -41,7 +42,7 @@ export default function MonthSection({ nav, accountIds, onAdd, onOpenCompare }: 
             {carry === null ? (
               <div className={css({ px: '5', md: { px: '8' }, pt: '6', pb: '5', textAlign: 'center' })}>
                 <div className={css({ fontSize: '11', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: 'widest', color: 'muted', mb: '2' })}>Saldo livre</div>
-                <div className={cx(css({ fontSize: '28', fontWeight: 'bold', lineHeight: 'none' }, loading ? { color: 'muted', opacity: '0.3' } : freeBalance > 0 ? { color: 'income' } : freeBalance < 0 ? { color: 'expense' } : { color: 'muted' }), 'nums')}>
+                <div className={cx(css({ fontSize: '28', fontWeight: 'bold', lineHeight: 'none' }, loading ? { color: 'muted', opacity: '0.3' } : freeBalance > 0 ? { color: 'income' } : freeBalance < 0 ? { color: 'expense' } : { color: 'muted' }), nums)}>
                   {loading ? '–' : formatBRL(freeBalance)}
                 </div>
               </div>
@@ -58,7 +59,7 @@ export default function MonthSection({ nav, accountIds, onAdd, onOpenCompare }: 
             {!loading && accountIds !== null && (transfersIn > 0 || transfersOut > 0) && (
               <div className={css({ mx: '5', md: { mx: '8' }, mb: '4', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12' })}>
                 <span className={css({ color: 'muted' })}>⇄ Transferências no mês</span>
-                <span className={cx(css({ color: 'ink', fontWeight: 'semibold' }), 'nums')}>
+                <span className={cx(css({ color: 'ink', fontWeight: 'semibold' }), nums)}>
                   {transfersIn > 0 && `+${formatBRL(transfersIn)}`}
                   {transfersIn > 0 && transfersOut > 0 && ' · '}
                   {transfersOut > 0 && `−${formatBRL(transfersOut)}`}
@@ -100,11 +101,11 @@ function CarriedBalance({ month, carry, result, loading }: { month: number; carr
   return (
     <div className={css({ px: '5', md: { px: '8' }, pt: '6', pb: '5', textAlign: 'center' })}>
       <div className={css({ fontSize: '11', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: 'widest', color: 'muted', mb: '2' })}>Saldo de {MONTH_LONG[month - 1]}</div>
-      <div className={cx(css({ fontSize: '28', fontWeight: 'bold', lineHeight: 'none' }), 'nums', loading ? css({ color: 'muted', opacity: '0.3' }) : toneClass(total))}>
+      <div className={cx(css({ fontSize: '28', fontWeight: 'bold', lineHeight: 'none' }), nums, loading ? css({ color: 'muted', opacity: '0.3' }) : toneClass(total))}>
         {loading ? '–' : formatBRL(total)}
       </div>
       {!loading && (
-        <div className={cx(css({ mt: '3', display: 'flex', flexWrap: 'wrap', justifyContent: 'center', columnGap: '3', rowGap: '1', fontSize: '12' }), 'nums')}>
+        <div className={cx(css({ mt: '3', display: 'flex', flexWrap: 'wrap', justifyContent: 'center', columnGap: '3', rowGap: '1', fontSize: '12' }), nums)}>
           <span className={css({ color: 'muted' })}>{carry < 0 ? 'Déficit' : 'Sobra'} de {prev} <span className={cx(css({ fontWeight: 'semibold' }), toneClass(carry))}>{formatDelta(carry)}</span></span>
           <span className={css({ color: 'muted' })}>Resultado do mês <span className={cx(css({ fontWeight: 'semibold' }), toneClass(result))}>{formatDelta(result)}</span></span>
         </div>
@@ -124,7 +125,7 @@ function Summary({ label, tone, value, divider = false }: {
           {label}
         </span>
       </div>
-      <div className={cx(css({ fontSize: '17', fontWeight: 'bold', color: 'ink', truncate: true }), 'nums')}>{value}</div>
+      <div className={cx(css({ fontSize: '17', fontWeight: 'bold', color: 'ink', truncate: true }), nums)}>{value}</div>
     </div>
   )
 }
@@ -138,7 +139,7 @@ function SpendRatio({ income, expense }: { income: number; expense: number }) {
     <div className={css({ px: '5', md: { px: '8' }, pt: '4', pb: '4' })}>
       <div className={css({ h: '1.5', rounded: 'full', bg: 'income.light', overflow: 'hidden' })}>
         <div
-          className={cx(css({ h: 'full', rounded: 'full', bg: 'expense' }), 'bar-grow')}
+          className={cx(css({ h: 'full', rounded: 'full', bg: 'expense' }), barGrow)}
           style={{ width: `${Math.min(pct, 100)}%` }}
         />
       </div>
@@ -146,8 +147,8 @@ function SpendRatio({ income, expense }: { income: number; expense: number }) {
         {ratio === null
           ? 'Nenhuma receita registrada neste mês.'
           : pct > 999
-            ? <>Você gastou <span className={cx(css({ fontWeight: 'semibold', color: 'ink' }), 'nums')}>mais de 10×</span> o que recebeu.</>
-            : <>Você gastou <span className={cx(css({ fontWeight: 'semibold', color: 'ink' }), 'nums')}>{pct}%</span> do que recebeu.</>}
+            ? <>Você gastou <span className={cx(css({ fontWeight: 'semibold', color: 'ink' }), nums)}>mais de 10×</span> o que recebeu.</>
+            : <>Você gastou <span className={cx(css({ fontWeight: 'semibold', color: 'ink' }), nums)}>{pct}%</span> do que recebeu.</>}
       </p>
     </div>
   )
@@ -211,13 +212,13 @@ function MethodRow({ icon, name, amount, share, index }: { icon: string; name: s
       <div className={css({ flex: '1', minW: '0' })}>
         <div className={css({ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '3' })}>
           <span className={css({ fontSize: '15', fontWeight: 'medium', color: 'ink', truncate: true })}>{name}</span>
-          <span className={cx(css({ fontSize: '15', fontWeight: 'bold', color: 'ink', flexShrink: '0' }), 'nums')}>{amount}</span>
+          <span className={cx(css({ fontSize: '15', fontWeight: 'bold', color: 'ink', flexShrink: '0' }), nums)}>{amount}</span>
         </div>
         <div className={css({ mt: '2', display: 'flex', alignItems: 'center', gap: '3' })}>
           <div className={css({ flex: '1', h: '1', rounded: 'full', bg: 'border', overflow: 'hidden' })}>
-            <div className={cx(css({ h: 'full', rounded: 'full', bg: 'ink' }), 'bar-grow')} style={{ width: `${Math.max(pct, 2)}%`, animationDelay: `${index * 40}ms` }} />
+            <div className={cx(css({ h: 'full', rounded: 'full', bg: 'ink' }), barGrow)} style={{ width: `${Math.max(pct, 2)}%`, animationDelay: `${index * 40}ms` }} />
           </div>
-          <span className={cx(css({ fontSize: '12', color: 'muted', w: '9', textAlign: 'right' }), 'nums')}>{pct}%</span>
+          <span className={cx(css({ fontSize: '12', color: 'muted', w: '9', textAlign: 'right' }), nums)}>{pct}%</span>
         </div>
       </div>
     </div>

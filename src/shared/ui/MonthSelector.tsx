@@ -1,6 +1,7 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { css, cva } from '../../../styled-system/css'
 import { MONTH_LONG } from '../utils/dates'
+import { monthIn } from './atoms'
 
 const kicker = css({ fontSize: '10', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: 'widest', color: 'muted', mb: '0.5' })
 const monthText = css({ fontSize: '15', fontWeight: 'semibold', color: 'ink', whiteSpace: 'nowrap' })
@@ -60,7 +61,7 @@ export function MonthSelector({
   align = 'center',
 }: MonthSelectorProps) {
   const label = (
-    <div key={`${year}-${month}`} className={direction === 'next' ? 'month-in-next' : 'month-in-prev'}>
+    <div key={`${year}-${month}`} className={monthIn[direction]}>
       {showLabel && (
         <div className={kicker}>
           Mês Atual

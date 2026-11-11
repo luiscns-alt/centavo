@@ -1,4 +1,5 @@
 import { css, cx } from '../../../styled-system/css'
+import { barGrow, nums } from '../../shared/ui/atoms'
 interface CategoryRowProps {
   icon: string
   name: string
@@ -26,16 +27,16 @@ export function CategoryRow({ icon, name, type, amount, share, index = 0 }: Cate
       <div className={css({ flex: '1', minW: '0' })}>
         <div className={css({ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '3' })}>
           <span className={css({ fontSize: '15', fontWeight: 'medium', color: 'ink', truncate: true })}>{name}</span>
-          <span className={cx(css({ fontSize: '15', fontWeight: 'bold', color: 'ink', flexShrink: '0' }), 'nums')}>{amount}</span>
+          <span className={cx(css({ fontSize: '15', fontWeight: 'bold', color: 'ink', flexShrink: '0' }), nums)}>{amount}</span>
         </div>
         <div className={css({ mt: '2', display: 'flex', alignItems: 'center', gap: '3' })}>
           <div className={css({ flex: '1', h: '1', rounded: 'full', bg: 'border', overflow: 'hidden' })}>
             <div
-              className={cx(css({ h: 'full', rounded: 'full' }, isIncome ? { bg: 'income' } : { bg: 'expense' }), 'bar-grow')}
+              className={cx(css({ h: 'full', rounded: 'full' }, isIncome ? { bg: 'income' } : { bg: 'expense' }), barGrow)}
               style={{ width: `${Math.max(pct, 2)}%`, animationDelay: `${index * 40}ms` }}
             />
           </div>
-          <span className={cx(css({ fontSize: '12', color: 'muted', w: '9', textAlign: 'right' }), 'nums')}>{pct}%</span>
+          <span className={cx(css({ fontSize: '12', color: 'muted', w: '9', textAlign: 'right' }), nums)}>{pct}%</span>
         </div>
       </div>
     </div>

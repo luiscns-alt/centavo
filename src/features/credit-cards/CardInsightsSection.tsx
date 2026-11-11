@@ -8,6 +8,7 @@ import { AccountIcon } from '../accounts'
 import { MONTH_LONG, MONTH_SHORT } from '../../shared/utils/dates'
 import { formatBRL } from '../../shared/utils/money'
 import { css, cx } from '../../../styled-system/css'
+import { barGrow, nums, slideUp } from '../../shared/ui/atoms'
 
 interface Props {
   year: number
@@ -35,7 +36,7 @@ export function CardInsightsSection({ year, month, period, accountIds, onOpenCar
   if (data === undefined) return <div className={css({ mt: '10', h: '[720px]' })} aria-hidden />
 
   return (
-    <div className={cx(css({ mt: '10' }), 'slide-up')}>
+    <div className={cx(css({ mt: '10' }), slideUp)}>
       <h2 className={css({ px: '5', md: { px: '1' }, m: '0', mb: '1', fontSize: '17', fontWeight: 'semibold', color: 'ink' })}>Cartões de crédito</h2>
       <p className={css({ px: '5', md: { px: '1' }, m: '0', mb: '4', fontSize: '13', color: 'muted' })}>Quanto os cartões pesam nas suas saídas e o que ainda falta pagar.</p>
       <CardShareBlock data={data} period={period} />
@@ -60,7 +61,7 @@ function CardShareBlock({ data, period }: { data: CardInsights; period: number }
           <div className={css({ fontSize: '11', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: 'widest', color: 'muted' })}>Peso do cartão nas saídas</div>
           <p className={css({ m: '0', mt: '1', fontSize: '14', color: 'ink' })}>
             {lastWithSpend
-              ? <>Em {MONTH_LONG[Number(lastWithSpend.month.slice(5)) - 1]}, <span className={cx(css({ fontWeight: 'bold' }), 'nums')}>{pct(lastWithSpend.cardShare)}</span> das saídas foram no cartão.</>
+              ? <>Em {MONTH_LONG[Number(lastWithSpend.month.slice(5)) - 1]}, <span className={cx(css({ fontWeight: 'bold' }), nums)}>{pct(lastWithSpend.cardShare)}</span> das saídas foram no cartão.</>
               : 'Sem saídas neste período.'}
           </p>
         </div>
@@ -111,7 +112,7 @@ function CardShareBlock({ data, period }: { data: CardInsights; period: number }
       <details className={css({ mt: '1', borderTopWidth: '1px', borderColor: 'border' })}>
         <summary className={css({ py: '3', fontSize: '13', fontWeight: 'semibold', color: 'ink', cursor: 'pointer', userSelect: 'none' })}>Ver valores</summary>
         <div className={css({ overflowX: 'auto', pb: '2' })}>
-          <table className={cx(css({ w: 'full', fontSize: '13', borderCollapse: 'collapse' }), 'nums')}>
+          <table className={cx(css({ w: 'full', fontSize: '13', borderCollapse: 'collapse' }), nums)}>
             <thead>
               <tr className={css({ fontSize: '11', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: '[.08em]', color: 'muted' })}>
                 <th scope="col" className={css({ textAlign: 'left', fontWeight: 'semibold', py: '2', pr: '2' })}>Mês</th>
@@ -152,7 +153,7 @@ function OwedBlock({ data }: { data: CardInsights }) {
         <p className={css({ m: '0', mt: '1', mb: '3', fontSize: '14', color: 'ink' })}>Tudo pago — nenhuma fatura em aberto.</p>
       ) : (
         <>
-          <div className={cx(css({ mt: '1', fontSize: '22', fontWeight: 'bold', color: 'ink', lineHeight: 'tight' }), 'nums')}>{formatBRL(total)}</div>
+          <div className={cx(css({ mt: '1', fontSize: '22', fontWeight: 'bold', color: 'ink', lineHeight: 'tight' }), nums)}>{formatBRL(total)}</div>
           <p className={css({ m: '0', mt: '0.5', fontSize: '12', color: 'muted' })}>
             em {invoices.length} {invoices.length === 1 ? 'fatura' : 'faturas'}
             {multi ? `, somando ${data.cards.length} cartões` : ''} — inclui parcelas já lançadas para os próximos meses
@@ -209,21 +210,21 @@ function CardsBlock({ data, onOpenCard }: { data: CardInsights; onOpenCard: (id:
                       {c.status === 'partial' && ` · falta ${formatBRL(c.remaining)}`}
                     </div>
                   </div>
-                  <div className={cx(css({ fontSize: '15', fontWeight: 'bold', color: 'ink', flexShrink: '0' }), 'nums')}>{formatBRL(c.total)}</div>
+                  <div className={cx(css({ fontSize: '15', fontWeight: 'bold', color: 'ink', flexShrink: '0' }), nums)}>{formatBRL(c.total)}</div>
                   <ChevronRight size={16} strokeWidth={1.75} className={css({ color: 'muted', flexShrink: '0' })} />
                 </div>
                 <div className={css({ mt: '2', ml: '11', h: '2.5', rounded: 'full', bg: 'border/50', overflow: 'hidden' })}>
                   <div
-                    className={cx(css({ h: 'full', rounded: 'full' }), 'bar-grow')}
+                    className={cx(css({ h: 'full', rounded: 'full' }), barGrow)}
                     style={{
                       width: c.total > 0 ? `${Math.max(share * 100, 1.5)}%` : 0,
-                      background: 'repeating-linear-gradient(45deg, var(--color-expense) 0 3px, color-mix(in srgb, var(--color-expense) 45%, var(--color-surface)) 3px 4.6px)',
+                      background: 'repeating-linear-gradient(45deg, var(--colors-expense) 0 3px, color-mix(in srgb, var(--colors-expense) 45%, var(--colors-surface)) 3px 4.6px)',
                       opacity: c.status === 'paid' ? 0.4 : 1,
                     }}
                   />
                 </div>
                 {c.available !== null && (
-                  <div className={cx(css({ mt: '1', ml: '11', fontSize: '11', color: 'muted' }), 'nums')}>
+                  <div className={cx(css({ mt: '1', ml: '11', fontSize: '11', color: 'muted' }), nums)}>
                     limite disponível {c.available < 0 ? '−' : ''}{formatBRL(Math.abs(c.available))}
                   </div>
                 )}

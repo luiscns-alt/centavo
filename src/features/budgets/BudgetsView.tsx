@@ -13,6 +13,7 @@ import type { Category } from '../../core/types'
 import { formatBRL } from '../../shared/utils/money'
 import { formatMonthName, formatMonthShort } from '../../shared/utils/dates'
 import { css, cx } from '../../../styled-system/css'
+import { nums, slideUp } from '../../shared/ui/atoms'
 
 
 /** Status in words + icon — the bar color is never the only signal */
@@ -65,7 +66,7 @@ export function BudgetsView({ nav, accountFiltered }: { nav: MonthNav; accountFi
   const startEdit = (id: number) => { setEditing(id); setOpen(id); setPicking(false) }
 
   return (
-    <div className="slide-up">
+    <div className={slideUp}>
       {accountFiltered && (
         <p className={css({ mx: '5', md: { mx: '0' }, mt: '3', fontSize: '12', color: 'muted' })}>Orçamentos somam todas as contas e cartões, sem o filtro de conta.</p>
       )}
@@ -127,7 +128,7 @@ export function BudgetsView({ nav, accountFiltered }: { nav: MonthNav; accountFi
         <section className={css({ mx: '5', md: { mx: '0' }, mt: '6' })}>
           <div className={css({ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', px: '1', mb: '2' })}>
             <h2 className={css({ fontSize: '11', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: 'widest', color: 'muted', m: '0' })}>Sem orçamento</h2>
-            <span className={cx(css({ fontSize: '12', color: 'muted' }), 'nums')}>{formatBRL(without.reduce((s, l) => s + l.spent, 0))}</span>
+            <span className={cx(css({ fontSize: '12', color: 'muted' }), nums)}>{formatBRL(without.reduce((s, l) => s + l.spent, 0))}</span>
           </div>
           <div className={css({ bg: 'surface', borderWidth: '1px', borderColor: 'border', rounded: '2xl', '& > :not(:last-child)': { borderBottomWidth: '1px', borderColor: 'border' } })}>
             {without.map(l => (
@@ -135,7 +136,7 @@ export function BudgetsView({ nav, accountFiltered }: { nav: MonthNav; accountFi
                 <div className={css({ display: 'flex', alignItems: 'center', gap: '3', px: '4', md: { px: '5' }, py: '3' })}>
                   <span className={css({ fontSize: '16', w: '6', textAlign: 'center' })} aria-hidden>{l.category.icon}</span>
                   <span className={css({ flex: '1', minW: '0', fontSize: '14', fontWeight: 'medium', color: 'ink', truncate: true })}>{l.category.name}</span>
-                  <span className={cx(css({ fontSize: '14', fontWeight: 'semibold', color: 'ink' }), 'nums')}>{formatBRL(l.spent)}</span>
+                  <span className={cx(css({ fontSize: '14', fontWeight: 'semibold', color: 'ink' }), nums)}>{formatBRL(l.spent)}</span>
                   <button
                     onClick={() => startEdit(l.category.id as number)}
                     className={css({ fontSize: '12', fontWeight: 'semibold', color: 'muted', _hover: { color: 'ink' }, borderWidth: '1px', borderColor: 'border', rounded: 'full', h: '7', px: '2.5' })}
@@ -165,13 +166,13 @@ function Summary({ dash, month }: { dash: NonNullable<ReturnType<typeof useBudge
       <div className={css({ fontSize: '11', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: 'widest', color: 'muted' })}>
         {t.remaining >= 0 ? `Resta em ${formatMonthName(month)}` : `Acima do orçado em ${formatMonthName(month)}`}
       </div>
-      <div className={cx(css({ fontFamily: 'serif', fontSize: '40', lineHeight: 'none', mt: '1' }, t.remaining < 0 ? { color: 'expense' } : { color: 'ink' }), 'nums')}>
+      <div className={cx(css({ fontFamily: 'serif', fontSize: '40', lineHeight: 'none', mt: '1' }, t.remaining < 0 ? { color: 'expense' } : { color: 'ink' }), nums)}>
         {t.remaining < 0 ? '−' : ''}{formatBRL(Math.abs(t.remaining))}
       </div>
       <div className={css({ mt: '3' })}>
         <BudgetBar spent={t.budgetedSpent} limit={t.budgeted} status={status} />
       </div>
-      <div className={cx(css({ mt: '2', display: 'flex', flexWrap: 'wrap', columnGap: '4', rowGap: '1', fontSize: '12', color: 'muted' }), 'nums')}>
+      <div className={cx(css({ mt: '2', display: 'flex', flexWrap: 'wrap', columnGap: '4', rowGap: '1', fontSize: '12', color: 'muted' }), nums)}>
         <span><span className={css({ color: 'ink', fontWeight: 'semibold' })}>{formatBRL(t.budgetedSpent)}</span> de {formatBRL(t.budgeted)} orçados</span>
         {t.unbudgetedSpent !== 0 && <span>{formatBRL(t.unbudgetedSpent)} fora do orçamento</span>}
         {t.projected > 0 && <span>+ {formatBRL(t.projected)} em parcelas a vencer</span>}
@@ -214,7 +215,7 @@ function Row({ line, month, open, onToggle, editing, onEdit, onDoneEdit, child =
                 {line.category.name}
                 {line.isOverride && <span className={css({ ml: '1.5', fontSize: '11', fontWeight: 'medium', color: 'muted' })}>só este mês</span>}
               </span>
-              <span className={cx(css({ fontSize: '14', flexShrink: '0' }), 'nums')}>
+              <span className={cx(css({ fontSize: '14', flexShrink: '0' }), nums)}>
                 <span className={css({ fontWeight: 'bold', color: 'ink' })}>{formatBRL(line.spent)}</span>
                 {line.limit !== null && <span className={css({ color: 'muted' })}> / {formatBRL(line.limit)}</span>}
               </span>
@@ -233,9 +234,9 @@ function Row({ line, month, open, onToggle, editing, onEdit, onDoneEdit, child =
       </button>
 
       {open && (
-        <div className={cx(css({ px: '4', md: { px: '5', pl: '14' }, pb: '4', pl: '[3.25rem]', fontSize: '13' }), 'slide-up')}>
+        <div className={cx(css({ px: '4', md: { px: '5', pl: '14' }, pb: '4', pl: '[3.25rem]', fontSize: '13' }), slideUp)}>
           {(parts.length > 0 || b.refunds > 0) && (
-            <dl className={cx(css({ '& > :not(:last-child)': { mb: '1' } }), 'nums')}>
+            <dl className={cx(css({ '& > :not(:last-child)': { mb: '1' } }), nums)}>
               {parts.map(p => (
                 <div key={p.label} className={css({ display: 'flex', justifyContent: 'space-between', gap: '3' })}>
                   <dt className={css({ color: 'muted' })}>{p.label}</dt><dd className={css({ color: 'ink' })}>{formatBRL(p.value)}</dd>
@@ -366,7 +367,7 @@ function Picker({ exclude, onPick, onClose }: { exclude: Set<number>; onPick: (i
   const categories = useLiveQuery(() => db.categories.where('type').equals('expense').toArray())
   const list = useMemo(() => sortCategories(categories ?? []).filter(c => !exclude.has(c.id as number)), [categories, exclude])
   return (
-    <section className={cx(css({ mx: '5', md: { mx: '0' }, mt: '4', bg: 'surface', borderWidth: '1px', borderColor: 'border', rounded: '2xl', p: '4' }), 'slide-up')}>
+    <section className={cx(css({ mx: '5', md: { mx: '0' }, mt: '4', bg: 'surface', borderWidth: '1px', borderColor: 'border', rounded: '2xl', p: '4' }), slideUp)}>
       <div className={css({ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: '3' })}>
         <h3 className={css({ m: '0', fontSize: '14', fontWeight: 'semibold', color: 'ink' })}>Orçamento para qual categoria?</h3>
         <button onClick={onClose} aria-label="Fechar" className={css({ w: '8', h: '8', rounded: 'full', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'muted', _hover: { color: 'ink' } })}>

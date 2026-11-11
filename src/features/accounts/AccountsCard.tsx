@@ -9,6 +9,7 @@ import { ACCOUNT_KINDS } from '../../core/constants/domain'
 import { todayISO, MONTH_SHORT, formatDayMonth, formatMonthName } from '../../shared/utils/dates'
 import { formatBRL, formatBalance } from '../../shared/utils/money'
 import { css, cx } from '../../../styled-system/css'
+import { nums } from '../../shared/ui/atoms'
 
 
 
@@ -79,7 +80,7 @@ export function AccountsCard({ asOf, account, showCards = true, balances, onMana
                             {ACCOUNT_KINDS[bank.kind].label}{bank.archived ? ' · arquivada' : ''}
                           </div>
                         </div>
-                        <div className={cx(css({ fontSize: '15', fontWeight: 'bold', flexShrink: '0' }, bank.balance < 0 ? { color: 'expense' } : { color: 'ink' }), 'nums')}>
+                        <div className={cx(css({ fontSize: '15', fontWeight: 'bold', flexShrink: '0' }, bank.balance < 0 ? { color: 'expense' } : { color: 'ink' }), nums)}>
                           {formatBalance(bank.balance)}
                         </div>
                       </button>
@@ -105,13 +106,13 @@ export function AccountsCard({ asOf, account, showCards = true, balances, onMana
                       <AccountIcon account={l.account} />
                       <div className={css({ flex: '1', minW: '0' })}>
                         <div className={css({ fontSize: '15', fontWeight: 'medium', color: 'ink', truncate: true })}>{l.account.name}</div>
-                        <div className={cx(css({ fontSize: '12', truncate: true }, l.next?.status === 'overdue' ? { color: 'expense', fontWeight: 'semibold' } : { color: 'muted' }), 'nums')}>
+                        <div className={cx(css({ fontSize: '12', truncate: true }, l.next?.status === 'overdue' ? { color: 'expense', fontWeight: 'semibold' } : { color: 'muted' }), nums)}>
                           {l.next
                             ? `parcela ${l.next.n}/${l.total} · ${l.next.status === 'overdue' ? 'venceu' : 'vence'} ${Number(l.next.dueDate.slice(8))} ${MONTH_SHORT[Number(l.next.dueDate.slice(5, 7)) - 1]} · ${formatBRL(l.next.total)}`
                             : 'quitado'}
                         </div>
                       </div>
-                      <div className={cx(css({ fontSize: '15', fontWeight: 'bold', flexShrink: '0', color: 'expense' }), 'nums')}>{l.outstanding > 0 ? `−${formatBRL(l.outstanding)}` : formatBRL(0)}</div>
+                      <div className={cx(css({ fontSize: '15', fontWeight: 'bold', flexShrink: '0', color: 'expense' }), nums)}>{l.outstanding > 0 ? `−${formatBRL(l.outstanding)}` : formatBRL(0)}</div>
                       <ChevronRight size={16} strokeWidth={1.75} className={css({ color: 'muted', flexShrink: '0' })} />
                     </button>
                   </li>
@@ -122,7 +123,7 @@ export function AccountsCard({ asOf, account, showCards = true, balances, onMana
 
           <div className={css({ mx: '5', md: { mx: '6' }, mt: '1', py: '3.5', borderTopWidth: '1px', borderColor: 'border', display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '3' })}>
             <span className={css({ fontSize: '13', fontWeight: 'semibold', color: 'ink' })}>Patrimônio</span>
-            <span className={cx(css({ fontSize: '17', fontWeight: 'bold' }, total < 0 ? { color: 'expense' } : { color: 'ink' }), 'nums')}>{loading ? '–' : formatBalance(total)}</span>
+            <span className={cx(css({ fontSize: '17', fontWeight: 'bold' }, total < 0 ? { color: 'expense' } : { color: 'ink' }), nums)}>{loading ? '–' : formatBalance(total)}</span>
           </div>
         </>
       )}
@@ -152,12 +153,12 @@ function CardRow({ card, summary, onOpen, nested = false }: {
       <AccountIcon account={card} size={nested ? 28 : 36} />
       <div className={css({ flex: '1', minW: '0' })}>
         <div className={css({ fontSize: '14', fontWeight: 'medium', color: 'ink', truncate: true })}>{card.name}</div>
-        <div className={cx(css({ fontSize: '12', color: 'muted', truncate: true }), 'nums')}>
+        <div className={cx(css({ fontSize: '12', color: 'muted', truncate: true }), nums)}>
           {summary ? `Fatura vence ${due}` : 'Cartão de crédito'}
           {summary?.available != null && ` · disp. ${formatBalance(summary.available)}`}
         </div>
       </div>
-      <div className={cx(css({ fontSize: '14', fontWeight: 'bold', flexShrink: '0', color: 'ink' }), 'nums')}>
+      <div className={cx(css({ fontSize: '14', fontWeight: 'bold', flexShrink: '0', color: 'ink' }), nums)}>
         {summary ? formatBRL(Math.max(summary.remaining, 0)) : '–'}
       </div>
       <ChevronRight size={16} strokeWidth={1.75} className={css({ color: 'muted', flexShrink: '0' })} />

@@ -1,5 +1,6 @@
 import { ADD_ITEM, NAV_ITEMS, type Tab } from './nav'
 import { css, cx } from '../../styled-system/css'
+import { fabShadow, pbSafe } from '../shared/ui/atoms'
 
 interface Props {
   active: Tab
@@ -12,7 +13,7 @@ const slots = [home, transactions, ADD_ITEM, compare, settings]
 
 export function BottomNav({ active, onChange }: Props) {
   return (
-    <nav className={cx(css({ md: { display: 'none' }, position: 'fixed', bottom: '0', insetX: '0', zIndex: '50', bg: 'surface/90', backdropFilter: '[blur(12px)]', borderTopWidth: '1px', borderColor: 'border' }), 'pb-safe')}>
+    <nav className={cx(css({ md: { display: 'none' }, position: 'fixed', bottom: '0', insetX: '0', zIndex: '50', bg: 'surface/90', backdropFilter: '[blur(12px)]', borderTopWidth: '1px', borderColor: 'border' }), pbSafe)}>
       <div className={css({ display: 'flex', alignItems: 'center', maxW: '[480px]', mx: 'auto', px: '2' })}>
         {slots.map(({ id, label, Icon }) => {
           if (id === 'add') {
@@ -21,7 +22,7 @@ export function BottomNav({ active, onChange }: Props) {
                 <button
                   onClick={() => onChange(id)}
                   aria-label={label}
-                  className={cx(css({ w: '12', h: '12', mt: '-1', rounded: '2xl', bg: 'ink', color: 'bg', display: 'flex', alignItems: 'center', justifyContent: 'center', _active: { scale: '[0.95]' }, transition: 'transform' }), 'fab-shadow')}
+                  className={cx(css({ w: '12', h: '12', mt: '-1', rounded: '2xl', bg: 'ink', color: 'bg', display: 'flex', alignItems: 'center', justifyContent: 'center', _active: { scale: '[0.95]' }, transition: 'transform' }), fabShadow)}
                 >
                   <Icon size={22} strokeWidth={2.25} />
                 </button>

@@ -12,6 +12,7 @@ import { CategoriesSection } from '../categories'
 import { AccountsSection } from '../accounts'
 import { todayISO } from '../../shared/utils/dates'
 import { css, cx } from '../../../styled-system/css'
+import { slideUp } from '../../shared/ui/atoms'
 
 const formatLongDate = (iso: string) =>
   new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' })
@@ -25,7 +26,7 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className={css({ mt: '6' })}>
       <div className={css({ px: '5', md: { px: '1' }, fontSize: '11', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: 'widest', color: 'muted', mb: '2' })}>{title}</div>
-      <div className={cx(css({ mx: '5', md: { mx: '0' }, bg: 'surface', borderWidth: '1px', borderColor: 'border', rounded: '2xl', p: '5' }), 'slide-up')}>{children}</div>
+      <div className={cx(css({ mx: '5', md: { mx: '0' }, bg: 'surface', borderWidth: '1px', borderColor: 'border', rounded: '2xl', p: '5' }), slideUp)}>{children}</div>
     </section>
   )
 }
@@ -218,7 +219,7 @@ function BackupSection() {
       </div>
 
       {restore.step === 'confirm' && (
-        <div className={cx(css({ mt: '5', bg: 'bg', borderWidth: '1px', borderColor: 'border', rounded: 'xl', p: '4' }), 'slide-up')} role="alertdialog" aria-labelledby="restore-title">
+        <div className={cx(css({ mt: '5', bg: 'bg', borderWidth: '1px', borderColor: 'border', rounded: 'xl', p: '4' }), slideUp)} role="alertdialog" aria-labelledby="restore-title">
           <div id="restore-title" className={css({ fontSize: '15', fontWeight: 'semibold', color: 'ink' })}>
             Restaurar backup{restore.backup.exportedAt ? ` de ${formatLongDate(restore.backup.exportedAt)}` : ''}?
           </div>

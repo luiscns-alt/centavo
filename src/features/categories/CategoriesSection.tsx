@@ -7,6 +7,7 @@ import type { Category } from '../../core/types'
 import { STORAGE_KEYS } from '../../shared/constants/storageKeys'
 import { readLocal, writeLocal } from '../../shared/utils/storage'
 import { css, cx } from '../../../styled-system/css'
+import { nums, slideUp } from '../../shared/ui/atoms'
 
 type Editing = { mode: 'new' } | { mode: 'new-child'; parentId: number } | { mode: 'edit'; id: number } | { mode: 'delete'; id: number } | null
 
@@ -157,12 +158,12 @@ export function CategoriesSection() {
                 </div>
                 <div className={css({ flex: '1', minW: '0' })}>
                   <div className={css({ fontSize: '15', fontWeight: 'medium', color: 'ink', truncate: true })}>{cat.name}</div>
-                  <div className={cx(css({ fontSize: '12', color: 'muted' }), 'nums')}>
+                  <div className={cx(css({ fontSize: '12', color: 'muted' }), nums)}>
                     {used === 0 ? 'Sem lançamentos' : `${used} ${used === 1 ? 'lançamento' : 'lançamentos'}`}
                   </div>
                 </div>
                 {confirming ? (
-                  <div className={cx(css({ display: 'flex', alignItems: 'center', gap: '1.5' }), 'slide-up')}>
+                  <div className={cx(css({ display: 'flex', alignItems: 'center', gap: '1.5' }), slideUp)}>
                     <button
                       onClick={() => setEditing(null)}
                       className={css({ h: '8', px: '3', rounded: 'full', fontSize: '12', fontWeight: 'semibold', color: 'muted', _hover: { color: 'ink' } })}

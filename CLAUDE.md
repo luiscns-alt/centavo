@@ -43,13 +43,13 @@ src/
 - Types: persisted entities in `core/types/`; a feature's own types stay in the feature (exported via its index); component `Props` stay next to the component.
 - No `enum` (`erasableSyntaxOnly`): use `as const` objects + derived unions. Typed literal comparisons (`t.type === 'expense'`) are fine; constants are for lists and labels.
 - Dates and money: never re-implement month names or BRL formatting — use `shared/utils/dates` and `shared/utils/money`. localStorage only through `shared/utils/storage` with keys from `STORAGE_KEYS`.
-- Styling — **migration to Panda CSS in progress** (branch `feat/panda-css`, config in `panda.config.ts`):
-  - Migrated files use only Panda (`css`, `cva`, `cx` from `styled-system/css`; tokens only, `strictTokens`). Never add Tailwind classes to them; a parent may pass `className` for layout only (margins, flex), never colors.
-  - Not-yet-migrated files keep Tailwind v4 (`@tailwindcss/vite`), colors only from the `@theme` tokens (lint `architecture/tailwind-colors`).
-  - Panda tokens point at the CSS variables of `src/index.css` until Tailwind is removed; Tailwind's preflight is the only reset meanwhile.
-  - Migrated: every component in `app/`, `features/` and `shared/` uses Panda (`css`/`cx`/`cva`); no Tailwind utility classes remain. Still pending (final phase): remove Tailwind itself, move the light/dark values from `index.css` into `panda.config.ts`, enable Panda's preflight, and convert the custom `index.css` classes (`nums`, `slide-up`, `bar-grow`, `bar-hatch`, `fab-shadow`, `pb-safe`, `toast-in`, `no-scrollbar`, `month-in-*`).
+- Styling — **Panda CSS only** (`panda.config.ts`; no Tailwind):
+  - Components use `css`, `cva`, `cx` from `styled-system/css` with theme tokens only (`strictTokens`). A parent may pass `className` for layout only (margins, flex), never colors.
+  - All tokens live in `panda.config.ts`: colors as light/dark pairs (`_osDark`), fonts, type scale, easings, keyframes/animations, the `fab` shadow. Global styles (html/body/#root, focus ring, selection, date input) are its `globalCss`; Panda's preflight is the reset. `src/index.css` only declares the layer order.
+  - Reusable non-component classes are in `shared/ui/atoms.ts` (`nums`, `slideUp`, `barGrow`, `barHatch`, `fabShadow`, `pbSafe`, `toastIn`, `noScrollbar`, `monthIn`) — compose with `cx(css({...}), nums)`. `'group'` stays a plain class name (Panda's `_groupHover`).
+  - Colors outside the theme are rejected by lint (`architecture/raw-colors`): literal hex/rgb/hsl/oklch in any string (escape hatches, inline styles, gradients); only neutral black/white overlays are allowed. In inline styles reference tokens as `var(--colors-expense)`.
   - One-off values outside the scale use Panda's escape hatch (`'[150px]'`); a value used more than once becomes a token in `panda.config.ts`.
   - `styled-system/` is generated (`npm install` runs `panda codegen`) and gitignored.
-- Rules live in `eslint-rules/architecture.js` (`architecture/boundaries`, `architecture/no-ui-writes`, `architecture/tailwind-colors`).
+- Rules live in `eslint-rules/architecture.js` (`architecture/boundaries`, `architecture/no-ui-writes`, `architecture/raw-colors`).
 - Backup export: `features/settings/saveBackupFile.ts` — download in the browser; in the Android app a copy in Documentos/centavo (best effort) + the share sheet (`@capacitor/filesystem`, `@capacitor/share`), since a WebView ignores download links.
 - Saldo de <mês> (Início › O mês) = `carryInto` (series.ts) + the month's result — never treat the carry as income.

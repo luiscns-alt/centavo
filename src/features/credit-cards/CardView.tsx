@@ -9,6 +9,7 @@ import type { EditTarget } from '../transactions'
 import { todayISO, formatDayMonthNumeric, formatMonthAbbr, formatMonthName } from '../../shared/utils/dates'
 import { formatBRL } from '../../shared/utils/money'
 import { css, cx } from '../../../styled-system/css'
+import { barGrow, noScrollbar, nums, slideUp } from '../../shared/ui/atoms'
 
 
 const STATUS: Record<InvoiceStatus, { label: string; tone: string }> = {
@@ -71,15 +72,15 @@ export function CardView({ cardId, onBack, onEdit }: Props) {
         <section className={css({ mx: '5', md: { mx: '0' }, bg: 'surface', borderWidth: '1px', borderColor: 'border', rounded: '2xl', px: '5', py: '4' })}>
           <div className={css({ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '3' })}>
             <span className={css({ fontSize: '11', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: 'widest', color: 'muted' })}>Dívida total</span>
-            <span className={cx(css({ fontSize: '17', fontWeight: 'bold', color: 'ink' }), 'nums')}>{formatBRL(Math.max(debt, 0))}</span>
+            <span className={cx(css({ fontSize: '17', fontWeight: 'bold', color: 'ink' }), nums)}>{formatBRL(Math.max(debt, 0))}</span>
           </div>
           <p className={css({ m: '0', mt: '0.5', fontSize: '12', color: 'muted' })}>inclui as parcelas futuras</p>
           {limit !== undefined && usedPct !== null && (
             <>
               <div className={css({ mt: '3', h: '1.5', rounded: 'full', bg: 'border', overflow: 'hidden' })}>
-                <div className={cx(css({ h: 'full', rounded: 'full', bg: 'ink' }), 'bar-grow')} style={{ width: `${usedPct}%` }} />
+                <div className={cx(css({ h: 'full', rounded: 'full', bg: 'ink' }), barGrow)} style={{ width: `${usedPct}%` }} />
               </div>
-              <div className={cx(css({ mt: '1.5', display: 'flex', justifyContent: 'space-between', fontSize: '12', color: 'muted' }), 'nums')}>
+              <div className={cx(css({ mt: '1.5', display: 'flex', justifyContent: 'space-between', fontSize: '12', color: 'muted' }), nums)}>
                 <span>{usedPct}% do limite de {formatBRL(limit)}</span>
                 <span className={css(available !== null && available < 0 ? { color: 'expense', fontWeight: 'semibold' } : { color: 'ink', fontWeight: 'semibold' })}>
                   disponível {available !== null && available < 0 ? '−' : ''}{formatBRL(Math.abs(available ?? 0))}
@@ -91,7 +92,7 @@ export function CardView({ cardId, onBack, onEdit }: Props) {
 
         {/* Invoice timeline */}
         <div className={css({ mt: '5', px: '5', md: { px: '0' }, fontSize: '11', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: 'widest', color: 'muted', mb: '2' })}>Faturas</div>
-        <div className={cx(css({ display: 'flex', gap: '2', overflowX: 'auto', px: '5', md: { px: '0' }, pb: '1' }), 'no-scrollbar')} role="tablist" aria-label="Faturas">
+        <div className={cx(css({ display: 'flex', gap: '2', overflowX: 'auto', px: '5', md: { px: '0' }, pb: '1' }), noScrollbar)} role="tablist" aria-label="Faturas">
           {invoices.map(inv => {
             const isActive = inv.invoiceMonth === active?.invoiceMonth
             const st = STATUS[inv.status]
@@ -107,7 +108,7 @@ export function CardView({ cardId, onBack, onEdit }: Props) {
                   {formatMonthAbbr(inv.invoiceMonth)}{inv.invoiceMonth.slice(0, 4) !== currentInvoice.slice(0, 4) ? ` ${inv.invoiceMonth.slice(2, 4)}` : ''}
                   {inv.invoiceMonth === currentInvoice && <span className={css({ fontWeight: 'normal', opacity: '0.7' })}> · atual</span>}
                 </div>
-                <div className={cx(css({ mt: '0.5', fontSize: '13', fontWeight: 'bold', truncate: true }, isActive ? { color: 'bg' } : { color: 'ink' }), 'nums')}>{formatBRL(inv.total)}</div>
+                <div className={cx(css({ mt: '0.5', fontSize: '13', fontWeight: 'bold', truncate: true }, isActive ? { color: 'bg' } : { color: 'ink' }), nums)}>{formatBRL(inv.total)}</div>
                 <div className={cx(css({ fontSize: '11' }), isActive ? css({ color: 'bg/70' }) : st.tone)}>{st.label}</div>
               </button>
             )
@@ -128,15 +129,15 @@ function InvoicePanel({ invoice, cardId, defaultFrom, onEdit }: {
   const monthName = formatMonthName(invoice.invoiceMonth)
 
   return (
-    <section className={cx(css({ mx: '5', md: { mx: '0' }, mt: '4', bg: 'surface', borderWidth: '1px', borderColor: 'border', rounded: '2xl' }), 'slide-up')}>
+    <section className={cx(css({ mx: '5', md: { mx: '0' }, mt: '4', bg: 'surface', borderWidth: '1px', borderColor: 'border', rounded: '2xl' }), slideUp)}>
       <div className={css({ px: '5', pt: '5', pb: '4' })}>
         <div className={css({ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '3' })}>
           <h2 className={css({ m: '0', fontSize: '15', fontWeight: 'semibold', color: 'ink' })}>Fatura de {monthName}</h2>
           <span className={cx(css({ fontSize: '12', fontWeight: 'semibold' }), st.tone)}>{st.label}</span>
         </div>
-        <div className={cx(css({ fontSize: '12', color: 'muted', mt: '0.5' }), 'nums')}>fecha {formatDayMonthNumeric(invoice.closingDate)} · vence {formatDayMonthNumeric(invoice.dueDate)}</div>
+        <div className={cx(css({ fontSize: '12', color: 'muted', mt: '0.5' }), nums)}>fecha {formatDayMonthNumeric(invoice.closingDate)} · vence {formatDayMonthNumeric(invoice.dueDate)}</div>
 
-        <div className={cx(css({ mt: '4', display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '2' }), 'nums')}>
+        <div className={cx(css({ mt: '4', display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '2' }), nums)}>
           <Figure label="Total" value={formatBRL(invoice.total)} />
           <Figure label="Pago" value={formatBRL(invoice.paid)} />
           <Figure label={invoice.remaining < 0 ? 'Crédito' : 'Restante'} value={formatBRL(Math.abs(invoice.remaining))} strong />
@@ -168,14 +169,14 @@ function InvoicePanel({ invoice, cardId, defaultFrom, onEdit }: {
                   <div className={css({ w: '9', h: '9', rounded: 'tile' }, isRefund ? { bg: 'border/60' } : { bg: 'expense.light' }, { display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16', flexShrink: '0' })} aria-hidden>{category?.icon}</div>
                   <div className={css({ flex: '1', minW: '0' })}>
                     <div className={css({ fontSize: '15', fontWeight: 'medium', color: 'ink', truncate: true })}>{isRefund ? tx.description : purchase?.description || category?.name}</div>
-                    <div className={cx(css({ fontSize: '12', color: 'muted', truncate: true }), 'nums')}>
+                    <div className={cx(css({ fontSize: '12', color: 'muted', truncate: true }), nums)}>
                       {isRefund ? `Estorno · ${formatDayMonthNumeric(tx.date)}` : <>
                         {(tx.installments ?? 1) > 1 ? `${tx.installment}/${tx.installments} · ` : ''}compra {formatDayMonthNumeric(tx.date)}
                         {purchase && (tx.installments ?? 1) > 1 ? ` · total ${formatBRL(purchase.total)}` : ''}
                       </>}
                     </div>
                   </div>
-                  <div className={cx(css({ fontSize: '15', fontWeight: 'bold', flexShrink: '0' }, isRefund ? { color: 'ink' } : { color: 'expense' }), 'nums')}>{isRefund ? '+' : '−'}{formatBRL(tx.amount)}</div>
+                  <div className={cx(css({ fontSize: '15', fontWeight: 'bold', flexShrink: '0' }, isRefund ? { color: 'ink' } : { color: 'expense' }), nums)}>{isRefund ? '+' : '−'}{formatBRL(tx.amount)}</div>
                 </button>
               </li>
             )
@@ -191,9 +192,9 @@ function InvoicePanel({ invoice, cardId, defaultFrom, onEdit }: {
                 </div>
                 <div className={css({ flex: '1', minW: '0' })}>
                   <div className={css({ fontSize: '15', fontWeight: 'medium', color: 'ink', truncate: true })}>{p.description || 'Pagamento'}</div>
-                  <div className={cx(css({ fontSize: '12', color: 'muted' }), 'nums')}>{formatDayMonthNumeric(p.date)}</div>
+                  <div className={cx(css({ fontSize: '12', color: 'muted' }), nums)}>{formatDayMonthNumeric(p.date)}</div>
                 </div>
-                <div className={cx(css({ fontSize: '15', fontWeight: 'bold', color: 'ink', flexShrink: '0' }), 'nums')}>+{formatBRL(p.amount)}</div>
+                <div className={cx(css({ fontSize: '15', fontWeight: 'bold', color: 'ink', flexShrink: '0' }), nums)}>+{formatBRL(p.amount)}</div>
               </button>
             </li>
           ))}
@@ -245,7 +246,7 @@ function PayForm({ invoice, cardId, defaultFrom, onDone }: { invoice: Invoice; c
   }
 
   return (
-    <div className={cx(css({ mt: '4', mx: '-5', px: '0', pt: '4', borderTopWidth: '1px', borderColor: 'border' }), 'slide-up')}>
+    <div className={cx(css({ mt: '4', mx: '-5', px: '0', pt: '4', borderTopWidth: '1px', borderColor: 'border' }), slideUp)}>
       <div className={css({ px: '5', fontSize: '11', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: 'widest', color: 'muted', mb: '2' })}>Pagar com</div>
       <AccountChips label="Conta de pagamento" accounts={banks} value={fromId} onChange={setFrom} />
       <div className={css({ px: '5', mt: '3', display: 'flex', alignItems: 'center', gap: '2' })}>
@@ -256,7 +257,7 @@ function PayForm({ invoice, cardId, defaultFrom, onDone }: { invoice: Invoice; c
             aria-label="Valor do pagamento"
             value={display}
             onChange={e => setDigits(e.target.value.replace(/\D/g, '').replace(/^0+/, '').slice(0, 11))}
-            className={cx(css({ flex: '1', minW: '0', bg: 'transparent', fontSize: '15', fontWeight: 'semibold', color: 'ink', outline: 'none' }), 'nums')}
+            className={cx(css({ flex: '1', minW: '0', bg: 'transparent', fontSize: '15', fontWeight: 'semibold', color: 'ink', outline: 'none' }), nums)}
           />
         </div>
         <input
@@ -264,7 +265,7 @@ function PayForm({ invoice, cardId, defaultFrom, onDone }: { invoice: Invoice; c
           aria-label="Data do pagamento"
           value={date}
           onChange={e => setDate(e.target.value)}
-          className={cx(css({ w: '[150px]', flexShrink: '0', h: '11', px: '2.5', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', fontSize: '14', color: 'ink', outline: 'none' }), 'nums')}
+          className={cx(css({ w: '[150px]', flexShrink: '0', h: '11', px: '2.5', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', fontSize: '14', color: 'ink', outline: 'none' }), nums)}
         />
       </div>
       <p className={css({ px: '5', mt: '1.5', mb: '0', fontSize: '12', color: 'muted' })}>

@@ -48,8 +48,8 @@
 - **Expense light (backgrounds):** `#F9EEF0`
 - **Dark mode:** Invert surfaces — `#1A1816` bg, `#2A2724` surface, `#F7F5F1` text, `#9B948F` muted, `#3A3532` border. Reduce income/expense saturation ~15% for dark backgrounds.
 
-### Color tokens (Tailwind v4)
-Tokens live in `src/index.css` › `@theme` as `--color-*` (bg, surface, ink, muted, border, income, income-light, expense, expense-light), with dark values swapped under `prefers-color-scheme: dark`. Use them as utilities (`text-expense`, `bg-ink/55`). The lint rule `architecture/tailwind-colors` rejects arbitrary colors (`text-[#…]`), Tailwind palette colors (`bg-red-500`, `text-black`) and unknown color names (typos); `white`, `transparent` and `current` are allowed.
+### Color tokens (Panda CSS)
+Tokens live in `panda.config.ts` › `semanticTokens.colors` (bg, surface, ink, muted, border, income, income.light, expense, expense.light), each a light/dark pair (`_osDark`, follows `prefers-color-scheme`). Use them by name in `css()` (`color: 'expense'`, `bg: 'ink/55'`). `strictTokens` makes any other color a type error, and the lint rule `architecture/raw-colors` rejects literal colors in escape hatches and inline styles; `white`, `transparent` and `current` are allowed. As CSS variables they are `var(--colors-*)`.
 
 ### Variants
 Components with states use Panda CSS atomic recipes (`cva` from `styled-system/css`): `button` and `chip` in `src/shared/ui/variants.ts`, plus local ones in `BudgetBar` and `TransactionRow`. A variant that doesn't exist, or a color that isn't a token, is a type error (`strictTokens`).
@@ -152,7 +152,7 @@ Two charts, both hand-built SVG (no chart library — offline PWA, small bundle,
 - **Axes:** one y-axis only, compact pt-BR labels ("2,5 mil") in 11px `muted`; month labels 11px, every other one when columns are narrower than 30px.
 - **Text:** values, labels and legends use text tokens (`ink`/`muted`); the colored mark beside them carries identity. Exception kept from the ledger: signed Saldo values in tables use `income`/`expense` with +/− prefixes.
 - **Interaction:** every month column is a hover/focus/tap target larger than its bars; tooltip lists the month's values with swatches. Filters (period) sit in one row above the chart, legend on the same row.
-- **Dark mode:** same tokens — the chart reads `--color-*`, so it follows the dark palette automatically.
+- **Dark mode:** same tokens — the chart uses the color tokens, so it follows the dark palette automatically.
 - **Comparativo → Cartões de crédito** (below the Entradas × Saídas table; rendered only when a card is in scope — no empty state; a filter that excludes every card hides it):
   1. *Peso do cartão nas saídas* — stacked columns per month: each card's invoice is its own hatched `expense` segment (split from the next by a 2px surface hairline, no per-card colors), "outras formas" on top as an `expense` tint (32%). One callout on the latest month ("28%"). The tint is below 3:1 on the surface, so a legend and a "Ver valores" table are mandatory.
   2. *Faturas a pagar* — total still owed across cards as the headline number, then one hatched column per invoice month (sum of all cards; per-card split only in the tooltip). No income reference line (user decision: income is too irregular to be a fair baseline).
@@ -169,7 +169,7 @@ Two charts, both hand-built SVG (no chart library — offline PWA, small bundle,
 ### Análises → Orçamentos
 - The nav tab is **Análises** with a segmented control: Comparativo | Orçamentos (choice remembered). Orçamentos is always global (no account filter).
 - Monthly limit per expense category: versions "a partir de <mês>" + one-off "só em <mês>" exceptions. Card installments count in the invoice month; refunds give back.
-- **No traffic-light colors.** Bar states: ok → neutral ink bar; ≥80% → `expense` bar + ⚠ icon + "88% usado"; over 100% → `expense` up to the limit + striped (`.bar-hatch`) overflow + "Estourou R$ X". Status is always also in words. Current month shows a small surface-colored tick at the expected pace, and "Acima do ritmo" (ink, gauge icon) when ahead of it.
+- **No traffic-light colors.** Bar states: ok → neutral ink bar; ≥80% → `expense` bar + ⚠ icon + "88% usado"; over 100% → `expense` up to the limit + striped (`barHatch`, shared/ui/atoms) overflow + "Estourou R$ X". Status is always also in words. Current month shows a small surface-colored tick at the expected pace, and "Acima do ritmo" (ink, gauge icon) when ahead of it.
 - Summary hero (Instrument Serif): what is left of the budgeted total; footnotes for spending outside budgets and loan installments still due.
 - Expanding a row: breakdown (à vista / parcelas de cartão / empréstimos / estornos), loan installments still due ("vai estourar"), card installments already committed for the next months, inline editor.
 - Início shows an Orçamentos card (only when a budget exists) with up to 3 alerts. A one-time toast (ink, bottom) announces a category crossing 80% or 100% in this or next month.

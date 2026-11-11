@@ -12,6 +12,7 @@ import type { LoanType, PaymentMethod, AmortizationSystem, RateUnit } from '../.
 import { todayISO, addMonths, dayIn, parseYM, formatMonthShortYear } from '../../shared/utils/dates'
 import { formatBRL } from '../../shared/utils/money'
 import { css, cx } from '../../../styled-system/css'
+import { nums } from '../../shared/ui/atoms'
 
 const plusOneMonth = (iso: string) => dayIn(addMonths(parseYM(iso), 1), Number(iso.slice(8)))
 
@@ -120,7 +121,7 @@ export function LoanForm({ onCreated, onCancel }: Props) {
             <div className={css({ gridColumn: 'span 2 / span 2', sm: { gridColumn: 'span 1 / span 1' } })}>
               <FieldLabel>Prazo</FieldLabel>
               <div className={css({ h: '11', px: '3', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', display: 'flex', alignItems: 'center', gap: '1.5', _focusWithin: { borderColor: 'muted/60' } })}>
-                <input inputMode="numeric" aria-label="Prazo em meses" placeholder="48" value={term} onChange={e => setTerm(e.target.value.replace(/\D/g, '').slice(0, 3))} className={cx(css({ flex: '1', minW: '0', bg: 'transparent', fontSize: '15', fontWeight: 'semibold', color: 'ink', _placeholder: { color: 'muted', fontWeight: 'normal' }, outline: 'none' }), 'nums')} />
+                <input inputMode="numeric" aria-label="Prazo em meses" placeholder="48" value={term} onChange={e => setTerm(e.target.value.replace(/\D/g, '').slice(0, 3))} className={cx(css({ flex: '1', minW: '0', bg: 'transparent', fontSize: '15', fontWeight: 'semibold', color: 'ink', _placeholder: { color: 'muted', fontWeight: 'normal' }, outline: 'none' }), nums)} />
                 <span className={css({ fontSize: '13', color: 'muted' })}>meses</span>
               </div>
             </div>
@@ -130,12 +131,12 @@ export function LoanForm({ onCreated, onCancel }: Props) {
             <FieldLabel>Taxa de juros</FieldLabel>
             <div className={css({ display: 'flex', alignItems: 'center', gap: '2' })}>
               <div className={css({ flex: '1', h: '11', px: '3', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', display: 'flex', alignItems: 'center', gap: '1.5', _focusWithin: { borderColor: 'muted/60' } })}>
-                <input inputMode="decimal" aria-label="Taxa de juros" placeholder="1,49" value={rateText} onChange={e => setRateText(e.target.value.replace(/[^\d,.]/g, '').slice(0, 10))} className={cx(css({ flex: '1', minW: '0', bg: 'transparent', fontSize: '15', fontWeight: 'semibold', color: 'ink', _placeholder: { color: 'muted', fontWeight: 'normal' }, outline: 'none' }), 'nums')} />
+                <input inputMode="decimal" aria-label="Taxa de juros" placeholder="1,49" value={rateText} onChange={e => setRateText(e.target.value.replace(/[^\d,.]/g, '').slice(0, 10))} className={cx(css({ flex: '1', minW: '0', bg: 'transparent', fontSize: '15', fontWeight: 'semibold', color: 'ink', _placeholder: { color: 'muted', fontWeight: 'normal' }, outline: 'none' }), nums)} />
                 <span className={css({ fontSize: '13', color: 'muted' })}>%</span>
               </div>
               <Choice label="Período da taxa" value={rateUnit} onChange={setRateUnit} options={[{ id: 'monthly', label: 'ao mês' }, { id: 'annual', label: 'ao ano' }]} />
             </div>
-            {sim && rateUnit === 'annual' && <p className={cx(css({ m: '0', mt: '1.5', fontSize: '12', color: 'muted' }), 'nums')}>Equivale a {sim.monthly.replace('.', ',')}% ao mês (juros compostos).</p>}
+            {sim && rateUnit === 'annual' && <p className={cx(css({ m: '0', mt: '1.5', fontSize: '12', color: 'muted' }), nums)}>Equivale a {sim.monthly.replace('.', ',')}% ao mês (juros compostos).</p>}
           </div>
 
           <div>
@@ -146,11 +147,11 @@ export function LoanForm({ onCreated, onCancel }: Props) {
           <div className={css({ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '3' })}>
             <label className={css({ display: 'block', minW: '0' })}>
               <FieldLabel>Contratado em</FieldLabel>
-              <input type="date" value={startDate} onChange={e => { setStartDate(e.target.value); setFirstDue(null) }} className={cx(css({ w: 'full' }, { h: '11', px: '3', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', fontSize: '15', color: 'ink', _placeholder: { color: 'muted' }, outline: 'none', _focus: { borderColor: 'muted/60' } }), 'nums')} />
+              <input type="date" value={startDate} onChange={e => { setStartDate(e.target.value); setFirstDue(null) }} className={cx(css({ w: 'full' }, { h: '11', px: '3', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', fontSize: '15', color: 'ink', _placeholder: { color: 'muted' }, outline: 'none', _focus: { borderColor: 'muted/60' } }), nums)} />
             </label>
             <label className={css({ display: 'block', minW: '0' })}>
               <FieldLabel>1º vencimento</FieldLabel>
-              <input type="date" value={firstDueDate} onChange={e => setFirstDue(e.target.value)} className={cx(css({ w: 'full' }, { h: '11', px: '3', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', fontSize: '15', color: 'ink', _placeholder: { color: 'muted' }, outline: 'none', _focus: { borderColor: 'muted/60' } }), 'nums')} />
+              <input type="date" value={firstDueDate} onChange={e => setFirstDue(e.target.value)} className={cx(css({ w: 'full' }, { h: '11', px: '3', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', fontSize: '15', color: 'ink', _placeholder: { color: 'muted' }, outline: 'none', _focus: { borderColor: 'muted/60' } }), nums)} />
             </label>
           </div>
 
@@ -194,7 +195,7 @@ export function LoanForm({ onCreated, onCancel }: Props) {
         <section className={css({ mx: '5', md: { mx: '0' }, mt: '4', bg: 'surface', borderWidth: '1px', borderColor: 'border', rounded: '2xl', p: '5' })} aria-live="polite">
           <div className={css({ fontSize: '11', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: 'widest', color: 'muted', mb: '2' })}>Simulação</div>
           {sim ? (
-            <div className={cx(css({ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', columnGap: '4', rowGap: '3' }), 'nums')}>
+            <div className={cx(css({ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', columnGap: '4', rowGap: '3' }), nums)}>
               <Fig label={system === 'price' ? 'Parcela' : '1ª parcela'} value={formatBRL(sim.first.total)} strong />
               <Fig label={system === 'price' ? 'Última' : 'Última parcela'} value={formatBRL(sim.last.total)} />
               <Fig label="Total de juros" value={formatBRL(sim.interest)} />

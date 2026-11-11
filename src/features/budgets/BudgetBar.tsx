@@ -1,11 +1,12 @@
 import { css, cva, cx } from '../../../styled-system/css'
 import type { BudgetStatus } from './budgets'
+import { barGrow, barHatch } from '../../shared/ui/atoms'
 
 const track = cva({
   base: { position: 'relative', rounded: 'full', bg: 'border', overflow: 'hidden' },
   variants: { thin: { true: { h: '1' }, false: { h: '1.5' } } },
 })
-/** Fill below the limit: neutral ink while ok, vinho from 80% on (`bar-grow` = entry animation, index.css) */
+/** Fill below the limit: neutral ink while ok, vinho from 80% on (`barGrow` = entry animation, shared/ui/atoms) */
 const fill = cva({
   base: { position: 'absolute', insetY: '0', left: '0' },
   variants: {
@@ -17,7 +18,7 @@ const fill = cva({
     },
   },
 })
-/** Striped overflow past the limit (`bar-hatch`, index.css) */
+/** Striped overflow past the limit (`barHatch`, shared/ui/atoms) */
 const overflow = css({ position: 'absolute', insetY: '0', right: '0' })
 const paceTick = css({ position: 'absolute', insetY: '0', w: '0.5', bg: 'surface' })
 
@@ -44,11 +45,11 @@ export function BudgetBar({ spent, limit, status, pace, thin = false }: {
     <div className={track({ thin })} aria-hidden>
       {over ? (
         <>
-          <div className={cx(fill({ status: 'over' }), 'bar-grow')} style={{ width: `${limitPct}%` }} />
-          <div className={cx(overflow, 'bar-hatch')} style={{ left: `calc(${limitPct}% + 2px)` }} />
+          <div className={cx(fill({ status: 'over' }), barGrow)} style={{ width: `${limitPct}%` }} />
+          <div className={cx(overflow, barHatch)} style={{ left: `calc(${limitPct}% + 2px)` }} />
         </>
       ) : (
-        <div className={cx(fill({ status }), 'bar-grow')} style={{ width: `${fillPct}%` }} />
+        <div className={cx(fill({ status }), barGrow)} style={{ width: `${fillPct}%` }} />
       )}
       {pace != null && !over && limit > 0 && pace > 0 && pace < limit && (
         <div className={paceTick} style={{ left: `${(pace / limit) * 100}%` }} />

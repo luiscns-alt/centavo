@@ -10,6 +10,7 @@ import type { Transaction } from '../../core/types'
 import { todayISO, formatMonthYear, formatShortDate } from '../../shared/utils/dates'
 import { formatBRL } from '../../shared/utils/money'
 import { css, cx } from '../../../styled-system/css'
+import { nums, slideUp } from '../../shared/ui/atoms'
 
 
 /**
@@ -66,7 +67,7 @@ export function RefundPanel({ target, total, minDate }: { target: RefundTarget; 
       <div className={css({ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '3', px: '4', py: '3' })}>
         <div>
           <div className={css({ fontSize: '13', fontWeight: 'semibold', color: 'ink' })}>Estornos</div>
-          <div className={cx(css({ fontSize: '12', color: 'muted' }), 'nums')}>
+          <div className={cx(css({ fontSize: '12', color: 'muted' }), nums)}>
             {refunded > 0 ? `${formatBRL(refunded)} devolvidos · até ${formatBRL(left)} ainda` : 'Dinheiro de volta reduz o gasto da categoria'}
           </div>
         </div>
@@ -85,9 +86,9 @@ export function RefundPanel({ target, total, minDate }: { target: RefundTarget; 
         <ul className={css({ listStyle: 'none', m: '0', p: '0', borderTopWidth: '1px', borderColor: 'border', '& > :not(:last-child)': { borderBottomWidth: '1px', borderColor: 'border' } })}>
           {refunds.map(r => (
             <li key={r.id} className={css({ display: 'flex', alignItems: 'center', gap: '3', px: '4', py: '2.5', fontSize: '13' })}>
-              <span className={cx(css({ color: 'muted', w: '16', flexShrink: '0' }), 'nums')}>{formatShortDate(r.date)}</span>
+              <span className={cx(css({ color: 'muted', w: '16', flexShrink: '0' }), nums)}>{formatShortDate(r.date)}</span>
               <span className={css({ flex: '1', minW: '0', truncate: true, color: 'ink' })}>{r.description}</span>
-              <span className={cx(css({ fontWeight: 'semibold', color: 'ink' }), 'nums')}>+{formatBRL(r.amount)}</span>
+              <span className={cx(css({ fontWeight: 'semibold', color: 'ink' }), nums)}>+{formatBRL(r.amount)}</span>
               <button type="button" onClick={() => void remove(r)} aria-label="Excluir estorno" className={css({ color: 'muted', _hover: { color: 'ink' } })}>
                 <Trash2 size={14} strokeWidth={1.75} />
               </button>
@@ -97,7 +98,7 @@ export function RefundPanel({ target, total, minDate }: { target: RefundTarget; 
       )}
 
       {open && (
-        <div className={cx(css({ borderTopWidth: '1px', borderColor: 'border', p: '4' }), 'slide-up')}>
+        <div className={cx(css({ borderTopWidth: '1px', borderColor: 'border', p: '4' }), slideUp)}>
           <div className={css({ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: '2' })}>
             <FieldLabel>Valor devolvido</FieldLabel>
             <button type="button" onClick={() => setOpen(false)} aria-label="Cancelar estorno" className={css({ color: 'muted', _hover: { color: 'ink' }, mt: '-1.5' })}>
@@ -112,7 +113,7 @@ export function RefundPanel({ target, total, minDate }: { target: RefundTarget; 
               min={minDate}
               onChange={e => setDate(e.target.value)}
               aria-label="Data do estorno"
-              className={cx(css({ h: '11', px: '3', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', fontSize: '14', color: 'ink', outline: 'none' }), 'nums')}
+              className={cx(css({ h: '11', px: '3', rounded: 'tile', borderWidth: '1px', borderColor: 'border', bg: 'bg', fontSize: '14', color: 'ink', outline: 'none' }), nums)}
             />
             <input
               type="text"
@@ -164,7 +165,7 @@ export function RefundDetail({ id, onDone, onCancel }: { id: number; onDone: () 
 
   return (
     <div className={css({ flex: '1', display: 'flex', flexDirection: 'column', md: { alignItems: 'center', px: '10', py: '12' } })}>
-      <div className={cx(css({ w: 'full', md: { maxW: '[480px]', bg: 'surface', rounded: '2xl', borderWidth: '1px', borderColor: 'border' }, bg: 'bg' }), 'slide-up')}>
+      <div className={cx(css({ w: 'full', md: { maxW: '[480px]', bg: 'surface', rounded: '2xl', borderWidth: '1px', borderColor: 'border' }, bg: 'bg' }), slideUp)}>
         <div className={css({ display: 'flex', alignItems: 'center', gap: '2', px: '3', md: { px: '4' }, h: '14', borderBottomWidth: '1px', borderColor: 'border' })}>
           {onCancel && (
             <button onClick={onCancel} aria-label="Voltar" className={css({ w: '9', h: '9', rounded: 'full', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'muted', _hover: { color: 'ink', bg: 'border/60' } })}>
@@ -174,7 +175,7 @@ export function RefundDetail({ id, onDone, onCancel }: { id: number; onDone: () 
           <h1 className={css({ m: '0', fontSize: '17', fontWeight: 'semibold', color: 'ink' })}>Estorno</h1>
         </div>
         <div className={css({ px: '5', pt: '8', pb: '6', textAlign: 'center' })}>
-          <div className={cx(css({ fontFamily: 'serif', fontSize: '44', lineHeight: 'none', color: 'ink' }), 'nums')}>+{formatBRL(r.amount)}</div>
+          <div className={cx(css({ fontFamily: 'serif', fontSize: '44', lineHeight: 'none', color: 'ink' }), nums)}>+{formatBRL(r.amount)}</div>
           <p className={css({ fontSize: '13', color: 'muted', mt: '2', mb: '0' })}>{r.description}</p>
         </div>
         <dl className={css({ mx: '5', rounded: 'xl', borderWidth: '1px', borderColor: 'border', bg: 'surface', '& > :not(:last-child)': { borderBottomWidth: '1px', borderColor: 'border' }, fontSize: '14' })}>

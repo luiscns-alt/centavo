@@ -4,6 +4,7 @@ import { CategoryError } from '../../core/db'
 import type { Category } from '../../core/types'
 import { firstGrapheme } from '../../shared/utils/text'
 import { css, cx } from '../../../styled-system/css'
+import { noScrollbar, slideUp } from '../../shared/ui/atoms'
 
 const SUGGESTED: Record<Category['type'], string[]> = {
   expense: ['🏷️', '🛒', '☕', '🍕', '🍺', '⛽', '🚌', '🅿️', '🏋️', '💇', '👕', '🧸', '🎮', '📱', '💡', '🔧', '🌱', '🏥', '🎓', '🐶'],
@@ -42,7 +43,7 @@ export function CategoryEditor({ type, initial, submitLabel = 'Adicionar', paren
 
   return (
     <div
-      className={cx(css({ bg: 'surface', borderWidth: '1px', borderColor: 'border', rounded: 'xl', p: '3' }), 'slide-up')}
+      className={cx(css({ bg: 'surface', borderWidth: '1px', borderColor: 'border', rounded: 'xl', p: '3' }), slideUp)}
       onKeyDown={e => {
         // Handled here so Esc closes the editor, not the whole form
         if (e.key === 'Escape') { e.stopPropagation(); onCancel() }
@@ -75,7 +76,7 @@ export function CategoryEditor({ type, initial, submitLabel = 'Adicionar', paren
         </button>
       </div>
 
-      <div className={cx(css({ mt: '2.5', display: 'flex', gap: '1', overflowX: 'auto', md: { flexWrap: 'wrap' } }), 'no-scrollbar')} role="radiogroup" aria-label="Sugestões de emoji">
+      <div className={cx(css({ mt: '2.5', display: 'flex', gap: '1', overflowX: 'auto', md: { flexWrap: 'wrap' } }), noScrollbar)} role="radiogroup" aria-label="Sugestões de emoji">
         {SUGGESTED[type].map(e => (
           <button
             key={e}

@@ -1,11 +1,10 @@
 import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite'
 import pandacss from '@pandacss/vite'
 
 export default defineConfig(({ mode }) => ({
-  // Panda before the framework plugin (docs); Tailwind stays until the migration ends
-  plugins: [pandacss(), tailwindcss(), react()],
+  // Panda before the framework plugin (docs)
+  plugins: [pandacss(), react()],
   // `vite build --mode android` (test APK): readable code and source maps, nothing minified
   build: mode === 'android' ? { minify: false, cssMinify: false, sourcemap: true } : {},
   test: {

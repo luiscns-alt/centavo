@@ -2,7 +2,7 @@
 
 Controle de fluxo de caixa pessoal: contas, cartões de crédito, empréstimos, orçamentos e estornos. **Privacy-first e offline:** não há servidor; os dados ficam no aparelho (IndexedDB) e saem só por backup exportado em Ajustes.
 
-**Stack:** React 19 · TypeScript · Vite 8 · Tailwind CSS v4 (`@tailwindcss/vite`) · Dexie (IndexedDB) · Capacitor 8 para o APK de teste.
+**Stack:** React 19 · TypeScript · Vite 8 · Panda CSS (`@pandacss/vite`) · Dexie (IndexedDB) · Capacitor 8 para o APK de teste.
 
 ## Desenvolvimento
 

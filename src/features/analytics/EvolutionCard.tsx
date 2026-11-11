@@ -6,6 +6,7 @@ import type { MonthNav } from '../../shared/ui/MonthSelector'
 import { monthKey, MONTH_LONG, MONTH_SHORT } from '../../shared/utils/dates'
 import { formatBRL, formatDelta } from '../../shared/utils/money'
 import { css, cx } from '../../../styled-system/css'
+import { nums } from '../../shared/ui/atoms'
 
 const WINDOW = 6
 
@@ -41,11 +42,11 @@ export function EvolutionCard({ nav, accountIds, onOpenCompare }: Props) {
           <div className={css({ fontSize: '11', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: 'widest', color: 'muted' })}>
             {label}
           </div>
-          <div className={cx(css({ mt: '1', fontSize: '20', fontWeight: 'bold', color: 'ink', lineHeight: 'tight' }), 'nums')}>
+          <div className={cx(css({ mt: '1', fontSize: '20', fontWeight: 'bold', color: 'ink', lineHeight: 'tight' }), nums)}>
             {loading || !sel ? '–' : formatBRL(sel.cumulative)}
           </div>
           {sel && !loading && (
-            <div className={cx(css({ fontSize: '12', color: 'muted', mt: '0.5' }), 'nums')}>
+            <div className={cx(css({ fontSize: '12', color: 'muted', mt: '0.5' }), nums)}>
               {formatDelta(sel.net)} de resultado em {MONTH_LONG[sel.month - 1]}
             </div>
           )}

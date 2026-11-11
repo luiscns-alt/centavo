@@ -13,6 +13,7 @@ import type { PaymentMethod } from '../../core/types'
 import { toISODate, MONTH_LONG, formatDayMonth } from '../../shared/utils/dates'
 import { formatBRL } from '../../shared/utils/money'
 import { css, cx } from '../../../styled-system/css'
+import { noScrollbar, nums, slideUp } from '../../shared/ui/atoms'
 
 
 type Filter = 'all' | 'income' | 'expense' | 'transfer'
@@ -101,7 +102,7 @@ export function TransactionList({ nav, account, onAdd, onEdit, onOpenCard, onOpe
 
         {rows.length > 0 && (
           <div className={css({ px: '5', md: { px: '0', mt: '0' }, mt: '2', mb: '2', display: 'flex', alignItems: 'center', gap: '2', flexWrap: 'wrap' })}>
-            <div className={cx(css({ display: 'inline-flex', bg: 'border/70', rounded: 'full', p: '0.5', overflowX: 'auto', maxW: 'full' }), 'no-scrollbar')} role="tablist" aria-label="Filtrar lançamentos">
+            <div className={cx(css({ display: 'inline-flex', bg: 'border/70', rounded: 'full', p: '0.5', overflowX: 'auto', maxW: 'full' }), noScrollbar)} role="tablist" aria-label="Filtrar lançamentos">
               {filters.map(f => (
                 <button
                   key={f.id}
@@ -129,7 +130,7 @@ export function TransactionList({ nav, account, onAdd, onEdit, onOpenCard, onOpe
                 </select>
               </label>
             )}
-            <span className={cx(css({ ml: 'auto', fontSize: '12', color: 'muted', whiteSpace: 'nowrap' }), 'nums')}>
+            <span className={cx(css({ ml: 'auto', fontSize: '12', color: 'muted', whiteSpace: 'nowrap' }), nums)}>
               {visible.length} {visible.length === 1 ? 'item' : 'itens'}
             </span>
           </div>
@@ -157,13 +158,13 @@ export function TransactionList({ nav, account, onAdd, onEdit, onOpenCard, onOpe
             {groups.map(g => {
               const inv = invoices.get(g.key)
               return (
-                <section key={g.key} className="slide-up">
+                <section key={g.key} className={slideUp}>
                   {inv
                     ? <InvoiceHeader info={inv} total={-g.net} onOpen={() => onOpenCard(inv.card.id as number)} />
                     : (
                       <div className={css({ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', pt: '3', pb: '1', md: { px: '1' } })}>
                         <h2 className={css({ m: '0', fontSize: '12', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: '[.08em]', color: 'muted' })}>{dayLabel(g.key)}</h2>
-                        <span className={cx(css({ fontSize: '12', color: 'muted' }), 'nums')}>
+                        <span className={cx(css({ fontSize: '12', color: 'muted' }), nums)}>
                           {g.net > 0 ? '+' : g.net < 0 ? '−' : ''}{formatBRL(Math.abs(g.net))}
                         </span>
                       </div>
@@ -220,7 +221,7 @@ function InvoiceHeader({ info, total, onOpen }: { info: InvoiceGroupInfo; total:
       <h2 className={css({ m: '0', flex: '1', minW: '0', truncate: true, fontSize: '12', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: '[.08em]', color: 'muted', _groupHover: { color: 'ink' } })}>
         Fatura {info.card.name} · vence {formatDayMonth(info.dueDate)}
       </h2>
-      <span className={cx(css({ fontSize: '12', color: 'muted' }), 'nums')}>−{formatBRL(Math.abs(total))}</span>
+      <span className={cx(css({ fontSize: '12', color: 'muted' }), nums)}>−{formatBRL(Math.abs(total))}</span>
       <ChevronRight size={14} strokeWidth={2} className={css({ color: 'muted' })} />
     </button>
   )
@@ -242,7 +243,7 @@ function TransferRow({ row, ids }: { row: Extract<LedgerRow, { kind: 'transfer' 
         </div>
         <div className={css({ fontSize: '12', color: 'muted', truncate: true })}>{route}</div>
       </div>
-      <div className={cx(css({ fontSize: '15', fontWeight: 'bold', flexShrink: '0', color: 'ink' }), 'nums')}>
+      <div className={cx(css({ fontSize: '15', fontWeight: 'bold', flexShrink: '0', color: 'ink' }), nums)}>
         {delta > 0 ? '+' : delta < 0 ? '−' : ''}{formatBRL(row.transfer.amount)}
       </div>
     </div>

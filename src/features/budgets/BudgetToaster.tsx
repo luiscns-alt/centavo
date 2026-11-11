@@ -8,6 +8,7 @@ import { formatBRL } from '../../shared/utils/money'
 import { STORAGE_KEYS } from '../../shared/constants/storageKeys'
 import { readJSON, writeJSON } from '../../shared/utils/storage'
 import { css, cx } from '../../../styled-system/css'
+import { toastIn } from '../../shared/ui/atoms'
 
 interface Toast { id: string; level: 'warning' | 'over'; text: string }
 
@@ -90,7 +91,7 @@ export function BudgetToaster({ onOpen }: { onOpen: () => void }) {
   const Icon = toast.level === 'over' ? OctagonAlert : AlertTriangle
   return (
     <div className={css({ position: 'fixed', insetX: '0', bottom: '24', md: { bottom: '6' }, zIndex: '50', display: 'flex', justifyContent: 'center', px: '4', pointerEvents: 'none' })}>
-      <div role="status" className={cx(css({ pointerEvents: 'auto', maxW: '[440px]', w: 'full', bg: 'ink', color: 'bg', rounded: '2xl', shadow: 'lg', px: '4', py: '3', display: 'flex', alignItems: 'center', gap: '3' }), 'toast-in')}>
+      <div role="status" className={cx(css({ pointerEvents: 'auto', maxW: '[440px]', w: 'full', bg: 'ink', color: 'bg', rounded: '2xl', shadow: 'lg', px: '4', py: '3', display: 'flex', alignItems: 'center', gap: '3' }), toastIn)}>
         <Icon size={18} strokeWidth={2} className={css({ flexShrink: '0' })} aria-hidden />
         <p className={css({ flex: '1', m: '0', fontSize: '13', lineHeight: 'snug' })}>{toast.text}</p>
         <button onClick={() => { setToast(null); onOpen() }} className={css({ fontSize: '13', fontWeight: 'semibold', textDecoration: 'underline', textUnderlineOffset: '2px', flexShrink: '0' })}>Ver</button>
