@@ -3,6 +3,8 @@ import { db } from '../../core/db'
 import { expenseDelta } from '../../core/amounts'
 import type { Category, PaymentMethod } from '../../core/types'
 import { monthBounds } from '../../shared/utils/dates'
+import { isCashAccount } from '../../core/ledger/base'
+import { carryInto } from './series'
 
 export interface CategorySummary {
   category: Category
@@ -20,6 +22,11 @@ export interface MonthlyData {
   byCategory: CategorySummary[]
   /** Expenses by payment method, largest first ('none' = not informed) */
   byMethod: { method: PaymentMethod | 'none'; total: number }[]
+  /**
+   * Saldo livre left from earlier months (opening balances + every earlier month's result) — only
+   * for all accounts; null with an account filter (transfers move money between accounts there).
+   */
+  carry: number | null
   loading: boolean
 }
 
@@ -34,11 +41,16 @@ export function useMonthlyData(year: number, month: number, accountIds: number[]
 
   const result = useLiveQuery(async () => {
     const ids = accountIds ? new Set(accountIds) : null
-    const [allTx, categories, transfers] = await Promise.all([
+    const [allTx, categories, transfers, earlier, accounts] = await Promise.all([
       db.transactions.where('month').equals(key).toArray(),
       db.categories.toArray(),
       ids === null ? Promise.resolve([]) : db.transfers.where('date').between(start, end, true, true).toArray(),
+      ids === null ? db.transactions.where('month').below(key).toArray() : Promise.resolve([]),
+      ids === null ? db.accounts.toArray() : Promise.resolve([]),
     ])
+    const carry = ids === null
+      ? carryInto(key, earlier, accounts.filter(isCashAccount).map(a => ({ amount: a.openingBalance, date: a.openingDate })))
+      : null
     const transactions = ids === null ? allTx : allTx.filter(t => ids.has(t.accountId))
 
     const catMap = new Map<number, Category>(
@@ -85,12 +97,12 @@ export function useMonthlyData(year: number, month: number, accountIds: number[]
 
     return {
       totalIncome, totalExpense, freeBalance: totalIncome - totalExpense,
-      transfersIn, transfersOut, byCategory, byMethod,
+      transfersIn, transfersOut, byCategory, byMethod, carry,
     }
   }, [key, start, end, idsKey])
 
   if (!result) {
-    return { totalIncome: 0, totalExpense: 0, freeBalance: 0, transfersIn: 0, transfersOut: 0, byCategory: [], byMethod: [], loading: true }
+    return { totalIncome: 0, totalExpense: 0, freeBalance: 0, transfersIn: 0, transfersOut: 0, byCategory: [], byMethod: [], carry: null, loading: true }
   }
   return { ...result, loading: false }
 }

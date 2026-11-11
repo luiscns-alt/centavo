@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { buildMonthlySeries, monthDiff } from './series'
+import { buildMonthlySeries, carryInto, monthDiff } from './series'
 import { monthWindow } from '../../shared/utils/dates'
 
 const tx = (date: string, type: 'income' | 'expense', amount: number) => ({ date, type, amount })
@@ -96,5 +96,22 @@ describe('buildMonthlySeries with card installments', () => {
       ['2026-12', 100, -300], // but only one installment is a December expense
       ['2027-01', 100, -300],
     ])
+  })
+})
+
+describe('carryInto', () => {
+  const tx = (month: string, type: 'income' | 'expense' | 'refund', amount: number) => ({ month, type, amount })
+
+  it('November surplus of R$ 1.000 makes a R$ 1.000-short December close at zero', () => {
+    const txs = [tx('2026-11', 'income', 500_000), tx('2026-11', 'expense', 400_000), tx('2026-12', 'income', 500_000), tx('2026-12', 'expense', 600_000)]
+    const carry = carryInto('2026-12', txs, [])
+    expect(carry).toBe(100_000)
+    expect(carry + (500_000 - 600_000)).toBe(0)
+  })
+
+  it('starts from the opening balances; refunds give back; later months and dates are ignored', () => {
+    const txs = [tx('2026-10', 'expense', 30_000), tx('2026-10', 'refund', 5_000), tx('2026-12', 'income', 999_999)]
+    const openings = [{ amount: 200_000, date: '2026-09-15' }, { amount: 70_000, date: '2026-12-01' }]
+    expect(carryInto('2026-11', txs, openings)).toBe(200_000 - 30_000 + 5_000)
   })
 })

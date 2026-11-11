@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../../core/db'
 import { BackupError, backupFilename, createBackup, parseBackup, restoreBackup, type Backup } from './backup'
+import { saveBackupFile } from './saveBackupFile'
 import { getLastBackupAt, getStorageStatus, requestPersistentStorage, setLastBackupAt, type StorageStatus } from '../../core/storage'
 import { Download, HardDrive, ShieldCheck, ShieldAlert, Upload } from 'lucide-react'
 import { Button } from '../../shared/ui/Button'
@@ -128,22 +129,24 @@ function BackupSection() {
   }))
   const [lastBackupAt, setLastBackup] = useState(getLastBackupAt)
   const [exporting, setExporting] = useState(false)
+  /** Android app: where the last export went */
+  const [saved, setSaved] = useState<{ location: string | null; shared: boolean } | null>(null)
   const [restore, setRestore] = useState<RestoreState>({ step: 'idle' })
   const fileInput = useRef<HTMLInputElement>(null)
 
   async function handleExport() {
     setExporting(true)
+    setSaved(null)
     try {
       const backup = await createBackup()
-      const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = backupFilename(todayISO())
-      a.click()
-      setTimeout(() => URL.revokeObjectURL(url), 1000)
+      const result = await saveBackupFile(backupFilename(todayISO()), JSON.stringify(backup, null, 2))
+      if (result.kind === 'device' && !result.location && !result.shared) {
+        setRestore({ step: 'error', message: 'O backup não foi salvo: escolha onde guardar (Drive, e-mail, Arquivos) na janela de compartilhar.' })
+        return
+      }
       setLastBackupAt(backup.exportedAt)
       setLastBackup(backup.exportedAt)
+      if (result.kind === 'device') setSaved(result)
     } catch {
       setRestore({ step: 'error', message: 'Não foi possível gerar o backup. Tente novamente.' })
     } finally {
@@ -238,6 +241,13 @@ function BackupSection() {
         </div>
       )}
 
+      {saved && (
+        <p className="text-[13px] text-ink mt-4" role="status">
+          {saved.location ? `Backup salvo em ${saved.location}` : 'Backup gerado'}
+          {saved.shared ? ' e enviado pelo compartilhar.' : '.'}
+          {!saved.shared && ' Envie uma cópia para fora do celular (Drive ou e-mail): desinstalar o app ou perder o aparelho apaga tudo.'}
+        </p>
+      )}
       {restore.step === 'restoring' && (
         <p className="text-[13px] text-muted mt-4">Restaurando...</p>
       )}

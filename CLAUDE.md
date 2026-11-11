@@ -51,3 +51,5 @@ src/
   - One-off values outside the scale use Panda's escape hatch (`'[150px]'`); a value used more than once becomes a token in `panda.config.ts`.
   - `styled-system/` is generated (`npm install` runs `panda codegen`) and gitignored.
 - Rules live in `eslint-rules/architecture.js` (`architecture/boundaries`, `architecture/no-ui-writes`, `architecture/tailwind-colors`).
+- Backup export: `features/settings/saveBackupFile.ts` — download in the browser; in the Android app a copy in Documentos/centavo (best effort) + the share sheet (`@capacitor/filesystem`, `@capacitor/share`), since a WebView ignores download links.
+- Saldo de <mês> (Início › O mês) = `carryInto` (series.ts) + the month's result — never treat the carry as income.

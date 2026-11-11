@@ -79,3 +79,28 @@ export function buildMonthlySeries(
   }
   return series
 }
+
+/**
+ * Saldo livre carried into `month` (YYYY-MM): what was left from every earlier month, so a month
+ * that spends a previous surplus doesn't look like a loss.
+ *
+ *   carry = opening balances of cash accounts dated before `month`
+ *         + Σ (income − expenses) of every earlier report month   (refunds give back)
+ *
+ * Same rules as Saldo livre: card purchases count in their invoice month; transfers (including
+ * invoice payments and loan releases) never count. So it can differ from "Disponível hoje", which
+ * is the money in the accounts right now.
+ */
+export function carryInto(
+  month: string,
+  transactions: Pick<Transaction, 'type' | 'amount' | 'month'>[],
+  openings: { amount: number; date: string }[],
+): number {
+  let carry = 0
+  for (const o of openings) if (o.date.slice(0, 7) < month) carry += o.amount
+  for (const t of transactions) {
+    if (t.month >= month) continue
+    carry += t.type === 'income' ? t.amount : -expenseDelta(t)
+  }
+  return carry
+}

@@ -87,7 +87,7 @@ Answers "how am I doing today" — **above the fold is always today**, from one 
 3. **Atenção** (only when there is something; else one muted line "Tudo em dia"): up to 3 items, worst first — vencido (fatura/parcela) > estourado / conta negativa > fatura vence em ≤ 5 dias > orçamento ≥ 80%. Severe items in `expense` with an octagon icon; the rest ink. Each opens its screen.
 4. **Cartões**: invoice to pay now per card (vence/venceu, available limit), total "a pagar".
 5. Right column (desktop ≥1024px): **Orçamentos do mês**, (Metas, reserved), **Contas** (bank accounts + empréstimos + patrimônio; cards live in their own block).
-6. **O mês** (lazy: own chunk, mounted near the viewport): month selector, Saldo livre (receitas − despesas, 28px bold — no longer the hero), patrimônio chart, breakdowns.
+6. **O mês** (lazy: own chunk, mounted near the viewport): month selector, then the month as a running total — **Saldo de <mês>** (28px bold) = sobra (or déficit) carried from earlier months + this month's result, with both shown underneath; then receitas/despesas, patrimônio chart, breakdowns. With an account filter it falls back to the plain Saldo livre (receitas − despesas), since transfers move money between accounts. The carry follows Saldo livre rules: opening balances of cash accounts + every earlier month's result; card purchases by invoice month; transfers never count.
 The last summary is kept on the device and painted instantly on open (same day and filter only), then replaced by the live read.
 
 ### Transaction Rows

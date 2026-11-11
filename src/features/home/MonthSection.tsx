@@ -5,7 +5,7 @@ import { EmptyState } from '../../shared/ui/EmptyState'
 import { SectionLabel } from '../../shared/ui/SectionLabel'
 import { PAYMENT_METHODS } from '../../core/constants/domain'
 import type { PaymentMethod } from '../../core/types'
-import { formatBRL } from '../../shared/utils/money'
+import { formatBRL, formatDelta, toneClass } from '../../shared/utils/money'
 import { MONTH_LONG } from '../../shared/utils/dates'
 
 
@@ -21,7 +21,7 @@ interface Props {
  * patrimônio chart and the breakdowns. Loaded lazily (own chunk, mounted near the viewport).
  */
 export default function MonthSection({ nav, accountIds, onAdd, onOpenCompare }: Props) {
-  const { totalIncome, totalExpense, freeBalance, transfersIn, transfersOut, byCategory, byMethod, loading } =
+  const { totalIncome, totalExpense, freeBalance, transfersIn, transfersOut, byCategory, byMethod, carry, loading } =
     useMonthlyData(nav.year, nav.month, accountIds)
 
   const balanceColor = freeBalance > 0 ? 'text-income' : freeBalance < 0 ? 'text-expense' : 'text-muted'
@@ -39,12 +39,16 @@ export default function MonthSection({ nav, accountIds, onAdd, onOpenCompare }: 
       <div className="lg:grid lg:grid-cols-[380px_1fr] lg:gap-6 lg:items-start">
         <div>
           <section className="mx-5 md:mx-0 bg-surface border border-border rounded-2xl overflow-hidden">
-            <div className="px-5 md:px-8 pt-6 pb-5 text-center">
-              <div className="text-[11px] font-semibold uppercase tracking-[.1em] text-muted mb-2">Saldo livre</div>
-              <div className={`text-[28px] font-bold leading-none nums ${loading ? 'text-muted opacity-30' : balanceColor}`}>
-                {loading ? '–' : formatBRL(freeBalance)}
+            {carry === null ? (
+              <div className="px-5 md:px-8 pt-6 pb-5 text-center">
+                <div className="text-[11px] font-semibold uppercase tracking-[.1em] text-muted mb-2">Saldo livre</div>
+                <div className={`text-[28px] font-bold leading-none nums ${loading ? 'text-muted opacity-30' : balanceColor}`}>
+                  {loading ? '–' : formatBRL(freeBalance)}
+                </div>
               </div>
-            </div>
+            ) : (
+              <CarriedBalance month={nav.month} carry={carry} result={freeBalance} loading={loading} />
+            )}
             <div className="grid grid-cols-2 border-t border-border">
               <Summary label="Receitas" tone="income" value={loading ? '–' : formatBRL(totalIncome)} />
               <Summary label="Despesas" tone="expense" value={loading ? '–' : formatBRL(totalExpense)} divider />
@@ -83,6 +87,29 @@ export default function MonthSection({ nav, accountIds, onAdd, onOpenCompare }: 
           )}
         </section>
       </div>
+    </div>
+  )
+}
+
+/**
+ * All accounts: the month as a running total — what was left from earlier months, plus this month's
+ * result. Spending a previous surplus no longer looks like a loss (DESIGN.md › Início › O mês).
+ */
+function CarriedBalance({ month, carry, result, loading }: { month: number; carry: number; result: number; loading: boolean }) {
+  const total = carry + result
+  const prev = MONTH_LONG[(month + 10) % 12]
+  return (
+    <div className="px-5 md:px-8 pt-6 pb-5 text-center">
+      <div className="text-[11px] font-semibold uppercase tracking-[.1em] text-muted mb-2">Saldo de {MONTH_LONG[month - 1]}</div>
+      <div className={`text-[28px] font-bold leading-none nums ${loading ? 'text-muted opacity-30' : toneClass(total)}`}>
+        {loading ? '–' : formatBRL(total)}
+      </div>
+      {!loading && (
+        <div className="mt-3 flex flex-wrap justify-center gap-x-3 gap-y-1 text-[12px] nums">
+          <span className="text-muted">{carry < 0 ? 'Déficit' : 'Sobra'} de {prev} <span className={`font-semibold ${toneClass(carry)}`}>{formatDelta(carry)}</span></span>
+          <span className="text-muted">Resultado do mês <span className={`font-semibold ${toneClass(result)}`}>{formatDelta(result)}</span></span>
+        </div>
+      )}
     </div>
   )
 }
