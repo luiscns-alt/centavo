@@ -25,3 +25,6 @@ dist-ssr
 
 # Claude Code local settings
 .claude/settings.local.json
+
+# Test APK output (android/ itself is committed; its build dirs are ignored by android/.gitignore)
+dist-apk
