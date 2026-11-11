@@ -1,4 +1,17 @@
 import { Plus } from 'lucide-react'
+import { css, cx } from '../../../styled-system/css'
+
+const wrap = css({ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', py: '14', px: '6' })
+const lines = css({ w: '14', mb: '5', display: 'flex', flexDirection: 'column', gap: '1.5' })
+const line = css({ h: 'hairline', bg: 'border' })
+const shortLine = css({ w: '2/3' })
+const titleText = css({ fontSize: '15', fontWeight: 'semibold', color: 'ink' })
+const descText = css({ fontSize: '13', color: 'muted', mt: '1', maxW: '[280px]', lineHeight: 'relaxed' })
+const action = css({
+  mt: '5', display: 'inline-flex', alignItems: 'center', gap: '1.5', h: '9', px: '4', rounded: 'full',
+  borderWidth: '1px', borderColor: 'border', bg: 'surface', fontSize: '13', fontWeight: 'semibold', color: 'ink',
+  transitionProperty: 'colors', transitionDuration: 'normal', _hover: { bg: 'bg' },
+})
 
 interface EmptyStateProps {
   title: string
@@ -9,20 +22,17 @@ interface EmptyStateProps {
 
 export function EmptyState({ title, description, actionLabel, onAction }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center text-center py-14 px-6 slide-up">
+    <div className={cx(wrap, 'slide-up')}>
       {/* Ledger lines — a quiet nod to the empty notebook page */}
-      <div className="w-14 mb-5 flex flex-col gap-1.5" aria-hidden>
-        <span className="h-px bg-border" />
-        <span className="h-px bg-border" />
-        <span className="h-px bg-border w-2/3" />
+      <div className={lines} aria-hidden>
+        <span className={line} />
+        <span className={line} />
+        <span className={cx(line, shortLine)} />
       </div>
-      <div className="text-[15px] font-semibold text-ink">{title}</div>
-      {description && <p className="text-[13px] text-muted mt-1 max-w-[280px] leading-relaxed">{description}</p>}
+      <div className={titleText}>{title}</div>
+      {description && <p className={descText}>{description}</p>}
       {actionLabel && onAction && (
-        <button
-          onClick={onAction}
-          className="mt-5 inline-flex items-center gap-1.5 h-9 px-4 rounded-full border border-border bg-surface text-[13px] font-semibold text-ink hover:bg-bg transition-colors"
-        >
+        <button onClick={onAction} className={action}>
           <Plus size={15} strokeWidth={2} />
           {actionLabel}
         </button>

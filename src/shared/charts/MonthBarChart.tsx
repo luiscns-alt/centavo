@@ -1,6 +1,28 @@
 import { useId, useState, type ReactNode } from 'react'
 import { barPath, formatAxis, niceTicks, useElementWidth } from './chartUtils'
 import { HatchPattern } from './Swatch'
+import { css, cva } from '../../../styled-system/css'
+
+const NUMS = { fontVariantNumeric: 'tabular-nums lining-nums' } as const
+const frame = css({ position: 'relative', w: 'full', userSelect: 'none' })
+const svgBox = css({ display: 'block', overflow: 'visible' })
+const gridLine = cva({ variants: { zero: { true: { stroke: 'muted' }, false: { stroke: 'border' } } } })
+const axisText = css({ fill: 'muted', ...NUMS })
+const columnHighlight = css({ fill: 'border' })
+const barFill = cva({ variants: { tone: { income: { fill: 'income' }, expense: { fill: 'expense' } } } })
+const monthText = cva({ variants: { dim: { true: { fill: 'muted' }, false: { fill: 'ink' } } } })
+const calloutText = css({ fill: 'ink', ...NUMS })
+const hitTarget = cva({ base: { outline: 'none' }, variants: { clickable: { true: { cursor: 'pointer' }, false: {} } } })
+const tooltip = css({
+  pointerEvents: 'none', position: 'absolute', zIndex: '10', w: '[220px]', bg: 'surface', borderWidth: '1px', borderColor: 'border',
+  rounded: 'xl', shadow: 'lg', px: '3', py: '2.5', fontSize: '12',
+})
+const tooltipRow = css({ display: 'flex', alignItems: 'center', gap: '2', py: '0.5' })
+const tooltipLabel = css({ color: 'muted' })
+const tooltipValue = cva({
+  base: { ml: 'auto', pl: '3', color: 'ink', ...NUMS },
+  variants: { strong: { true: { fontWeight: 'bold' }, false: { fontWeight: 'semibold' } } },
+})
 
 export interface Bar {
   value: number // centavos, may be negative
@@ -61,9 +83,9 @@ export function MonthBarChart({ groups, height = 180, title, renderTooltip, onSe
   const cx = (i: number) => M.left + band * i + band / 2
 
   return (
-    <div ref={ref} className="relative w-full select-none" style={{ height }}>
+    <div ref={ref} className={frame} style={{ height }}>
       {width > 0 && (
-        <svg width={width} height={height} role="img" aria-label={title} className="block overflow-visible">
+        <svg width={width} height={height} role="img" aria-label={title} className={svgBox}>
           <defs><HatchPattern id={hatchId} /></defs>
 
           {/* Grid + y-axis labels (recessive) */}
@@ -71,13 +93,13 @@ export function MonthBarChart({ groups, height = 180, title, renderTooltip, onSe
             <g key={t}>
               <line
                 x1={M.left} x2={width - M.right} y1={y(t)} y2={y(t)}
-                className={t === 0 ? 'stroke-muted' : 'stroke-border'}
+                className={gridLine({ zero: t === 0 })}
                 strokeOpacity={t === 0 ? 0.45 : 1}
                 strokeDasharray={t === 0 ? undefined : '2 3'}
               />
               <text
                 x={M.left - 8} y={y(t)} dy="0.32em" textAnchor="end"
-                className="fill-muted nums" fontSize="11"
+                className={axisText} fontSize="11"
               >
                 {formatAxis(t)}
               </text>
@@ -90,7 +112,7 @@ export function MonthBarChart({ groups, height = 180, title, renderTooltip, onSe
             return (
               <g key={g.key}>
                 {isActive && (
-                  <rect x={M.left + band * i + 1} y={M.top - 6} width={band - 2} height={innerH + 6} rx="6" className="fill-border" fillOpacity=".45" />
+                  <rect x={M.left + band * i + 1} y={M.top - 6} width={band - 2} height={innerH + 6} rx="6" className={columnHighlight} fillOpacity=".45" />
                 )}
                 {(g.stacked ? stackSegments(g.bars, y) : g.bars.map((b, j) => ({ b, x: x0 + j * (barW + GAP), from: y0, to: y(b.value), r: 4 })))
                   .map(({ b, x, from, to, r }, j) => {
@@ -100,7 +122,7 @@ export function MonthBarChart({ groups, height = 180, title, renderTooltip, onSe
                       <path
                         key={j}
                         d={d}
-                        className={b.hatched ? undefined : b.tone === 'income' ? 'fill-income' : 'fill-expense'}
+                        className={b.hatched ? undefined : barFill({ tone: b.tone })}
                         fill={b.hatched ? `url(#${hatchId})` : undefined}
                         fillOpacity={b.tint ? 0.32 : undefined}
                         opacity={g.dim && !isActive ? 0.35 : 1}
@@ -111,7 +133,7 @@ export function MonthBarChart({ groups, height = 180, title, renderTooltip, onSe
                 {(groups.length - 1 - i) % labelEvery === 0 && (
                   <text
                     x={cx(i)} y={height - 8} textAnchor="middle" fontSize="11"
-                    className={g.dim ? 'fill-muted' : 'fill-ink'}
+                    className={monthText({ dim: !!g.dim })}
                     fontWeight={g.dim ? 400 : 600}
                   >
                     {g.label}
@@ -134,7 +156,7 @@ export function MonthBarChart({ groups, height = 180, title, renderTooltip, onSe
                 x={Math.min(Math.max(cx(callout.index), M.left + 30), width - 30)}
                 y={neg ? bottom + 14 : top - 7}
                 textAnchor="middle" fontSize="11" fontWeight="700"
-                className="fill-ink nums"
+                className={calloutText}
               >
                 {callout.text}
               </text>
@@ -150,7 +172,7 @@ export function MonthBarChart({ groups, height = 180, title, renderTooltip, onSe
               tabIndex={0}
               role={onSelect ? 'button' : undefined}
               aria-label={g.ariaLabel}
-              className={onSelect ? 'cursor-pointer outline-none' : 'outline-none'}
+              className={hitTarget({ clickable: !!onSelect })}
               onMouseEnter={() => setActive(i)}
               onMouseLeave={() => setActive(null)}
               onFocus={() => setActive(i)}
@@ -167,7 +189,7 @@ export function MonthBarChart({ groups, height = 180, title, renderTooltip, onSe
       {/* Tooltip */}
       {active !== null && width > 0 && (
         <div
-          className="pointer-events-none absolute z-10 w-[220px] bg-surface border border-border rounded-xl shadow-lg px-3 py-2.5 text-[12px]"
+          className={tooltip}
           style={(() => {
             // Beside the hovered column, never on top of its bars; flip left near the right edge
             const right = cx(active) + band / 2 + 6
@@ -188,10 +210,10 @@ export function TooltipRow({ swatch, label, value, strong = false }: {
   swatch?: ReactNode; label: string; value: string; strong?: boolean
 }) {
   return (
-    <div className="flex items-center gap-2 py-0.5">
+    <div className={tooltipRow}>
       {swatch}
-      <span className="text-muted">{label}</span>
-      <span className={`ml-auto pl-3 nums ${strong ? 'font-bold text-ink' : 'font-semibold text-ink'}`}>{value}</span>
+      <span className={tooltipLabel}>{label}</span>
+      <span className={tooltipValue({ strong })}>{value}</span>
     </div>
   )
 }

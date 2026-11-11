@@ -1,25 +1,21 @@
-type BadgeVariant = 'income' | 'expense' | 'neutral'
+import type { ReactNode } from 'react'
+import { cva, type RecipeVariantProps } from '../../../styled-system/css'
 
-interface BadgeProps {
-  variant?: BadgeVariant
-  children: React.ReactNode
-}
+const badge = cva({
+  base: {
+    display: 'inline-flex', alignItems: 'center', gap: '1', px: '2.5', py: '1', rounded: 'full',
+    fontSize: '11', fontWeight: 'semibold',
+  },
+  variants: {
+    variant: {
+      income: { bg: 'income.light', color: 'income' },
+      expense: { bg: 'expense.light', color: 'expense' },
+      neutral: { bg: 'border', color: 'muted' },
+    },
+  },
+  defaultVariants: { variant: 'neutral' },
+})
 
-const variantClasses: Record<BadgeVariant, string> = {
-  income:  'bg-income-light text-income',
-  expense: 'bg-expense-light text-expense',
-  neutral: 'bg-border text-muted',
-}
-
-export function Badge({ variant = 'neutral', children }: BadgeProps) {
-  return (
-    <span
-      className={[
-        'inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold',
-        variantClasses[variant],
-      ].join(' ')}
-    >
-      {children}
-    </span>
-  )
+export function Badge({ variant, children }: RecipeVariantProps<typeof badge> & { children: ReactNode }) {
+  return <span className={badge({ variant })}>{children}</span>
 }

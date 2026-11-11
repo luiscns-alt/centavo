@@ -59,6 +59,12 @@ export default defineConfig({
         radii: {
           tile: { value: '10px' }, // icon tiles, inputs
         },
+        sizes: {
+          hairline: { value: '1px' }, // dividers drawn as boxes
+        },
+        letterSpacings: {
+          title: { value: '-0.01em' }, // screen titles
+        },
         easings: {
           out: { value: 'var(--ease-out)' },
           inOut: { value: 'var(--ease-in-out)' },

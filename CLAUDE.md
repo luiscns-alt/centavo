@@ -47,6 +47,7 @@ src/
   - Migrated files use only Panda (`css`, `cva`, `cx` from `styled-system/css`; tokens only, `strictTokens`). Never add Tailwind classes to them; a parent may pass `className` for layout only (margins, flex), never colors.
   - Not-yet-migrated files keep Tailwind v4 (`@tailwindcss/vite`), colors only from the `@theme` tokens (lint `architecture/tailwind-colors`).
   - Panda tokens point at the CSS variables of `src/index.css` until Tailwind is removed; Tailwind's preflight is the only reset meanwhile.
-  - Migrated so far: `shared/ui/variants.ts` (button, chip), `Button`, `MoneyInput`/`FieldLabel`/`Choice`, `BudgetBar`, `TransactionRow`.
+  - Migrated so far: all of `shared/` (`ui/*`, `charts/*`), `BudgetBar`, `TransactionRow`. Next: one feature per commit (transactions, accounts, credit-cards, budgets, loans, analytics, home, settings, categories), then `app/`.
+  - One-off values outside the scale use Panda's escape hatch (`'[150px]'`); a value used more than once becomes a token in `panda.config.ts`.
   - `styled-system/` is generated (`npm install` runs `panda codegen`) and gitignored.
 - Rules live in `eslint-rules/architecture.js` (`architecture/boundaries`, `architecture/no-ui-writes`, `architecture/tailwind-colors`).

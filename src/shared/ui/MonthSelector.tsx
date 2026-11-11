@@ -1,5 +1,28 @@
-import { MONTH_LONG } from '../utils/dates'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { css, cva } from '../../../styled-system/css'
+import { MONTH_LONG } from '../utils/dates'
+
+const kicker = css({ fontSize: '10', fontWeight: 'semibold', textTransform: 'uppercase', letterSpacing: 'widest', color: 'muted', mb: '0.5' })
+const monthText = css({ fontSize: '15', fontWeight: 'semibold', color: 'ink', whiteSpace: 'nowrap' })
+const monthName = css({ textTransform: 'capitalize' })
+const yearText = css({ color: 'muted', fontWeight: 'medium' })
+const todayButton = css({
+  fontSize: '12', fontWeight: 'semibold', color: 'muted', px: '2.5', py: '1', rounded: 'full', borderWidth: '1px', borderColor: 'border',
+  transitionProperty: 'colors', transitionDuration: 'normal', _hover: { color: 'ink', bg: 'bg' },
+})
+const arrowButton = css({
+  w: '9', h: '9', rounded: 'full', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'muted',
+  transitionProperty: 'colors', transitionDuration: 'normal', _hover: { color: 'ink', bg: 'border/60' },
+})
+const bar = cva({
+  base: { display: 'flex', alignItems: 'center' },
+  variants: {
+    align: { start: { gap: '1' }, center: { px: '3', py: '2' } },
+    bordered: { true: { borderBottomWidth: '1px', borderColor: 'border' }, false: {} },
+  },
+})
+const startLabel = css({ minW: '[150px]', textAlign: 'center' })
+const centerLabel = css({ flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2', textAlign: 'center' })
 
 
 /** Month state + handlers, owned by App and shared by the month-based screens */
@@ -39,12 +62,12 @@ export function MonthSelector({
   const label = (
     <div key={`${year}-${month}`} className={direction === 'next' ? 'month-in-next' : 'month-in-prev'}>
       {showLabel && (
-        <div className="text-[10px] font-semibold uppercase tracking-[.1em] text-muted mb-0.5">
+        <div className={kicker}>
           Mês Atual
         </div>
       )}
-      <div className="text-[15px] font-semibold text-ink whitespace-nowrap">
-        <span className="capitalize">{MONTH_LONG[month - 1]}</span> <span className="text-muted font-medium">{year}</span>
+      <div className={monthText}>
+        <span className={monthName}>{MONTH_LONG[month - 1]}</span> <span className={yearText}>{year}</span>
       </div>
     </div>
   )
@@ -52,7 +75,7 @@ export function MonthSelector({
   const today = onToday && !isCurrentMonth && (
     <button
       onClick={onToday}
-      className="text-[12px] font-semibold text-muted hover:text-ink px-2.5 py-1 rounded-full border border-border hover:bg-bg transition-colors"
+      className={todayButton}
     >
       Hoje
     </button>
@@ -61,7 +84,7 @@ export function MonthSelector({
   const arrow = (dir: 'prev' | 'next') => (
     <button
       onClick={dir === 'prev' ? onPrev : onNext}
-      className="w-9 h-9 rounded-full flex items-center justify-center text-muted hover:text-ink hover:bg-border/60 transition-colors"
+      className={arrowButton}
       aria-label={dir === 'prev' ? 'Mês anterior' : 'Próximo mês'}
     >
       {dir === 'prev'
@@ -72,19 +95,19 @@ export function MonthSelector({
 
   if (align === 'start') {
     return (
-      <div className={`flex items-center gap-1 ${bordered ? 'border-b border-border' : ''}`}>
+      <div className={bar({ align: 'start', bordered })}>
         {arrow('prev')}
-        <div className="min-w-[150px] text-center">{label}</div>
+        <div className={startLabel}>{label}</div>
         {arrow('next')}
-        {today && <div className="ml-2">{today}</div>}
+        {today && <div className={css({ ml: '2' })}>{today}</div>}
       </div>
     )
   }
 
   return (
-    <div className={`flex items-center px-3 py-2 ${bordered ? 'border-b border-border' : ''}`}>
+    <div className={bar({ align: 'center', bordered })}>
       {arrow('prev')}
-      <div className="flex-1 flex items-center justify-center gap-2 text-center">
+      <div className={centerLabel}>
         {label}
         {today}
       </div>
