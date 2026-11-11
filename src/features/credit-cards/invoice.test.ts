@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { addMonthsKey, dayIn, invoiceDates, invoiceFor, invoiceStatus, splitInstallments } from './invoice'
+import { invoiceDates, invoiceFor, invoiceStatus, splitInstallments } from './invoice'
+import { addMonthsKey, dayIn } from '../../shared/utils/dates'
 
 describe('invoiceFor — fecha dia 3, vence dia 10', () => {
   it.each([

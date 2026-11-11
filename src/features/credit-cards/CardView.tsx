@@ -1,17 +1,14 @@
 import { useState } from 'react'
 import { ArrowLeftRight, ChevronLeft } from 'lucide-react'
-import { formatBRL, todayISO } from '../../core/db'
 import { useCardData, type Invoice } from './useInvoices'
 import { useAccounts, AccountIcon, AccountChips } from '../accounts'
 import { LedgerError, isCashAccount } from '../../core/ledger/base'
 import { payInvoice } from './ledger'
 import type { InvoiceStatus } from './invoice'
 import type { EditTarget } from '../transactions'
+import { todayISO, formatDayMonthNumeric, formatMonthAbbr, formatMonthName } from '../../shared/utils/dates'
+import { formatBRL } from '../../shared/utils/money'
 
-const MONTH_SHORT = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
-const MONTH_LONG = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
-const dm = (iso: string) => `${iso.slice(8)}/${iso.slice(5, 7)}`
-const monthShort = (key: string) => MONTH_SHORT[Number(key.slice(5)) - 1]
 
 const STATUS: Record<InvoiceStatus, { label: string; tone: string }> = {
   open:    { label: 'Aberta',    tone: 'text-ink' },
@@ -109,7 +106,7 @@ export function CardView({ cardId, onBack, onEdit }: Props) {
                 ].join(' ')}
               >
                 <div className={`text-[12px] font-semibold ${isActive ? 'text-bg' : 'text-ink'}`}>
-                  {monthShort(inv.invoiceMonth)}{inv.invoiceMonth.slice(0, 4) !== currentInvoice.slice(0, 4) ? ` ${inv.invoiceMonth.slice(2, 4)}` : ''}
+                  {formatMonthAbbr(inv.invoiceMonth)}{inv.invoiceMonth.slice(0, 4) !== currentInvoice.slice(0, 4) ? ` ${inv.invoiceMonth.slice(2, 4)}` : ''}
                   {inv.invoiceMonth === currentInvoice && <span className="font-normal opacity-70"> · atual</span>}
                 </div>
                 <div className={`mt-0.5 text-[13px] font-bold nums truncate ${isActive ? 'text-bg' : 'text-ink'}`}>{formatBRL(inv.total)}</div>
@@ -130,7 +127,7 @@ function InvoicePanel({ invoice, cardId, defaultFrom, onEdit }: {
 }) {
   const [paying, setPaying] = useState(false)
   const st = STATUS[invoice.status]
-  const monthName = MONTH_LONG[Number(invoice.invoiceMonth.slice(5)) - 1]
+  const monthName = formatMonthName(invoice.invoiceMonth)
 
   return (
     <section className="mx-5 md:mx-0 mt-4 bg-surface border border-border rounded-2xl slide-up">
@@ -139,7 +136,7 @@ function InvoicePanel({ invoice, cardId, defaultFrom, onEdit }: {
           <h2 className="m-0 text-[15px] font-semibold text-ink">Fatura de {monthName}</h2>
           <span className={`text-[12px] font-semibold ${st.tone}`}>{st.label}</span>
         </div>
-        <div className="text-[12px] text-muted mt-0.5 nums">fecha {dm(invoice.closingDate)} · vence {dm(invoice.dueDate)}</div>
+        <div className="text-[12px] text-muted mt-0.5 nums">fecha {formatDayMonthNumeric(invoice.closingDate)} · vence {formatDayMonthNumeric(invoice.dueDate)}</div>
 
         <div className="mt-4 grid grid-cols-3 gap-2 nums">
           <Figure label="Total" value={formatBRL(invoice.total)} />
@@ -174,8 +171,8 @@ function InvoicePanel({ invoice, cardId, defaultFrom, onEdit }: {
                   <div className="flex-1 min-w-0">
                     <div className="text-[15px] font-medium text-ink truncate">{isRefund ? tx.description : purchase?.description || category?.name}</div>
                     <div className="text-[12px] text-muted truncate nums">
-                      {isRefund ? `Estorno · ${dm(tx.date)}` : <>
-                        {(tx.installments ?? 1) > 1 ? `${tx.installment}/${tx.installments} · ` : ''}compra {dm(tx.date)}
+                      {isRefund ? `Estorno · ${formatDayMonthNumeric(tx.date)}` : <>
+                        {(tx.installments ?? 1) > 1 ? `${tx.installment}/${tx.installments} · ` : ''}compra {formatDayMonthNumeric(tx.date)}
                         {purchase && (tx.installments ?? 1) > 1 ? ` · total ${formatBRL(purchase.total)}` : ''}
                       </>}
                     </div>
@@ -196,7 +193,7 @@ function InvoicePanel({ invoice, cardId, defaultFrom, onEdit }: {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-[15px] font-medium text-ink truncate">{p.description || 'Pagamento'}</div>
-                  <div className="text-[12px] text-muted nums">{dm(p.date)}</div>
+                  <div className="text-[12px] text-muted nums">{formatDayMonthNumeric(p.date)}</div>
                 </div>
                 <div className="text-[15px] font-bold nums text-ink shrink-0">+{formatBRL(p.amount)}</div>
               </button>
@@ -239,7 +236,7 @@ function PayForm({ invoice, cardId, defaultFrom, onDone }: { invoice: Invoice; c
     try {
       await payInvoice({
         cardAccountId: cardId, invoiceMonth: invoice.invoiceMonth, fromAccountId: fromId,
-        amount: Number(digits), date, description: `Fatura ${monthShort(invoice.invoiceMonth)}/${invoice.invoiceMonth.slice(0, 4)}`,
+        amount: Number(digits), date, description: `Fatura ${formatMonthAbbr(invoice.invoiceMonth)}/${invoice.invoiceMonth.slice(0, 4)}`,
       })
       onDone()
     } catch (e) {

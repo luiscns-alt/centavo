@@ -1,21 +1,18 @@
 import { useState } from 'react'
 import { ArrowLeftRight, ChevronDown, ChevronRight } from 'lucide-react'
-import { formatBRL, toISODate, type PaymentMethod } from '../../core/db'
 import { groupKeyOf, rowDelta, useTransactionList, type InvoiceGroupInfo, type LedgerRow } from './useTransactionList'
 import { useAccounts, AccountFilter, type AccountScope, AccountIcon } from '../accounts'
-import { PAYMENT_METHODS } from '../../core/ledger/base'
 import type { MonthNav } from '../../shared/ui/MonthSelector'
 import type { EditTarget } from './AddTransactionForm'
 import { ScreenHeader } from '../../shared/ui/ScreenHeader'
 import { TransactionRow } from './TransactionRow'
 import { EmptyState } from '../../shared/ui/EmptyState'
 import { MobileHeader } from '../../shared/ui/MobileHeader'
+import { PAYMENT_METHODS } from '../../core/constants/domain'
+import type { PaymentMethod } from '../../core/types'
+import { toISODate, MONTH_LONG, formatDayMonth } from '../../shared/utils/dates'
+import { formatBRL } from '../../shared/utils/money'
 
-const MONTH_NAMES_LC = [
-  'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
-  'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro',
-]
-const MONTH_SHORT = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
 
 type Filter = 'all' | 'income' | 'expense' | 'transfer'
 const FILTERS: { id: Filter; label: string }[] = [
@@ -46,7 +43,6 @@ function dayLabel(iso: string): string {
     .replaceAll('.', '')
 }
 
-const shortDate = (iso: string) => `${Number(iso.slice(8))} ${MONTH_SHORT[Number(iso.slice(5, 7)) - 1]}`
 
 function matches(row: LedgerRow, f: Filter, method: PaymentMethod | '') {
   if (method && (row.kind !== 'tx' || row.tx.method !== method)) return false
@@ -93,7 +89,7 @@ export function TransactionList({ nav, account, onAdd, onEdit, onOpenCard, onOpe
   const methodsHere = [...new Set(rows.flatMap(r => (r.kind === 'tx' && r.tx.method ? [r.tx.method] : [])))]
   const visible = rows.filter(r => matches(r, active, method))
   const groups = group(visible, ids)
-  const monthLc = MONTH_NAMES_LC[nav.month - 1]
+  const monthLc = MONTH_LONG[nav.month - 1]
 
   return (
     <div className="flex-1 overflow-y-auto pb-28 md:pb-12">
@@ -195,7 +191,7 @@ export function TransactionList({ nav, account, onAdd, onEdit, onOpenCard, onOpe
                               row.tx.type === 'refund' && !row.tx.description?.startsWith('Estorno') ? 'Estorno' : null,
                               row.tx.description ? row.category.name : null,
                               row.tx.installments && row.tx.installments > 1 ? `${row.tx.installment}/${row.tx.installments}` : null,
-                              row.tx.invoiceMonth ? `compra ${shortDate(row.tx.date)}` : null,
+                              row.tx.invoiceMonth ? `compra ${formatDayMonth(row.tx.date)}` : null,
                               !row.tx.invoiceMonth && row.tx.method ? PAYMENT_METHODS[row.tx.method] : null,
                               multiAccount && ids === null && !row.tx.invoiceMonth ? row.account?.name : null,
                             ].filter(Boolean).join(' · ') || undefined}
@@ -224,7 +220,7 @@ function InvoiceHeader({ info, total, onOpen }: { info: InvoiceGroupInfo; total:
     <button onClick={onOpen} className="w-full flex items-center gap-2 pt-3 pb-1.5 md:px-1 text-left group">
       <AccountIcon account={info.card} size="inline" />
       <h2 className="m-0 flex-1 min-w-0 truncate text-[12px] font-semibold uppercase tracking-[.08em] text-muted group-hover:text-ink">
-        Fatura {info.card.name} · vence {shortDate(info.dueDate)}
+        Fatura {info.card.name} · vence {formatDayMonth(info.dueDate)}
       </h2>
       <span className="text-[12px] text-muted nums">−{formatBRL(Math.abs(total))}</span>
       <ChevronRight size={14} strokeWidth={2} className="text-muted" />

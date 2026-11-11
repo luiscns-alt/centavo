@@ -1,11 +1,14 @@
 import { useId, useState } from 'react'
 import { X } from 'lucide-react'
-import { firstGrapheme, todayISO, type AccountKind } from '../../core/db'
-import { ACCOUNT_KINDS, EDITABLE_KINDS, LedgerError, isCashAccount } from '../../core/ledger/base'
-import { type AccountInput } from './ledger'
+import { LedgerError, isCashAccount } from '../../core/ledger/base'
+import type { AccountInput } from './ledger'
 import { bankById, exactBank, normalizeBankText, searchBanks, type Bank } from './banks/catalog'
 import { AccountIcon } from './AccountIcon'
 import { useAccounts } from './useAccounts'
+import { ACCOUNT_KINDS, EDITABLE_KINDS } from '../../core/constants/domain'
+import type { AccountKind } from '../../core/types'
+import { todayISO } from '../../shared/utils/dates'
+import { firstGrapheme } from '../../shared/utils/text'
 
 interface Props {
   initial?: AccountInput

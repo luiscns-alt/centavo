@@ -1,19 +1,20 @@
 import { useEffect, useRef, useState } from 'react'
 import { OctagonAlert, AlertTriangle, X } from 'lucide-react'
 import { crossed, type BudgetDashboard, type BudgetStatus } from './budgets'
-import { formatBRL } from '../../core/db'
 import { liveQuery } from 'dexie'
 import { loadBudgetDashboard } from './useBudgets'
-import { MONTH_LONG } from '../../shared/charts/chartUtils'
+import { MONTH_LONG } from '../../shared/utils/dates'
+import { formatBRL } from '../../shared/utils/money'
+import { STORAGE_KEYS } from '../../shared/constants/storageKeys'
+import { readJSON, writeJSON } from '../../shared/utils/storage'
 
-const SEEN_KEY = 'centavo:budgetAlerts'
 interface Toast { id: string; level: 'warning' | 'over'; text: string }
 
 function readSeen(): Record<string, 'warning' | 'over'> {
-  try { return JSON.parse(localStorage.getItem(SEEN_KEY) ?? '{}') } catch { return {} }
+  return readJSON<Record<string, 'warning' | 'over'>>(STORAGE_KEYS.budgetAlerts, {})
 }
 function writeSeen(v: Record<string, 'warning' | 'over'>) {
-  try { localStorage.setItem(SEEN_KEY, JSON.stringify(v)) } catch { /* private mode */ }
+  writeJSON(STORAGE_KEYS.budgetAlerts, v)
 }
 
 function statuses(d: BudgetDashboard): Map<number, { status: BudgetStatus; name: string; over: number }> {

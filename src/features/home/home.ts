@@ -15,9 +15,11 @@
 import { accountBalances, loanCredits } from '../accounts'
 import { buildBudgetDashboard, type BudgetStatus } from '../budgets'
 import { buildCardInvoices } from '../credit-cards'
-import { db as defaultDb, type Account, type BudgetOverride, type BudgetPlan, type CardSettings, type CentavoDB, type Category, type Loan, type LoanEvent, type Transaction, type Transfer } from '../../core/db'
+import { db as defaultDb, type CentavoDB } from '../../core/db'
 import { isCashAccount } from '../../core/ledger/base'
 import { buildLoanSchedule } from '../loans'
+import type { Account, BudgetOverride, BudgetPlan, CardSettings, Category, Loan, LoanEvent, Transaction, Transfer } from '../../core/types'
+import { daysBetween, formatDayMonthNumeric, lastDayOfMonth } from '../../shared/utils/dates'
 
 export const HOME_SUMMARY_VERSION = 1
 export const DUE_SOON_DAYS = 5
@@ -91,19 +93,13 @@ export interface HomeInput {
   budgetOverrides: BudgetOverride[]
 }
 
-const daysBetween = (a: string, b: string) => Math.round((Date.parse(`${b}T12:00:00Z`) - Date.parse(`${a}T12:00:00Z`)) / 86_400_000)
-const dm = (iso: string) => `${iso.slice(8)}/${iso.slice(5, 7)}`
 
-function lastDayOf(month: string): string {
-  const [y, m] = month.split('-').map(Number)
-  return `${month}-${String(new Date(y, m, 0).getDate()).padStart(2, '0')}`
-}
 
 export function buildHomeSummary(input: HomeInput): HomeSummary {
   const t0 = typeof performance !== 'undefined' ? performance.now() : 0
   const { today, accounts } = input
   const month = today.slice(0, 7)
-  const monthEnd = lastDayOf(month)
+  const monthEnd = lastDayOfMonth(month)
   const inScope = (id: number) => input.scope === null || input.scope.includes(id)
   const alerts: HomeAlert[] = []
 
@@ -134,7 +130,7 @@ export function buildHomeSummary(input: HomeInput): HomeSummary {
     const overdue = inv.dueDate < today && remaining > 0
     if (remaining > 0 && inv.dueDate <= monthEnd) invoicesDue += remaining
     if (overdue) {
-      alerts.push({ kind: 'invoice_overdue', severity: 4, title: `Fatura ${card.name} venceu em ${dm(inv.dueDate)}`, amount: remaining, date: inv.dueDate, target: { screen: 'card', id: card.id } })
+      alerts.push({ kind: 'invoice_overdue', severity: 4, title: `Fatura ${card.name} venceu em ${formatDayMonthNumeric(inv.dueDate)}`, amount: remaining, date: inv.dueDate, target: { screen: 'card', id: card.id } })
     } else if (remaining > 0 && daysBetween(today, inv.dueDate) <= DUE_SOON_DAYS) {
       const d = daysBetween(today, inv.dueDate)
       alerts.push({
@@ -162,7 +158,7 @@ export function buildHomeSummary(input: HomeInput): HomeSummary {
       if (r.status === 'paid' || r.dueDate > monthEnd) continue
       loansDue += r.total
       if (r.status === 'overdue') {
-        alerts.push({ kind: 'loan_overdue', severity: 4, title: `Parcela ${r.n} de ${account.name} venceu em ${dm(r.dueDate)}`, amount: r.total, date: r.dueDate, target: { screen: 'loan', id: loan.id as number } })
+        alerts.push({ kind: 'loan_overdue', severity: 4, title: `Parcela ${r.n} de ${account.name} venceu em ${formatDayMonthNumeric(r.dueDate)}`, amount: r.total, date: r.dueDate, target: { screen: 'loan', id: loan.id as number } })
       }
     }
     const next = s.summary.next

@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { X } from 'lucide-react'
-import { CategoryError, firstGrapheme, type Category } from '../../core/db'
+import { CategoryError } from '../../core/db'
+import type { Category } from '../../core/types'
+import { firstGrapheme } from '../../shared/utils/text'
 
 const SUGGESTED: Record<Category['type'], string[]> = {
   expense: ['🏷️', '🛒', '☕', '🍕', '🍺', '⛽', '🚌', '🅿️', '🏋️', '💇', '👕', '🧸', '🎮', '📱', '💡', '🔧', '🌱', '🏥', '🎓', '🐶'],

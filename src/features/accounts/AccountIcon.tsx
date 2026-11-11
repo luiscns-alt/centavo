@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { bankById } from './banks/catalog'
-import type { Account } from '../../core/db'
+import type { Account } from '../../core/types'
 
 interface Props {
   account: Pick<Account, 'icon' | 'bankId'>

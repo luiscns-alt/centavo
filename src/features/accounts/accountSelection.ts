@@ -1,4 +1,4 @@
-import type { Account } from '../../core/db'
+import type { Account } from '../../core/types'
 
 /**
  * What the account filter points at, stored as a short string:

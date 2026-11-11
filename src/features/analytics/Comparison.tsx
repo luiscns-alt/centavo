@@ -1,24 +1,23 @@
 import { useState } from 'react'
-import { formatBRL } from '../../core/db'
 import { useMonthlySeries } from './useMonthlySeries'
 import type { MonthPoint } from './series'
-import { MONTH_LONG, MONTH_SHORT } from '../../shared/charts/chartUtils'
 import { MonthBarChart, TooltipRow } from '../../shared/charts/MonthBarChart'
 import { Swatch } from '../../shared/charts/Swatch'
 import { EmptyState } from '../../shared/ui/EmptyState'
 import type { MonthNav } from '../../shared/ui/MonthSelector'
 import type { AccountScope } from '../accounts'
 import { CardInsightsSection } from '../credit-cards'
+import { MONTH_LONG, MONTH_SHORT } from '../../shared/utils/dates'
+import { formatBRL, formatAmount, formatAmountDelta, formatDelta, toneClass } from '../../shared/utils/money'
+import { STORAGE_KEYS } from '../../shared/constants/storageKeys'
+import { readLocal, writeLocal } from '../../shared/utils/storage'
 
 type Period = 6 | 12
-const PERIOD_KEY = 'centavo:comparePeriod'
 
 function readPeriod(): Period {
-  try { return localStorage.getItem(PERIOD_KEY) === '12' ? 12 : 6 } catch { return 6 }
+  return readLocal(STORAGE_KEYS.comparePeriod) === '12' ? 12 : 6
 }
 
-const signed = (c: number) => `${c > 0 ? '+' : c < 0 ? '−' : ''}${formatBRL(Math.abs(c))}`
-const toneOf = (c: number) => (c > 0 ? 'text-income' : c < 0 ? 'text-expense' : 'text-muted')
 
 interface Props {
   nav: MonthNav
@@ -34,7 +33,7 @@ export function Comparison({ nav, account, onAdd, onOpenCard }: Props) {
 
   function setPeriod(p: Period) {
     setPeriodState(p)
-    try { localStorage.setItem(PERIOD_KEY, String(p)) } catch { /* private mode — not remembered */ }
+    writeLocal(STORAGE_KEYS.comparePeriod, String(p))
   }
 
   const withData = points.filter(p => p.hasData)
@@ -101,7 +100,7 @@ export function Comparison({ nav, account, onAdd, onOpenCard }: Props) {
                       <TooltipRow swatch={<Swatch tone="income" />} label="Entradas" value={formatBRL(p.income)} />
                       <TooltipRow swatch={<Swatch tone="expense" />} label="Saídas" value={formatBRL(p.expense)} />
                       <div className="h-px bg-border my-1" />
-                      <TooltipRow label="Saldo" value={p.hasData ? signed(p.net) : '—'} strong />
+                      <TooltipRow label="Saldo" value={p.hasData ? formatDelta(p.net) : '—'} strong />
                     </>
                   )
                 }}
@@ -134,7 +133,7 @@ function Summary({ points, loading }: { points: MonthPoint[]; loading: boolean }
     { label: 'Saídas', value: formatBRL(Math.round(avgOut)), sub: 'média por mês' },
     {
       label: 'Melhor mês',
-      value: best ? signed(best.net) : '–',
+      value: best ? formatDelta(best.net) : '–',
       sub: best ? `${MONTH_LONG[best.month - 1]} ${best.year}` : '',
     },
   ]
@@ -155,10 +154,7 @@ function Summary({ points, loading }: { points: MonthPoint[]; loading: boolean }
   )
 }
 
-const plainFmt = new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 /** Table amounts drop the "R$" (stated once above the table) so four columns fit a phone */
-const plain = (c: number) => plainFmt.format(c / 100)
-const signedPlain = (c: number) => `${c > 0 ? '+' : c < 0 ? '−' : ''}${plain(Math.abs(c))}`
 
 /** Table view of the same data — newest month first, with totals */
 function MonthTable({ points }: { points: MonthPoint[] }) {
@@ -188,10 +184,10 @@ function MonthTable({ points }: { points: MonthPoint[] }) {
                 <span className="capitalize">{MONTH_SHORT[p.month - 1]}</span>
                 <span className="text-muted font-normal"> {String(p.year).slice(2)}</span>
               </th>
-              <td className="text-right text-ink px-1.5 md:px-2 py-3 whitespace-nowrap">{p.hasData ? plain(p.income) : '—'}</td>
-              <td className="text-right text-ink px-1.5 md:px-2 py-3 whitespace-nowrap">{p.hasData ? plain(p.expense) : '—'}</td>
-              <td className={`text-right font-bold pl-3 pr-3 md:px-5 py-3 whitespace-nowrap ${p.hasData ? toneOf(p.net) : 'text-muted'}`}>
-                {p.hasData ? signedPlain(p.net) : '—'}
+              <td className="text-right text-ink px-1.5 md:px-2 py-3 whitespace-nowrap">{p.hasData ? formatAmount(p.income) : '—'}</td>
+              <td className="text-right text-ink px-1.5 md:px-2 py-3 whitespace-nowrap">{p.hasData ? formatAmount(p.expense) : '—'}</td>
+              <td className={`text-right font-bold pl-3 pr-3 md:px-5 py-3 whitespace-nowrap ${p.hasData ? toneClass(p.net) : 'text-muted'}`}>
+                {p.hasData ? formatAmountDelta(p.net) : '—'}
               </td>
             </tr>
           ))}
@@ -199,9 +195,9 @@ function MonthTable({ points }: { points: MonthPoint[] }) {
         <tfoot>
           <tr className="border-t border-border bg-bg/60">
             <th scope="row" className="text-left font-semibold text-ink pl-3 pr-3 md:px-5 py-3">Total</th>
-            <td className="text-right font-semibold text-ink px-1.5 md:px-2 py-3 whitespace-nowrap">{plain(total.income)}</td>
-            <td className="text-right font-semibold text-ink px-1.5 md:px-2 py-3 whitespace-nowrap">{plain(total.expense)}</td>
-            <td className={`text-right font-bold pl-3 pr-3 md:px-5 py-3 whitespace-nowrap ${toneOf(total.net)}`}>{signedPlain(total.net)}</td>
+            <td className="text-right font-semibold text-ink px-1.5 md:px-2 py-3 whitespace-nowrap">{formatAmount(total.income)}</td>
+            <td className="text-right font-semibold text-ink px-1.5 md:px-2 py-3 whitespace-nowrap">{formatAmount(total.expense)}</td>
+            <td className={`text-right font-bold pl-3 pr-3 md:px-5 py-3 whitespace-nowrap ${toneClass(total.net)}`}>{formatAmountDelta(total.net)}</td>
           </tr>
         </tfoot>
       </table>

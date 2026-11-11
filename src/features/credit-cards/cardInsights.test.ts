@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
-import type { Account, Transaction, Transfer } from '../../core/db'
 import { buildCardInsights } from './cardInsights'
 import { buildCardInvoices } from './cardInvoices'
+import type { Account, Transaction, Transfer } from '../../core/types'
 
 const acc = (id: number, kind: Account['kind'], extra: Partial<Account> = {}): Account => ({
   id, name: `A${id}`, kind, icon: '', openingBalance: 0, openingDate: '2026-01-01', archived: 0, createdAt: id, ...extra,

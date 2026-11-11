@@ -1,4 +1,5 @@
-import { signedAmount, type Account, type Loan, type LoanEvent, type Transaction, type Transfer } from '../../core/db'
+import { signedAmount } from '../../core/amounts'
+import type { Account, Loan, LoanEvent, Transaction, Transfer } from '../../core/types'
 
 type Tx = Pick<Transaction, 'type' | 'amount' | 'accountId' | 'date'>
 type Tr = Pick<Transfer, 'fromAccountId' | 'toAccountId' | 'amount' | 'date'>

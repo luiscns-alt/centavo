@@ -2,10 +2,11 @@
  * Comparativo → Cartões: how much the cards weigh on spending, what is still owed on their
  * invoices, and each card's current invoice. Pure: the hook reads, this computes.
  */
-import { expenseDelta, type Account, type CardSettings, type Transaction, type Transfer } from '../../core/db'
 import { buildCardInvoices } from './cardInvoices'
-import { monthKey, monthWindow } from '../analytics'
 import type { InvoiceStatus } from './invoice'
+import { expenseDelta } from '../../core/amounts'
+import type { Account, CardSettings, Transaction, Transfer } from '../../core/types'
+import { monthKey, monthWindow } from '../../shared/utils/dates'
 
 type Card = Account & { id: number; card: CardSettings }
 

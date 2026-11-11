@@ -1,15 +1,15 @@
 import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { ChevronLeft, RotateCcw, Trash2, X } from 'lucide-react'
-import { db, formatBRL, todayISO, type Transaction } from '../../core/db'
+import { db } from '../../core/db'
 import { LedgerError, type RefundTarget } from '../../core/ledger/base'
 import { createRefund, deleteTransaction } from './ledger'
 import { invoiceFor } from '../credit-cards'
-import { MONTH_LONG } from '../../shared/charts/chartUtils'
 import { FieldLabel, MoneyInput } from '../../shared/ui/MoneyInput'
+import type { Transaction } from '../../core/types'
+import { todayISO, formatMonthYear, formatShortDate } from '../../shared/utils/dates'
+import { formatBRL } from '../../shared/utils/money'
 
-const shortDate = (iso: string) => `${iso.slice(8)}/${iso.slice(5, 7)}/${iso.slice(2, 4)}`
-const monthOf = (ym: string) => `${MONTH_LONG[Number(ym.slice(5)) - 1]} ${ym.slice(0, 4)}`
 
 /**
  * Estornos of an expense or card purchase, in its edit screen. A refund lowers the category's
@@ -84,7 +84,7 @@ export function RefundPanel({ target, total, minDate }: { target: RefundTarget; 
         <ul className="list-none m-0 p-0 border-t border-border divide-y divide-border">
           {refunds.map(r => (
             <li key={r.id} className="flex items-center gap-3 px-4 py-2.5 text-[13px]">
-              <span className="text-muted nums w-16 shrink-0">{shortDate(r.date)}</span>
+              <span className="text-muted nums w-16 shrink-0">{formatShortDate(r.date)}</span>
               <span className="flex-1 min-w-0 truncate text-ink">{r.description}</span>
               <span className="nums font-semibold text-ink">+{formatBRL(r.amount)}</span>
               <button type="button" onClick={() => void remove(r)} aria-label="Excluir estorno" className="text-muted hover:text-ink">
@@ -121,7 +121,7 @@ export function RefundPanel({ target, total, minDate }: { target: RefundTarget; 
               className="h-11 px-3 rounded-[10px] border border-border bg-bg text-[14px] text-ink placeholder:text-muted outline-none min-w-0"
             />
           </div>
-          {creditOn && <p className="mt-2 mb-0 text-[12px] text-muted">Crédito na fatura de {monthOf(creditOn)}.</p>}
+          {creditOn && <p className="mt-2 mb-0 text-[12px] text-muted">Crédito na fatura de {formatMonthYear(creditOn)}.</p>}
           {error && <p className="mt-2 mb-0 text-[12px] text-expense" role="alert">{error}</p>}
           <button
             type="button"
@@ -157,8 +157,8 @@ export function RefundDetail({ id, onDone, onCancel }: { id: number; onDone: () 
   const rows: [string, string][] = [
     ['Categoria', `${category?.icon ?? ''} ${category?.name ?? '—'}`],
     [account?.kind === 'credit' ? 'Cartão' : 'Conta', account?.name ?? '—'],
-    ['Data', shortDate(r.date)],
-    ...(r.invoiceMonth ? [['Fatura', monthOf(r.invoiceMonth)] as [string, string]] : []),
+    ['Data', formatShortDate(r.date)],
+    ...(r.invoiceMonth ? [['Fatura', formatMonthYear(r.invoiceMonth)] as [string, string]] : []),
   ]
 
   return (

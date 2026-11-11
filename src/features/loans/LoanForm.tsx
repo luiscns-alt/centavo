@@ -1,16 +1,17 @@
 import { useMemo, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { ChevronLeft } from 'lucide-react'
-import { db, formatBRL, sortCategories, todayISO, type LoanType, type PaymentMethod } from '../../core/db'
-import { ACCOUNT_METHODS, LedgerError, PAYMENT_METHODS, isCashAccount } from '../../core/ledger/base'
-import { LOAN_TYPES, createLoan } from './ledger'
-import { monthlyRatePercent, originalSchedule, type AmortizationSystem, type RateUnit } from './loanMath'
-import { addMonths, dayIn, parseYM } from '../credit-cards'
+import { db, sortCategories } from '../../core/db'
+import { LedgerError, isCashAccount } from '../../core/ledger/base'
+import { createLoan } from './ledger'
+import { monthlyRatePercent, originalSchedule } from './loanMath'
 import { useAccounts, AccountChips } from '../accounts'
 import { Choice, FieldLabel, MoneyInput } from '../../shared/ui/MoneyInput'
+import { ACCOUNT_METHODS, PAYMENT_METHODS, LOAN_TYPES } from '../../core/constants/domain'
+import type { LoanType, PaymentMethod, AmortizationSystem, RateUnit } from '../../core/types'
+import { todayISO, addMonths, dayIn, parseYM, formatMonthShortYear } from '../../shared/utils/dates'
+import { formatBRL } from '../../shared/utils/money'
 
-const MONTH_SHORT = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
-const monthYear = (iso: string) => `${MONTH_SHORT[Number(iso.slice(5, 7)) - 1]}/${iso.slice(0, 4)}`
 const plusOneMonth = (iso: string) => dayIn(addMonths(parseYM(iso), 1), Number(iso.slice(8)))
 
 interface Props {
@@ -200,7 +201,7 @@ export function LoanForm({ onCreated, onCancel }: Props) {
               <Fig label="Total de juros" value={formatBRL(sim.interest)} />
               <Fig label="Total pago" value={formatBRL(sim.total)} />
               <Fig label="1ª parcela: juros" value={formatBRL(sim.first.interest)} />
-              <Fig label="Termina em" value={monthYear(sim.last.dueDate)} />
+              <Fig label="Termina em" value={formatMonthShortYear(sim.last.dueDate)} />
             </div>
           ) : (
             <p className="m-0 text-[13px] text-muted">Preencha valor, taxa e prazo para ver as parcelas.</p>

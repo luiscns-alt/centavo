@@ -1,7 +1,7 @@
 import { AlertTriangle, ArrowRight, OctagonAlert } from 'lucide-react'
-import { formatBRL } from '../../core/db'
 import type { HomeSummary } from '../home'
 import { BudgetBar } from './BudgetBar'
+import { formatBRL } from '../../shared/utils/money'
 
 /** Início: this month's budgets — only when at least one budget exists */
 export function BudgetHomeCard({ budgets, onOpen }: { budgets: HomeSummary['budgets']; onOpen: () => void }) {

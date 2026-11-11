@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { buildMonthlySeries, monthDiff, monthWindow } from './series'
+import { buildMonthlySeries, monthDiff } from './series'
+import { monthWindow } from '../../shared/utils/dates'
 
 const tx = (date: string, type: 'income' | 'expense', amount: number) => ({ date, type, amount })
 

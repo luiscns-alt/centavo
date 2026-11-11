@@ -1,5 +1,5 @@
-import type { Account } from '../../core/db'
 import { AccountIcon } from './AccountIcon'
+import type { Account } from '../../core/types'
 
 interface Props {
   accounts: Account[]

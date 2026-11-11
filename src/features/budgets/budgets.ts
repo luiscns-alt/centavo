@@ -1,3 +1,5 @@
+import type { BudgetOverride, BudgetPlan, Category, Transaction } from '../../core/types'
+import { addMonthsKey, daysInMonth, parseYM } from '../../shared/utils/dates'
 /**
  * Orçamentos — pure, read-only math over the ledger. Nothing here writes; limits are set through
  * ledger.setBudget / setBudgetOverride. All amounts are integer centavos.
@@ -11,7 +13,6 @@
  *   a child may have its own (nested) limit. Totals never count a nested limit twice.
  * - Status: ok < 80% ≤ warning ≤ 100% < over.
  */
-import type { BudgetOverride, BudgetPlan, Category, Transaction } from '../../core/db'
 
 export const WARN_AT = 0.8
 
@@ -117,16 +118,7 @@ export function crossed(before: BudgetStatus, after: BudgetStatus): 'warning' | 
   return after === 'over' ? 'over' : after === 'warning' ? 'warning' : null
 }
 
-function addMonth(ym: string, n: number): string {
-  const [y, m] = ym.split('-').map(Number)
-  const t = y * 12 + (m - 1) + n
-  return `${Math.floor(t / 12)}-${String((t % 12) + 1).padStart(2, '0')}`
-}
 
-function daysIn(ym: string): number {
-  const [y, m] = ym.split('-').map(Number)
-  return new Date(y, m, 0).getDate()
-}
 
 // ── Dashboard ─────────────────────────────────────────────────────────────
 
@@ -156,7 +148,7 @@ export function buildBudgetDashboard(input: BudgetInput): BudgetDashboard {
     else if (t.purchaseId != null) b.cardInstallments += t.amount
     else b.oneOff += t.amount
   }
-  const aheadEnd = addMonth(month, input.aheadMonths ?? 3)
+  const aheadEnd = addMonthsKey(month, input.aheadMonths ?? 3)
   for (const t of input.future ?? []) {
     if (t.type !== 'expense' || t.month <= month || t.month > aheadEnd) continue
     const m = get(t.categoryId).ahead
@@ -166,7 +158,7 @@ export function buildBudgetDashboard(input: BudgetInput): BudgetDashboard {
   for (const f of input.forecast ?? []) { get(f.categoryId).projected += f.amount; projectedAll += f.amount }
 
   const inMonth = input.today?.slice(0, 7) === month
-  const elapsed = inMonth ? Number(input.today!.slice(8, 10)) / daysIn(month) : null
+  const elapsed = inMonth ? Number(input.today!.slice(8, 10)) / daysInMonth(parseYM(month)) : null
 
   const children = new Map<number, Category[]>()
   for (const c of cats) {

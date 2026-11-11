@@ -1,10 +1,10 @@
 import { ArrowRight } from 'lucide-react'
-import { formatBRL } from '../../core/db'
-import { monthDiff, monthKey } from './series'
+import { monthDiff } from './series'
 import { useMonthlySeries } from './useMonthlySeries'
-import { MONTH_LONG, MONTH_SHORT } from '../../shared/charts/chartUtils'
 import { MonthBarChart, TooltipRow } from '../../shared/charts/MonthBarChart'
 import type { MonthNav } from '../../shared/ui/MonthSelector'
+import { monthKey, MONTH_LONG, MONTH_SHORT } from '../../shared/utils/dates'
+import { formatBRL, formatDelta } from '../../shared/utils/money'
 
 const WINDOW = 6
 
@@ -15,7 +15,6 @@ interface Props {
   onOpenCompare: () => void
 }
 
-const signed = (c: number) => `${c > 0 ? '+' : c < 0 ? '−' : ''}${formatBRL(Math.abs(c))}`
 
 /** Patrimônio (or one account's balance) at the end of each of the last months */
 export function EvolutionCard({ nav, accountIds, onOpenCompare }: Props) {
@@ -46,7 +45,7 @@ export function EvolutionCard({ nav, accountIds, onOpenCompare }: Props) {
           </div>
           {sel && !loading && (
             <div className="text-[12px] text-muted mt-0.5 nums">
-              {signed(sel.net)} de resultado em {MONTH_LONG[sel.month - 1]}
+              {formatDelta(sel.net)} de resultado em {MONTH_LONG[sel.month - 1]}
             </div>
           )}
         </div>
@@ -75,7 +74,7 @@ export function EvolutionCard({ nav, accountIds, onOpenCompare }: Props) {
                 <>
                   <div className="font-semibold text-ink mb-1 capitalize">{MONTH_LONG[p.month - 1]} {p.year}</div>
                   <TooltipRow label={label} value={formatBRL(p.cumulative)} strong />
-                  <TooltipRow label="Resultado do mês" value={p.hasData ? signed(p.net) : '—'} />
+                  <TooltipRow label="Resultado do mês" value={p.hasData ? formatDelta(p.net) : '—'} />
                 </>
               )
             }}

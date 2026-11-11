@@ -1,9 +1,6 @@
+import { MONTH_LONG } from '../utils/dates'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
-const MONTH_NAMES = [
-  'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',
-]
 
 /** Month state + handlers, owned by App and shared by the month-based screens */
 export interface MonthNav {
@@ -47,7 +44,7 @@ export function MonthSelector({
         </div>
       )}
       <div className="text-[15px] font-semibold text-ink whitespace-nowrap">
-        {MONTH_NAMES[month - 1]} <span className="text-muted font-medium">{year}</span>
+        <span className="capitalize">{MONTH_LONG[month - 1]}</span> <span className="text-muted font-medium">{year}</span>
       </div>
     </div>
   )

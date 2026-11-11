@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { buildBudgetDashboard, crossed, limitFor, statusOf, type BudgetInput } from './budgets'
-import type { BudgetOverride, BudgetPlan, Category } from '../../core/db'
+import type { BudgetOverride, BudgetPlan, Category } from '../../core/types'
 
 const cat = (id: number, name: string, parentId?: number): Category =>
   ({ id, name, icon: '•', type: 'expense', ...(parentId ? { parentId } : {}) })

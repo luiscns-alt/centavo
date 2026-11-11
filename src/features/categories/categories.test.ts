@@ -1,10 +1,8 @@
 import 'fake-indexeddb/auto' // must load before Dexie
 import { describe, it, expect, afterEach } from 'vitest'
 import Dexie from 'dexie'
-import {
-  CentavoDB, CategoryError, DEFAULT_CATEGORIES, V3_CATEGORIES, V6_CATEGORIES,
-  addCategory, deleteCategory, firstGrapheme, sortCategories, updateCategory,
-} from '../../core/db'
+import { CentavoDB, CategoryError, DEFAULT_CATEGORIES, V3_CATEGORIES, V6_CATEGORIES, addCategory, deleteCategory, sortCategories, updateCategory } from '../../core/db'
+import { firstGrapheme } from '../../shared/utils/text'
 
 const opened: Dexie[] = []
 let seq = 0

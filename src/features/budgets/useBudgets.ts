@@ -1,7 +1,8 @@
 import { useLiveQuery } from 'dexie-react-hooks'
-import { db, todayISO } from '../../core/db'
+import { db } from '../../core/db'
 import { buildBudgetDashboard, type BudgetDashboard, type ForecastItem } from './budgets'
 import { buildLoanSchedule } from '../loans'
+import { todayISO } from '../../shared/utils/dates'
 
 /**
  * Budget dashboard for a month — always global (budgets are per category, not per account).

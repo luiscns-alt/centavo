@@ -1,5 +1,7 @@
-import { expenseDelta, signedAmount, type Transaction } from '../../core/db'
 import type { BalanceAdjustment } from '../accounts'
+import { expenseDelta, signedAmount } from '../../core/amounts'
+import type { Transaction } from '../../core/types'
+import { monthKey, monthWindow } from '../../shared/utils/dates'
 
 /** One month of the income/expense series. All amounts are integer centavos. */
 export interface MonthPoint {
@@ -17,19 +19,6 @@ export interface MonthPoint {
   hasData: boolean
 }
 
-const pad = (n: number) => String(n).padStart(2, '0')
-
-export const monthKey = (year: number, month: number) => `${year}-${pad(month)}`
-
-/** The `n` months ending at (endYear, endMonth), oldest first */
-export function monthWindow(endYear: number, endMonth: number, n: number): { year: number; month: number }[] {
-  const out: { year: number; month: number }[] = []
-  const endIndex = endYear * 12 + (endMonth - 1)
-  for (let i = endIndex - n + 1; i <= endIndex; i++) {
-    out.push({ year: Math.floor(i / 12), month: (i % 12) + 1 })
-  }
-  return out
-}
 
 /** Months between two (year, month) pairs: positive when b is after a */
 export const monthDiff = (a: { year: number; month: number }, b: { year: number; month: number }) =>

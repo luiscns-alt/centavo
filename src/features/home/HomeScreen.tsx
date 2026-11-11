@@ -1,6 +1,5 @@
 import { lazy, Suspense } from 'react'
 import { AlertTriangle, ArrowLeftRight, ChevronRight, Clock, CreditCard, Minus, OctagonAlert, Plus } from 'lucide-react'
-import { formatBRL, todayISO } from '../../core/db'
 import type { HomeAlert, HomeSummary } from './home'
 import { useHomeSummary } from './useHomeSummary'
 import type { MonthNav } from '../../shared/ui/MonthSelector'
@@ -8,13 +7,11 @@ import { AccountFilter, type AccountScope, AccountIcon, AccountsCard } from '../
 import { LazyMount } from '../../shared/ui/LazyMount'
 import { MobileHeader } from '../../shared/ui/MobileHeader'
 import { BudgetHomeCard } from '../budgets'
+import { todayISO, formatDayMonth, formatMonthName } from '../../shared/utils/dates'
+import { formatBRL, formatBalance } from '../../shared/utils/money'
 
 const MonthSection = lazy(() => import('./MonthSection'))
 
-const MONTH_LONG = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
-const MONTH_SHORT = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
-const dayMonth = (iso: string) => `${Number(iso.slice(8))} ${MONTH_SHORT[Number(iso.slice(5, 7)) - 1]}`
-const signedBRL = (c: number) => (c < 0 ? `−${formatBRL(-c)}` : formatBRL(c))
 
 export type QuickAction = 'expense' | 'income' | 'transfer'
 
@@ -105,19 +102,19 @@ function Hero({ data, stale }: { data?: HomeSummary; stale: boolean }) {
     due.invoices > 0 ? `faturas ${formatBRL(due.invoices)}` : null,
     due.loans > 0 ? `parcelas ${formatBRL(due.loans)}` : null,
   ].filter(Boolean) : []
-  const month = data ? MONTH_LONG[Number(data.month.slice(5)) - 1] : ''
+  const month = data ? formatMonthName(data.month) : ''
 
   return (
     <section className="md:bg-surface md:border md:border-border md:rounded-2xl" aria-busy={loading || stale}>
       <div className="px-5 md:px-8 pt-5 md:pt-8 pb-5 md:pb-7 text-center" style={{ filter: 'url(#paper-grain)' }}>
         <div className="text-[11px] font-semibold uppercase tracking-[.1em] text-muted mb-3">Disponível hoje</div>
         <div className={`font-serif text-[44px] md:text-[52px] leading-none nums ${loading ? 'text-muted opacity-30' : total < 0 ? 'text-expense' : 'text-ink'}`}>
-          {loading ? '–' : signedBRL(total)}
+          {loading ? '–' : formatBalance(total)}
         </div>
         {data && (
           <div className="mt-4 text-[13px] nums">
             <span className="text-muted">Sobra prevista em {month}: </span>
-            <span className={`font-semibold ${free < 0 ? 'text-expense' : 'text-ink'}`}>{signedBRL(free)}</span>
+            <span className={`font-semibold ${free < 0 ? 'text-expense' : 'text-ink'}`}>{formatBalance(free)}</span>
             {parts.length > 0 && <div className="text-[12px] text-muted mt-0.5">depois de {parts.join(' e ')}</div>}
           </div>
         )}
@@ -206,8 +203,8 @@ function CardsBlock({ cards, onOpen }: { cards: HomeSummary['cards']; onOpen: (i
               <div className="flex-1 min-w-0">
                 <div className="text-[15px] font-medium text-ink truncate">{c.name}</div>
                 <div className={`text-[12px] truncate nums ${c.overdue ? 'text-expense font-semibold' : 'text-muted'}`}>
-                  {c.remaining > 0 ? `${c.overdue ? 'Venceu' : 'Vence'} ${dayMonth(c.dueDate)}` : 'Nada a pagar agora'}
-                  {c.available != null && ` · disp. ${signedBRL(c.available)}`}
+                  {c.remaining > 0 ? `${c.overdue ? 'Venceu' : 'Vence'} ${formatDayMonth(c.dueDate)}` : 'Nada a pagar agora'}
+                  {c.available != null && ` · disp. ${formatBalance(c.available)}`}
                 </div>
               </div>
               <div className="text-[15px] font-bold nums shrink-0 text-ink">{formatBRL(c.remaining)}</div>

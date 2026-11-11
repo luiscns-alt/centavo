@@ -1,9 +1,11 @@
-import { db as defaultDb, MIGRATED_ACCOUNT_NAME, type Account, type BudgetOverride, type BudgetPlan, type CardSettings, type CentavoDB, type Category, type Loan, type LoanEvent, type PaymentMethod, type Purchase, type Transaction, type Transfer } from '../../core/db'
-import { LOAN_TYPES, loanTerms, adjustBalance, initialState, nextInstallment, prepayment, type LoanState } from '../loans'
+import { db as defaultDb, MIGRATED_ACCOUNT_NAME, type CentavoDB } from '../../core/db'
+import { loanTerms, adjustBalance, initialState, nextInstallment, prepayment } from '../loans'
 import { dec } from '../../core/decimal'
-import { ACCOUNT_KINDS, PAYMENT_METHODS, isISODate } from '../../core/ledger/base'
 import { bankById } from '../accounts'
-import { addMonthsKey, splitInstallments } from '../credit-cards'
+import { splitInstallments } from '../credit-cards'
+import { LOAN_TYPES, ACCOUNT_KINDS, PAYMENT_METHODS } from '../../core/constants/domain'
+import type { Account, BudgetOverride, BudgetPlan, CardSettings, Category, Loan, LoanEvent, PaymentMethod, Purchase, Transaction, Transfer, LoanState } from '../../core/types'
+import { isISODate, addMonthsKey } from '../../shared/utils/dates'
 
 /**
  * v1: categories + transactions.

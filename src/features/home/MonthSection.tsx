@@ -1,16 +1,13 @@
-import { formatBRL } from '../../core/db'
 import { useMonthlyData, type CategorySummary, EvolutionCard } from '../analytics'
 import { MonthSelector, type MonthNav } from '../../shared/ui/MonthSelector'
 import { CategoryRow } from '../categories'
 import { EmptyState } from '../../shared/ui/EmptyState'
 import { SectionLabel } from '../../shared/ui/SectionLabel'
-import { PAYMENT_METHODS } from '../../core/ledger/base'
-import type { PaymentMethod } from '../../core/db'
+import { PAYMENT_METHODS } from '../../core/constants/domain'
+import type { PaymentMethod } from '../../core/types'
+import { formatBRL } from '../../shared/utils/money'
+import { MONTH_LONG } from '../../shared/utils/dates'
 
-const MONTH_NAMES_LC = [
-  'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
-  'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro',
-]
 
 interface Props {
   nav: MonthNav
@@ -72,7 +69,7 @@ export default function MonthSection({ nav, accountIds, onAdd, onOpenCompare }: 
         <section className="mt-6 lg:mt-0 px-5 md:px-6 md:py-5 md:bg-surface md:border md:border-border md:rounded-2xl">
           {isEmpty ? (
             <EmptyState
-              title={`Nada em ${MONTH_NAMES_LC[nav.month - 1]} ainda`}
+              title={`Nada em ${MONTH_LONG[nav.month - 1]} ainda`}
               description="Registre uma receita ou despesa e o resumo por categoria aparece aqui."
               actionLabel="Novo lançamento"
               onAction={onAdd}

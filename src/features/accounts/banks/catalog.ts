@@ -1,10 +1,10 @@
+import type { AccountKind } from '../../../core/types'
 /**
  * Known Brazilian banks for the account form. Logos are the banks' trademarks, shipped as
  * static files in /public/banks (from github.com/Tgentil/Bancos-em-SVG, which collects the
  * official artwork) and shown only to identify the user's own accounts. No network lookups:
  * the app works offline and never tells a third party which banks the user has.
  */
-import type { AccountKind } from '../../../core/db'
 
 export interface Bank {
   /** Stable key stored in Account.bankId — never rename an existing id */

@@ -1,12 +1,12 @@
 import { ChevronRight } from 'lucide-react'
-import { formatBRL } from '../../core/db'
 import { useCardInsights } from './useCardInsights'
 import type { CardInsights } from './cardInsights'
 import type { InvoiceStatus } from './invoice'
-import { MONTH_LONG, MONTH_SHORT } from '../../shared/charts/chartUtils'
 import { MonthBarChart, TooltipRow } from '../../shared/charts/MonthBarChart'
 import { Swatch } from '../../shared/charts/Swatch'
 import { AccountIcon } from '../accounts'
+import { MONTH_LONG, MONTH_SHORT } from '../../shared/utils/dates'
+import { formatBRL } from '../../shared/utils/money'
 
 interface Props {
   year: number

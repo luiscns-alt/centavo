@@ -13,20 +13,17 @@ import type { AccountScope } from '../features/accounts'
 import type { Tab } from './nav'
 import type { AnalysisView } from '../features/analytics'
 import { useAccounts, resolveSelection } from '../features/accounts'
-
-const ACCOUNT_FILTER_KEY = 'centavo:accountFilter'
-const ANALYSIS_VIEW_KEY = 'centavo:analysisView'
+import { STORAGE_KEYS } from '../shared/constants/storageKeys'
+import { readLocal, writeLocal } from '../shared/utils/storage'
 
 function readAnalysisView(): AnalysisView {
-  try { return localStorage.getItem(ANALYSIS_VIEW_KEY) === 'budgets' ? 'budgets' : 'compare' } catch { return 'compare' }
+  return readLocal(STORAGE_KEYS.analysisView) === 'budgets' ? 'budgets' : 'compare'
 }
 
 function readAccountFilter(): string {
-  try {
-    const v = localStorage.getItem(ACCOUNT_FILTER_KEY) ?? ''
-    // Before cards, the filter stored a bare account id
-    return /^\d+$/.test(v) ? `a:${v}` : v
-  } catch { return '' }
+  const v = readLocal(STORAGE_KEYS.accountFilter) ?? ''
+  // Before cards, the filter stored a bare account id
+  return /^\d+$/.test(v) ? `a:${v}` : v
 }
 
 function getCurrentMonth() {
@@ -55,7 +52,7 @@ export default function App() {
 
   function setAnalysisView(v: AnalysisView) {
     setAnalysisViewState(v)
-    try { localStorage.setItem(ANALYSIS_VIEW_KEY, v) } catch { /* private mode — not remembered */ }
+    writeLocal(STORAGE_KEYS.analysisView, v)
   }
 
   // A filter pointing at a deleted account resolves to "all"
@@ -63,10 +60,7 @@ export default function App() {
 
   function setSelection(s: string) {
     setSelectionState(s)
-    try {
-      if (s === '') localStorage.removeItem(ACCOUNT_FILTER_KEY)
-      else localStorage.setItem(ACCOUNT_FILTER_KEY, s)
-    } catch { /* private mode — filter not remembered */ }
+    writeLocal(STORAGE_KEYS.accountFilter, s === '' ? null : s)
   }
   const account: AccountScope = { selection: ids === null ? '' : selection, ids, setSelection }
 

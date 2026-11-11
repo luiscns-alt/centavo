@@ -6,7 +6,8 @@
  * Balances are never stored (see features/accounts/balances.ts).
  */
 import { db as defaultDb, type CentavoDB } from '../../core/db'
-import { LedgerError, isMonthKey, isPositiveCentavos } from '../../core/ledger/base'
+import { LedgerError, isPositiveCentavos } from '../../core/ledger/base'
+import { isMonthKey } from '../../shared/utils/dates'
 
 // ─── Budgets ─────────────────────────────────────────────────────────────────
 

@@ -1,11 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 
-export const MONTH_SHORT = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
-export const MONTH_LONG = [
-  'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
-  'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro',
-]
-
 /** Round a step to 1, 2 or 5 × 10ⁿ */
 function niceStep(raw: number): number {
   const exp = 10 ** Math.floor(Math.log10(raw))

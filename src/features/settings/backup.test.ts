@@ -1,11 +1,12 @@
 import 'fake-indexeddb/auto' // must load before Dexie
 import { describe, it, expect, afterEach } from 'vitest'
 import Dexie from 'dexie'
-import { CentavoDB, DEFAULT_CATEGORIES, MIGRATED_ACCOUNT_NAME, type Account, type Transaction } from '../../core/db'
+import { CentavoDB, DEFAULT_CATEGORIES, MIGRATED_ACCOUNT_NAME } from '../../core/db'
 import { BackupError, backupFilename, createBackup, parseBackup, restoreBackup, type Backup } from './backup'
 import { createAccount } from '../accounts'
 import { createCardPurchase, payInvoice } from '../credit-cards'
 import { createLoan, payLoanInstallment, prepayLoan } from '../loans'
+import type { Account, Transaction } from '../../core/types'
 
 const opened: Dexie[] = []
 let seq = 0

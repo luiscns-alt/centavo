@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { ArrowDown, Check, ChevronLeft, Minus, Plus, Trash2 } from 'lucide-react'
-import { addCategory, db, formatBRL, sortCategories, todayISO, toISODate, type PaymentMethod } from '../../core/db'
-import { ACCOUNT_METHODS, LedgerError, isCashAccount, PAYMENT_METHODS } from '../../core/ledger/base'
+import { addCategory, db, sortCategories } from '../../core/db'
+import { LedgerError, isCashAccount } from '../../core/ledger/base'
 import { createAccount, type AccountInput, useAccountBalances, useAccounts, AccountChips, AccountEditor } from '../accounts'
 import { createCardPurchase, deleteCardPurchase, updateCardPurchase, invoiceFor, splitInstallments, useCardSummaries } from '../credit-cards'
 import { addTransaction, createTransfer, deleteTransaction, deleteTransfer, updateTransaction, updateTransfer } from './ledger'
@@ -10,6 +10,12 @@ import { requestPersistentStorageOnce } from '../../core/storage'
 import { Button } from '../../shared/ui/Button'
 import { CategoryEditor } from '../categories'
 import { RefundDetail, RefundPanel } from './RefundPanel'
+import { ACCOUNT_METHODS, PAYMENT_METHODS } from '../../core/constants/domain'
+import type { PaymentMethod } from '../../core/types'
+import { todayISO, toISODate, formatMonthAbbr, formatMonthShortYear } from '../../shared/utils/dates'
+import { formatBRL } from '../../shared/utils/money'
+import { STORAGE_KEYS } from '../../shared/constants/storageKeys'
+import { readLocal, writeLocal } from '../../shared/utils/storage'
 
 type Mode = 'expense' | 'income' | 'transfer'
 
@@ -56,9 +62,6 @@ interface FormInitial {
 
 const MAX_DIGITS = 11 // R$ 999.999.999,99
 const MAX_UI_INSTALLMENTS = 24
-const LAST_ACCOUNT_KEY = 'centavo:lastAccount'
-const lastMethodKey = (accountId: number) => `centavo:lastMethod:${accountId}`
-const MONTH_SHORT = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
 
 /** Cash-register style: digits fill from the right — "1250" → "12,50" */
 function formatDigits(digits: string): string {
@@ -73,12 +76,6 @@ function yesterdayISO(): string {
   return toISODate(d)
 }
 
-function readStored(key: string): string | null {
-  try { return localStorage.getItem(key) } catch { return null }
-}
-function store(key: string, value: string) {
-  try { localStorage.setItem(key, value) } catch { /* not remembered */ }
-}
 
 const blank = (mode: Mode = 'expense'): FormInitial => ({
   mode, amountTotal: 0, digits: '', categoryId: '', accountId: null, toId: null,
@@ -181,7 +178,7 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
   // Effective account: explicit choice → app filter → last used → first option
   const pickFrom = (id: number | null) => (id !== null && fromOptions.some(a => a.id === id) ? id : null)
   const accountId =
-    pickFrom(accountChoice) ?? pickFrom(defaultAccountId) ?? pickFrom(Number(readStored(LAST_ACCOUNT_KEY)) || null) ?? (fromOptions[0]?.id ?? null)
+    pickFrom(accountChoice) ?? pickFrom(defaultAccountId) ?? pickFrom(Number(readLocal(STORAGE_KEYS.lastAccount)) || null) ?? (fromOptions[0]?.id ?? null)
   const pickTo = (id: number | null) => (id !== null && id !== accountId && toOptions.some(a => a.id === id) ? id : null)
   const toId = pickTo(toChoice) ?? (toOptions.find(a => a.id !== accountId)?.id ?? null)
 
@@ -189,7 +186,7 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
   const isCard = !isTransfer && account?.kind === 'credit'
 
   // Payment method: explicit choice → last used on this account → wallet = cash, else Pix
-  const storedMethod = accountId !== null ? readStored(lastMethodKey(accountId)) as PaymentMethod | null : null
+  const storedMethod = accountId !== null ? readLocal(STORAGE_KEYS.lastMethod(accountId)) as PaymentMethod | null : null
   const method: PaymentMethod | null = isTransfer || isCard ? null
     : methodChoice ?? (storedMethod && ACCOUNT_METHODS.includes(storedMethod) ? storedMethod : account?.kind === 'wallet' ? 'cash' : 'pix')
 
@@ -254,9 +251,9 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
         const input = { type: txType, amount, categoryId: Number(categoryId), accountId, method: method ?? undefined, date, description } as const
         if (edit?.kind === 'tx') await updateTransaction(edit.id, input)
         else await addTransaction(input)
-        if (method) store(lastMethodKey(accountId), method)
+        if (method) writeLocal(STORAGE_KEYS.lastMethod(accountId), method)
       }
-      store(LAST_ACCOUNT_KEY, String(accountId))
+      writeLocal(STORAGE_KEYS.lastAccount, String(accountId))
       void requestPersistentStorageOnce()
       setSuccess(true)
       if (!isEdit) {
@@ -309,8 +306,8 @@ function TransactionForm({ defaultAccountId = null, edit, onSaved, onCancel, ini
       return {
         each: parts[0],
         evenly: parts.every(p => p === parts[0]),
-        first: `${MONTH_SHORT[Number(inv.invoiceMonth.slice(5)) - 1]}/${inv.invoiceMonth.slice(0, 4)}`,
-        budgetMonth: MONTH_SHORT[Number(inv.invoiceMonth.slice(5)) - 1],
+        first: formatMonthShortYear(inv.invoiceMonth),
+        budgetMonth: formatMonthAbbr(inv.invoiceMonth),
         due,
       }
     })()

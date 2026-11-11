@@ -29,12 +29,18 @@ Key rules from DESIGN.md:
 ```
 src/
   app/        shell: App, nav, SideNav/BottomNav — composes features
-  core/       db (schema, types), decimal, storage, ledger/base (LedgerError, shared guards)
-  shared/     generic UI (ui/) and charts (charts/) — no business knowledge
+  core/       db (Dexie schema + migrations), types/ (persisted entities), constants/domain
+              (labels, option lists), amounts (signedAmount/expenseDelta), decimal, storage,
+              ledger/base (LedgerError, shared guards)
+  shared/     no business knowledge: ui/, charts/, utils/ (dates, money, storage, text),
+              constants/storageKeys
   features/<name>/   accounts · transactions · credit-cards · loans · categories · budgets ·
                      analytics · home · settings — screens, hooks, pure logic, ledger.ts, tests
 ```
 - Another feature is imported only through its `index.ts` (`features/<name>`); add to the index what you expose.
 - `core/` and `shared/` never import `app/` or `features/` (core may `import type`). Features never import `app/`.
 - Screens (`*.tsx`) and hooks (`use*.ts`) only read the database; writes go through ledger functions.
+- Types: persisted entities in `core/types/`; a feature's own types stay in the feature (exported via its index); component `Props` stay next to the component.
+- No `enum` (`erasableSyntaxOnly`): use `as const` objects + derived unions. Typed literal comparisons (`t.type === 'expense'`) are fine; constants are for lists and labels.
+- Dates and money: never re-implement month names or BRL formatting — use `shared/utils/dates` and `shared/utils/money`. localStorage only through `shared/utils/storage` with keys from `STORAGE_KEYS`.
 - Rules live in `eslint-rules/architecture.js` (`architecture/boundaries`, `architecture/no-ui-writes`).

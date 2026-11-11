@@ -1,6 +1,7 @@
 import { useLiveQuery } from 'dexie-react-hooks'
-import { db, type Account } from '../../core/db'
+import { db } from '../../core/db'
 import { accountBalances, loanCredits } from './balances'
+import type { Account } from '../../core/types'
 
 export type AccountWithBalance = Account & { id: number; balance: number }
 

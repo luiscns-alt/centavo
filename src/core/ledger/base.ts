@@ -5,37 +5,15 @@
  * check can't go stale between reading and writing, and any error rolls the whole operation back.
  * Balances are never stored (see features/accounts/balances.ts).
  */
-import { type Account, type AccountKind, type CardSettings, type CentavoDB, type PaymentMethod } from '../db'
+import type { CentavoDB } from '../db'
+import type { Account, AccountKind, CardSettings, PaymentMethod } from '../types'
+import { ACCOUNT_KINDS, PAYMENT_METHODS } from '../constants/domain'
 
 /** Error with a pt-BR message meant to be shown to the user as-is */
 export class LedgerError extends Error {}
 
-export const ACCOUNT_KINDS: Record<AccountKind, { label: string; icon: string }> = {
-  checking:   { label: 'Conta corrente', icon: '🏦' },
-  savings:    { label: 'Poupança',       icon: '🐷' },
-  wallet:     { label: 'Carteira',       icon: '👛' },
-  investment: { label: 'Investimentos',  icon: '📈' },
-  credit:     { label: 'Cartão de crédito', icon: '💳' },
-  loan:       { label: 'Empréstimo', icon: '💸' },
-}
-
-/** Kinds the account form offers (cards have their own fields; loans are created as loans) */
-export const EDITABLE_KINDS: AccountKind[] = ['checking', 'savings', 'wallet', 'investment', 'credit']
-
 /** Accounts money can be paid from / received in: not cards, not loans */
 export const isCashAccount = (a: Pick<Account, 'kind'>) => a.kind !== 'credit' && a.kind !== 'loan'
-
-export const PAYMENT_METHODS: Record<PaymentMethod, string> = {
-  pix: 'Pix',
-  credit: 'Cartão de crédito',
-  debit: 'Débito',
-  boleto: 'Boleto',
-  cash: 'Dinheiro',
-  ted: 'TED',
-}
-
-/** Methods offered for non-card accounts, in picker order */
-export const ACCOUNT_METHODS: PaymentMethod[] = ['pix', 'debit', 'boleto', 'ted', 'cash']
 
 export const isMethod = (m: unknown): m is PaymentMethod => typeof m === 'string' && m in PAYMENT_METHODS
 export const isDay = (d: unknown) => Number.isInteger(d) && (d as number) >= 1 && (d as number) <= 31
@@ -43,14 +21,6 @@ export const MAX_INSTALLMENTS = 48
 
 export const NAME_MAX = 30
 export const isKind = (k: unknown): k is AccountKind => typeof k === 'string' && k in ACCOUNT_KINDS
-
-/** YYYY-MM-DD that is also a real calendar date */
-export function isISODate(s: unknown): s is string {
-  if (typeof s !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return false
-  const [y, m, d] = s.split('-').map(Number)
-  const dt = new Date(y, m - 1, d)
-  return dt.getFullYear() === y && dt.getMonth() === m - 1 && dt.getDate() === d
-}
 
 export const isPositiveCentavos = (n: unknown): n is number => Number.isSafeInteger(n) && (n as number) > 0
 
@@ -96,4 +66,3 @@ export async function refundedOf(database: CentavoDB, target: RefundTarget): Pro
   return rows.reduce((s, t) => s + t.amount, 0)
 }
 
-export const isMonthKey = (m: unknown): m is string => typeof m === 'string' && /^\d{4}-(0[1-9]|1[0-2])$/.test(m)

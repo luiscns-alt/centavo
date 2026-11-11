@@ -1,6 +1,6 @@
-import type { Account, Loan, LoanEvent } from '../../core/db'
 import { loanTerms } from './ledger'
 import { dueDateOf, originalSchedule, project, type InstallmentCalc, type LoanTerms } from './loanMath'
+import type { Account, Loan, LoanEvent } from '../../core/types'
 
 export type InstallmentStatus = 'paid' | 'due' | 'overdue' | 'projected'
 

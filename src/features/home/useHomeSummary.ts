@@ -1,16 +1,15 @@
 import { useEffect, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { todayISO } from '../../core/db'
 import { HOME_SUMMARY_VERSION, loadHomeSummary, type HomeSummary } from './home'
+import { todayISO } from '../../shared/utils/dates'
+import { STORAGE_KEYS } from '../../shared/constants/storageKeys'
+import { readJSON, writeJSON } from '../../shared/utils/storage'
 
-const SNAPSHOT_KEY = 'centavo:homeSnapshot'
 interface Snapshot { scope: string; data: HomeSummary }
 
 function readSnapshot(): Snapshot | null {
-  try {
-    const s = JSON.parse(localStorage.getItem(SNAPSHOT_KEY) ?? 'null') as Snapshot | null
-    return s && s.data?.version === HOME_SUMMARY_VERSION ? s : null
-  } catch { return null }
+  const s = readJSON<Snapshot | null>(STORAGE_KEYS.homeSnapshot, null)
+  return s && s.data?.version === HOME_SUMMARY_VERSION ? s : null
 }
 
 /**
@@ -24,7 +23,7 @@ export function useHomeSummary(scope: number[] | null): { data: HomeSummary | un
 
   useEffect(() => {
     if (!live) return
-    try { localStorage.setItem(SNAPSHOT_KEY, JSON.stringify({ scope: scopeKey, data: live } satisfies Snapshot)) } catch { /* full or private */ }
+    writeJSON(STORAGE_KEYS.homeSnapshot, { scope: scopeKey, data: live } satisfies Snapshot)
   }, [live, scopeKey])
 
   if (live) return { data: live, stale: false }

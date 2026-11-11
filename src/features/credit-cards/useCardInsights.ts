@@ -1,6 +1,7 @@
 import { useLiveQuery } from 'dexie-react-hooks'
-import { db, todayISO } from '../../core/db'
+import { db } from '../../core/db'
 import { buildCardInsights, type CardInsights } from './cardInsights'
+import { todayISO } from '../../shared/utils/dates'
 
 /**
  * One read for the whole Cartões section, independent of the chart above (each section has its

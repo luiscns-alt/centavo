@@ -5,21 +5,16 @@
  * check can't go stale between reading and writing, and any error rolls the whole operation back.
  * Balances are never stored (see features/accounts/balances.ts).
  */
-import { db as defaultDb, type Account, type CentavoDB, type Loan, type LoanEvent, type LoanType, type PaymentMethod, type Transaction, type Transfer } from '../../core/db'
+import { db as defaultDb, type CentavoDB } from '../../core/db'
 import { dec } from '../../core/decimal'
-import { LedgerError, cashAccount, expenseCategory, isISODate, isMethod, isPositiveCentavos } from '../../core/ledger/base'
+import { LedgerError, cashAccount, expenseCategory, isMethod, isPositiveCentavos } from '../../core/ledger/base'
 import { validAccount } from '../accounts'
-import { adjustBalance, dueDateOf, initialState, nextInstallment, prepayment, type AmortizationSystem, type LoanTerms, type PrepaymentMode, type RateUnit } from './loanMath'
+import { adjustBalance, dueDateOf, initialState, nextInstallment, prepayment, type LoanTerms } from './loanMath'
+import type { Account, Loan, LoanEvent, LoanType, PaymentMethod, Transaction, Transfer, AmortizationSystem, PrepaymentMode, RateUnit } from '../../core/types'
+import { isISODate } from '../../shared/utils/dates'
+import { LOAN_TYPES } from '../../core/constants/domain'
 
 // ─── Loans & financing ───────────────────────────────────────────────────────
-
-export const LOAN_TYPES: Record<LoanType, { label: string; icon: string }> = {
-  mortgage: { label: 'Imobiliário', icon: '🏠' },
-  vehicle:  { label: 'Veículo',     icon: '🚗' },
-  personal: { label: 'Pessoal',     icon: '💸' },
-  payroll:  { label: 'Consignado',  icon: '🧾' },
-  other:    { label: 'Outro',       icon: '📄' },
-}
 
 export const loanTerms = (l: Loan): LoanTerms => ({
   principal: l.principal, rate: l.rate, termMonths: l.termMonths, system: l.system,

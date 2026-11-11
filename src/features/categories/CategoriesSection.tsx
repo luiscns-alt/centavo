@@ -1,19 +1,19 @@
 import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { CornerDownRight, Pencil, Plus, Trash2 } from 'lucide-react'
-import {
-  CategoryError, addCategory, db, deleteCategory, sortCategories, updateCategory, type Category,
-} from '../../core/db'
+import { CategoryError, addCategory, db, deleteCategory, sortCategories, updateCategory } from '../../core/db'
 import { CategoryEditor } from './CategoryEditor'
+import type { Category } from '../../core/types'
+import { STORAGE_KEYS } from '../../shared/constants/storageKeys'
+import { readLocal, writeLocal } from '../../shared/utils/storage'
 
 type Editing = { mode: 'new' } | { mode: 'new-child'; parentId: number } | { mode: 'edit'; id: number } | { mode: 'delete'; id: number } | null
 
-const REGROUP_KEY = 'centavo:regroupDismissed'
 /** Suggested regroup (v7): child → parent, by default names */
 const REGROUP: [string, string][] = [['Mercado', 'Alimentação'], ['Assinaturas', 'Entretenimento'], ['Cuidados pessoais', 'Saúde']]
 
 function readDismissed() {
-  try { return localStorage.getItem(REGROUP_KEY) === '1' } catch { return false }
+  return readLocal(STORAGE_KEYS.regroupDismissed) === '1'
 }
 
 /** Ajustes → Categorias: a two-level tree — create, rename/re-icon, move under a parent, delete unused */
@@ -52,7 +52,7 @@ export function CategoriesSection() {
 
   function dismissRegroup() {
     setDismissed(true)
-    try { localStorage.setItem(REGROUP_KEY, '1') } catch { /* private mode */ }
+    writeLocal(STORAGE_KEYS.regroupDismissed, '1')
   }
 
   async function applyRegroup() {

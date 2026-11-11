@@ -1,6 +1,8 @@
 import { useLiveQuery } from 'dexie-react-hooks'
-import { db, todayISO, type Account } from '../../core/db'
+import { db } from '../../core/db'
 import { buildLoanSchedule, type LoanSchedule, type ScheduleRow } from './loanSchedule'
+import type { Account } from '../../core/types'
+import { todayISO } from '../../shared/utils/dates'
 
 export { buildLoanSchedule, type InstallmentStatus, type LoanSchedule, type ScheduleRow } from './loanSchedule'
 

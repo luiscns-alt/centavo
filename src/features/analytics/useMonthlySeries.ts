@@ -1,8 +1,9 @@
 import { useMemo } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { db, monthBounds } from '../../core/db'
+import { db } from '../../core/db'
 import { balanceAdjustments, loanCredits } from '../accounts'
 import { buildMonthlySeries, type MonthPoint } from './series'
+import { monthBounds } from '../../shared/utils/dates'
 
 /**
  * Monthly income/expense/net and running balance (patrimônio) for the `n` months ending at

@@ -8,26 +8,8 @@
  *  - Days 29–31 clamp to the month's last day.
  *  - Installment k lands on the first installment's invoice + (k − 1) months.
  */
+import { addMonths, dayIn, parseYM, ymKey } from '../../shared/utils/dates'
 
-export interface YM { year: number; month: number } // month 1–12
-
-const pad = (n: number) => String(n).padStart(2, '0')
-export const ymKey = ({ year, month }: YM) => `${year}-${pad(month)}`
-export const parseYM = (key: string): YM => ({ year: Number(key.slice(0, 4)), month: Number(key.slice(5, 7)) })
-
-export function addMonths({ year, month }: YM, n: number): YM {
-  const i = year * 12 + (month - 1) + n
-  return { year: Math.floor(i / 12), month: (i % 12) + 1 }
-}
-
-export const addMonthsKey = (key: string, n: number) => ymKey(addMonths(parseYM(key), n))
-
-const lastDay = ({ year, month }: YM) => new Date(year, month, 0).getDate()
-
-/** The given day in that month, clamped to its last day — "dia 31" in February is the 28th/29th */
-export function dayIn(ym: YM, day: number): string {
-  return `${ymKey(ym)}-${pad(Math.min(day, lastDay(ym)))}`
-}
 
 export interface InvoiceRef {
   /** YYYY-MM of the due date — the invoice's name */

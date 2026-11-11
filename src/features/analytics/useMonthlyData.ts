@@ -1,5 +1,8 @@
 import { useLiveQuery } from 'dexie-react-hooks'
-import { db, expenseDelta, monthBounds, type Category, type PaymentMethod } from '../../core/db'
+import { db } from '../../core/db'
+import { expenseDelta } from '../../core/amounts'
+import type { Category, PaymentMethod } from '../../core/types'
+import { monthBounds } from '../../shared/utils/dates'
 
 export interface CategorySummary {
   category: Category

@@ -1,18 +1,18 @@
 import { useMemo, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { AlertTriangle, ChevronDown, Gauge, OctagonAlert, Plus, X } from 'lucide-react'
-import { db, formatBRL, sortCategories, type Category } from '../../core/db'
+import { db, sortCategories } from '../../core/db'
 import { LedgerError } from '../../core/ledger/base'
 import { saveBudget } from './ledger'
 import type { BudgetLine } from './budgets'
 import { useBudgetDashboard } from './useBudgets'
-import { MONTH_LONG, MONTH_SHORT } from '../../shared/charts/chartUtils'
 import { BudgetBar } from './BudgetBar'
 import { Choice, FieldLabel, MoneyInput } from '../../shared/ui/MoneyInput'
 import type { MonthNav } from '../../shared/ui/MonthSelector'
+import type { Category } from '../../core/types'
+import { formatBRL } from '../../shared/utils/money'
+import { formatMonthName, formatMonthShort } from '../../shared/utils/dates'
 
-const monthName = (key: string) => MONTH_LONG[Number(key.slice(5)) - 1]
-const shortMonth = (key: string) => `${MONTH_SHORT[Number(key.slice(5)) - 1]}/${key.slice(2, 4)}`
 
 /** Status in words + icon — the bar color is never the only signal */
 export function BudgetStatusText({ line, compact = false }: { line: BudgetLine; compact?: boolean }) {
@@ -162,7 +162,7 @@ function Summary({ dash, month }: { dash: NonNullable<ReturnType<typeof useBudge
   return (
     <section className="mx-5 md:mx-0 mt-4 bg-surface border border-border rounded-2xl px-5 py-4">
       <div className="text-[11px] font-semibold uppercase tracking-[.1em] text-muted">
-        {t.remaining >= 0 ? `Resta em ${monthName(month)}` : `Acima do orçado em ${monthName(month)}`}
+        {t.remaining >= 0 ? `Resta em ${formatMonthName(month)}` : `Acima do orçado em ${formatMonthName(month)}`}
       </div>
       <div className={`font-serif text-[40px] leading-none mt-1 nums ${t.remaining < 0 ? 'text-expense' : 'text-ink'}`}>
         {t.remaining < 0 ? '−' : ''}{formatBRL(Math.abs(t.remaining))}
@@ -255,7 +255,7 @@ function Row({ line, month, open, onToggle, editing, onEdit, onDoneEdit, child =
           )}
           {line.committedAhead.length > 0 && (
             <p className="mt-2 text-muted">
-              Já comprometido no cartão: {line.committedAhead.map(a => `${formatBRL(a.amount)} em ${shortMonth(a.month)}`).join(' · ')}
+              Já comprometido no cartão: {line.committedAhead.map(a => `${formatBRL(a.amount)} em ${formatMonthShort(a.month)}`).join(' · ')}
             </p>
           )}
           {line.pace && line.limit !== null && (
@@ -324,7 +324,7 @@ function Editor({ line, month, onDone }: { line: Pick<BudgetLine, 'category' | '
           label="Vale para"
           value={scope}
           onChange={setScope}
-          options={[{ id: 'from', label: `A partir de ${monthName(month)}` }, { id: 'once', label: `Só em ${monthName(month)}` }]}
+          options={[{ id: 'from', label: `A partir de ${formatMonthName(month)}` }, { id: 'once', label: `Só em ${formatMonthName(month)}` }]}
         />
       </div>
       {error && <p className="mt-2 text-[12px] text-expense" role="alert">{error}</p>}

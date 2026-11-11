@@ -1,16 +1,17 @@
 import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { Archive, ArchiveRestore, Pencil, Plus, Trash2 } from 'lucide-react'
-import { db, formatBRL } from '../../core/db'
-import { ACCOUNT_KINDS, LedgerError } from '../../core/ledger/base'
+import { db } from '../../core/db'
+import { LedgerError } from '../../core/ledger/base'
 import { createAccount, deleteAccount, setAccountArchived, updateAccount } from './ledger'
 import { useAccountBalances } from './useAccounts'
 import { AccountEditor } from './AccountEditor'
 import { AccountIcon } from './AccountIcon'
+import { ACCOUNT_KINDS } from '../../core/constants/domain'
+import { formatBalance } from '../../shared/utils/money'
 
 type Editing = { mode: 'new' } | { mode: 'edit'; id: number } | { mode: 'delete'; id: number } | null
 
-const signedBRL = (c: number) => (c < 0 ? `−${formatBRL(-c)}` : formatBRL(c))
 
 /** Ajustes → Contas: create, edit (incl. saldo inicial), archive, delete unused */
 export function AccountsSection({ onOpenLoan, onNewLoan }: { onOpenLoan: (id: number) => void; onNewLoan: () => void }) {
@@ -44,7 +45,7 @@ export function AccountsSection({ onOpenLoan, onNewLoan }: { onOpenLoan: (id: nu
       <div className="px-5 md:px-1 flex items-baseline justify-between mb-2">
         <div className="text-[11px] font-semibold uppercase tracking-[.1em] text-muted">Contas</div>
         {accounts.length > 0 && (
-          <div className="text-[12px] text-muted nums">Patrimônio <span className="font-semibold text-ink">{signedBRL(total)}</span></div>
+          <div className="text-[12px] text-muted nums">Patrimônio <span className="font-semibold text-ink">{formatBalance(total)}</span></div>
         )}
       </div>
 
@@ -81,7 +82,7 @@ export function AccountsSection({ onOpenLoan, onNewLoan }: { onOpenLoan: (id: nu
                     {a.card ? `Cartão · fecha ${a.card.closingDay} · vence ${a.card.dueDay}` : a.kind === 'loan' ? 'Empréstimo · saldo devedor' : ACCOUNT_KINDS[a.kind].label}
                     {a.archived ? ' · arquivada' : ''}
                     {' · '}
-                    <span className={`nums font-semibold ${a.balance < 0 ? 'text-expense' : 'text-ink'}`}>{signedBRL(a.balance)}</span>
+                    <span className={`nums font-semibold ${a.balance < 0 ? 'text-expense' : 'text-ink'}`}>{formatBalance(a.balance)}</span>
                   </div>
                 </div>
                 {a.kind === 'loan' ? (

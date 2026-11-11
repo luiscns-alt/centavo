@@ -14,10 +14,8 @@
  *    amortizes; then either the term shrinks (payment kept) or the payment shrinks (term kept).
  */
 import { ONE, ZERO, add, centavosTimes, dec, div, format, fromInt, mul, nthRoot, powInt, sub, type Dec } from '../../core/decimal'
-import { addMonths, dayIn, parseYM } from '../credit-cards'
-
-export type AmortizationSystem = 'price' | 'sac'
-export type RateUnit = 'monthly' | 'annual'
+import { addMonths, dayIn, parseYM } from '../../shared/utils/dates'
+import type { AmortizationSystem, LoanState, PrepaymentMode, RateUnit } from '../../core/types'
 
 export interface LoanTerms {
   principal: number          // centavos
@@ -27,16 +25,6 @@ export interface LoanTerms {
   startDate: string          // YYYY-MM-DD
   firstDueDate: string       // YYYY-MM-DD
   monthlyFees?: number       // centavos per installment (insurance, admin fee)
-}
-
-/** Where the contract stands after the last recorded event — everything the next step needs */
-export interface LoanState {
-  balance: number            // outstanding principal, centavos
-  next: number               // number of the next installment (1-based)
-  remaining: number          // installments left
-  payment: number            // Price: current fixed payment (interest + principal)
-  amortization: number       // SAC: current fixed amortization
-  accruedDays: number        // days of the current period whose interest was already paid (prepayments)
 }
 
 export interface InstallmentCalc {
@@ -49,8 +37,6 @@ export interface InstallmentCalc {
   total: number
   balanceAfter: number
 }
-
-export type PrepaymentMode = 'reduce-term' | 'reduce-payment'
 
 const MAX_TERM = 600
 

@@ -1,17 +1,15 @@
 import { ArrowRight, ChevronRight } from 'lucide-react'
-import { formatBRL, todayISO } from '../../core/db'
 import { useAccountBalances, type AccountWithBalance } from './useAccounts'
 import { useCardSummaries } from '../credit-cards'
 import { useLoanSummaries } from '../loans'
 import { groupByBank } from './accountSelection'
-import { ACCOUNT_KINDS } from '../../core/ledger/base'
 import type { AccountScope } from './AccountFilter'
 import { AccountIcon } from './AccountIcon'
+import { ACCOUNT_KINDS } from '../../core/constants/domain'
+import { todayISO, MONTH_SHORT, formatDayMonth, formatMonthName } from '../../shared/utils/dates'
+import { formatBRL, formatBalance } from '../../shared/utils/money'
 
-const MONTH_LONG = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
-const MONTH_SHORT = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
 
-const signedBRL = (c: number) => (c < 0 ? `−${formatBRL(-c)}` : formatBRL(c))
 
 interface Props {
   /** Balances at the end of this day (YYYY-MM-DD) */
@@ -47,7 +45,7 @@ export function AccountsCard({ asOf, account, showCards = true, balances, onMana
     <section className="mx-5 md:mx-0 bg-surface border border-border rounded-2xl">
       <div className="flex items-baseline justify-between gap-3 px-5 md:px-6 pt-5">
         <div className="text-[11px] font-semibold uppercase tracking-[.1em] text-muted">{showCards ? 'Contas e cartões' : 'Contas'}</div>
-        <div className="text-[12px] text-muted">{asOf === todayISO() ? 'hoje' : `${Number(asOf.slice(8))} de ${MONTH_LONG[Number(asOf.slice(5, 7)) - 1]}`}</div>
+        <div className="text-[12px] text-muted">{asOf === todayISO() ? 'hoje' : `${Number(asOf.slice(8))} de ${formatMonthName(asOf)}`}</div>
       </div>
 
       {!loading && visible.length === 0 ? (
@@ -81,7 +79,7 @@ export function AccountsCard({ asOf, account, showCards = true, balances, onMana
                           </div>
                         </div>
                         <div className={`text-[15px] font-bold nums shrink-0 ${bank.balance < 0 ? 'text-expense' : 'text-ink'}`}>
-                          {signedBRL(bank.balance)}
+                          {formatBalance(bank.balance)}
                         </div>
                       </button>
                     )}
@@ -123,7 +121,7 @@ export function AccountsCard({ asOf, account, showCards = true, balances, onMana
 
           <div className="mx-5 md:mx-6 mt-1 py-3.5 border-t border-border flex items-baseline justify-between gap-3">
             <span className="text-[13px] font-semibold text-ink">Patrimônio</span>
-            <span className={`text-[17px] font-bold nums ${total < 0 ? 'text-expense' : 'text-ink'}`}>{loading ? '–' : signedBRL(total)}</span>
+            <span className={`text-[17px] font-bold nums ${total < 0 ? 'text-expense' : 'text-ink'}`}>{loading ? '–' : formatBalance(total)}</span>
           </div>
         </>
       )}
@@ -144,7 +142,7 @@ function CardRow({ card, summary, onOpen, nested = false }: {
   onOpen: () => void
   nested?: boolean
 }) {
-  const due = summary ? `${Number(summary.dueDate.slice(8))} ${MONTH_SHORT[Number(summary.dueDate.slice(5, 7)) - 1]}` : ''
+  const due = summary ? formatDayMonth(summary.dueDate) : ''
   return (
     <button
       onClick={onOpen}
@@ -155,7 +153,7 @@ function CardRow({ card, summary, onOpen, nested = false }: {
         <div className="text-[14px] font-medium text-ink truncate">{card.name}</div>
         <div className="text-[12px] text-muted truncate nums">
           {summary ? `Fatura vence ${due}` : 'Cartão de crédito'}
-          {summary?.available != null && ` · disp. ${signedBRL(summary.available)}`}
+          {summary?.available != null && ` · disp. ${formatBalance(summary.available)}`}
         </div>
       </div>
       <div className="text-[14px] font-bold nums shrink-0 text-ink">

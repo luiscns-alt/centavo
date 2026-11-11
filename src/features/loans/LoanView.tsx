@@ -1,17 +1,16 @@
 import { Fragment, useMemo, useState } from 'react'
 import { ChevronLeft, Undo2, Trash2 } from 'lucide-react'
-import { formatBRL, todayISO, type PaymentMethod } from '../../core/db'
-import { ACCOUNT_METHODS, LedgerError, PAYMENT_METHODS, isCashAccount } from '../../core/ledger/base'
-import { LOAN_TYPES, adjustLoanBalance, deleteLoan, payLoanInstallment, prepayLoan, undoLastLoanEvent } from './ledger'
-import { monthlyRatePercent, payoffAmount, prepayment, project, type PrepaymentMode } from './loanMath'
+import { LedgerError, isCashAccount } from '../../core/ledger/base'
+import { adjustLoanBalance, deleteLoan, payLoanInstallment, prepayLoan, undoLastLoanEvent } from './ledger'
+import { monthlyRatePercent, payoffAmount, prepayment, project } from './loanMath'
 import { useLoanSchedule, type LoanSchedule, type ScheduleRow } from './useLoans'
 import { useAccounts, AccountIcon, AccountChips } from '../accounts'
 import { Choice, FieldLabel, MoneyInput } from '../../shared/ui/MoneyInput'
+import { ACCOUNT_METHODS, PAYMENT_METHODS, LOAN_TYPES } from '../../core/constants/domain'
+import type { PaymentMethod, PrepaymentMode } from '../../core/types'
+import { todayISO, formatDate, formatDayMonthNumeric, formatMonthShortYear } from '../../shared/utils/dates'
+import { formatBRL } from '../../shared/utils/money'
 
-const MONTH_SHORT = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
-const dmy = (iso: string) => `${iso.slice(8)}/${iso.slice(5, 7)}/${iso.slice(0, 4)}`
-const dm = (iso: string) => `${iso.slice(8)}/${iso.slice(5, 7)}`
-const monthYear = (iso: string) => `${MONTH_SHORT[Number(iso.slice(5, 7)) - 1]}/${iso.slice(0, 4)}`
 
 type Panel = null | 'pay' | 'prepay' | 'adjust'
 
@@ -83,8 +82,8 @@ export function LoanView({ loanId, onBack }: Props) {
           <div className="mt-1.5 text-[12px] text-muted nums">{progress}% de {formatBRL(loan.principal)} amortizado</div>
 
           <div className="mt-4 grid grid-cols-2 lg:grid-cols-4 gap-3 nums">
-            <Fig label="Próxima" value={summary.next ? formatBRL(summary.next.total) : '—'} sub={summary.next ? `${summary.next.status === 'overdue' ? 'venceu' : 'vence'} ${dm(summary.next.dueDate)}` : ''} danger={summary.next?.status === 'overdue'} />
-            <Fig label="Termina em" value={summary.endDate ? monthYear(summary.endDate) : '—'} sub={`${summary.remainingInstallments} restantes`} />
+            <Fig label="Próxima" value={summary.next ? formatBRL(summary.next.total) : '—'} sub={summary.next ? `${summary.next.status === 'overdue' ? 'venceu' : 'vence'} ${formatDayMonthNumeric(summary.next.dueDate)}` : ''} danger={summary.next?.status === 'overdue'} />
+            <Fig label="Termina em" value={summary.endDate ? formatMonthShortYear(summary.endDate) : '—'} sub={`${summary.remainingInstallments} restantes`} />
             <Fig label="Juros pagos" value={formatBRL(summary.interestPaid)} />
             <Fig label="Juros a pagar" value={formatBRL(summary.interestRemaining)} />
           </div>
@@ -279,13 +278,13 @@ function PrepayPanel({ data, onDone }: { data: LoanSchedule; onDone: () => void 
       </div>
       {payoff !== null && (
         <button onClick={() => setAmount(payoff)} className="mt-2 text-[12px] font-semibold text-ink underline underline-offset-2">
-          Quitar tudo: {formatBRL(payoff)} (saldo + juros até {dm(date)})
+          Quitar tudo: {formatBRL(payoff)} (saldo + juros até {formatDayMonthNumeric(date)})
         </button>
       )}
 
       {blockedByDue && summary.next && (
         <p className="m-0 mt-3 text-[13px] text-expense">
-          A parcela {summary.next.n} vence{date > nextDue! ? 'u' : ''} em {dm(nextDue!)} — pague-a primeiro, depois antecipe.
+          A parcela {summary.next.n} vence{date > nextDue! ? 'u' : ''} em {formatDayMonthNumeric(nextDue!)} — pague-a primeiro, depois antecipe.
         </p>
       )}
       {err && <p className="m-0 mt-3 text-[13px] text-expense">{err.startsWith('O valor passa') ? 'O valor passa do saldo para quitação.' : err}</p>}
@@ -295,7 +294,7 @@ function PrepayPanel({ data, onDone }: { data: LoanSchedule; onDone: () => void 
           <ModeCard
             active={mode === 'reduce-term'} onClick={() => setMode('reduce-term')} title="Reduzir prazo"
             saved={term.interestSaved}
-            lines={[`${summary.remainingInstallments - term.remaining} parcelas a menos`, term.end ? `termina ${monthYear(term.end)}` : '']}
+            lines={[`${summary.remainingInstallments - term.remaining} parcelas a menos`, term.end ? `termina ${formatMonthShortYear(term.end)}` : '']}
           />
           <ModeCard
             active={mode === 'reduce-payment'} onClick={() => setMode('reduce-payment')} title="Reduzir parcela"
@@ -422,7 +421,7 @@ function ScheduleTable({ data }: { data: LoanSchedule }) {
                           </span>
                         )}
                       </td>
-                      <td className="px-1.5 py-2 whitespace-nowrap">{dm(r.dueDate)}</td>
+                      <td className="px-1.5 py-2 whitespace-nowrap">{formatDayMonthNumeric(r.dueDate)}</td>
                       <td className="text-right font-semibold px-1.5 py-2 whitespace-nowrap">{formatBRL(r.total)}</td>
                       <td className="hidden lg:table-cell text-right px-1.5 py-2 whitespace-nowrap">{formatBRL(r.interest)}</td>
                       <td className="hidden lg:table-cell text-right px-1.5 py-2 whitespace-nowrap">{formatBRL(r.principal)}</td>
@@ -446,8 +445,8 @@ function ExtraRow({ e }: { e: LoanSchedule['events'][number] }) {
     <tr className="border-t border-border bg-bg/60">
       <td colSpan={6} className="pl-5 pr-5 py-2 text-[12px] text-ink">
         {e.kind === 'prepayment'
-          ? <>⤓ Antecipação de <b>{formatBRL(e.amount)}</b> em {dmy(e.date)} — {formatBRL(e.principal)} abatido, {e.mode === 'reduce-term' ? 'prazo reduzido' : 'parcela reduzida'}</>
-          : <>≈ Saldo ajustado pelo extrato para <b>{formatBRL(e.amount)}</b> em {dmy(e.date)}</>}
+          ? <>⤓ Antecipação de <b>{formatBRL(e.amount)}</b> em {formatDate(e.date)} — {formatBRL(e.principal)} abatido, {e.mode === 'reduce-term' ? 'prazo reduzido' : 'parcela reduzida'}</>
+          : <>≈ Saldo ajustado pelo extrato para <b>{formatBRL(e.amount)}</b> em {formatDate(e.date)}</>}
       </td>
     </tr>
   )

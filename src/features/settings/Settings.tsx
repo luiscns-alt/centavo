@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { db, todayISO } from '../../core/db'
+import { db } from '../../core/db'
 import { BackupError, backupFilename, createBackup, parseBackup, restoreBackup, type Backup } from './backup'
 import { getLastBackupAt, getStorageStatus, requestPersistentStorage, setLastBackupAt, type StorageStatus } from '../../core/storage'
 import { Download, HardDrive, ShieldCheck, ShieldAlert, Upload } from 'lucide-react'
@@ -9,6 +9,7 @@ import { MobileHeader } from '../../shared/ui/MobileHeader'
 import { ComponentsGallery } from './ComponentsGallery'
 import { CategoriesSection } from '../categories'
 import { AccountsSection } from '../accounts'
+import { todayISO } from '../../shared/utils/dates'
 
 const formatLongDate = (iso: string) =>
   new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' })

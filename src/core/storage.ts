@@ -1,3 +1,5 @@
+import { STORAGE_KEYS } from '../shared/constants/storageKeys'
+import { readLocal, writeLocal } from '../shared/utils/storage'
 export type StorageStatus = 'persisted' | 'not-persisted' | 'unsupported'
 
 /** Whether the browser has promised not to evict our IndexedDB under storage pressure */
@@ -20,13 +22,11 @@ export async function requestPersistentStorage(): Promise<StorageStatus> {
   }
 }
 
-const PERSIST_ASKED_KEY = 'centavo:persistAsked'
-
 /** Automatic request after the first save — at most once, so Firefox users aren't re-prompted */
 export async function requestPersistentStorageOnce(): Promise<void> {
   try {
-    if (localStorage.getItem(PERSIST_ASKED_KEY)) return
-    localStorage.setItem(PERSIST_ASKED_KEY, '1')
+    if (localStorage.getItem(STORAGE_KEYS.persistAsked)) return
+    localStorage.setItem(STORAGE_KEYS.persistAsked, '1')
   } catch {
     return // can't remember we asked, so don't risk prompting every time
   }
@@ -36,20 +36,10 @@ export async function requestPersistentStorageOnce(): Promise<void> {
 // ─── Last backup timestamp ────────────────────────────────────────────────────
 // Per-device convenience only; losing it just hides the "último backup" line.
 
-const LAST_BACKUP_KEY = 'centavo:lastBackupAt'
-
 export function getLastBackupAt(): string | null {
-  try {
-    return localStorage.getItem(LAST_BACKUP_KEY)
-  } catch {
-    return null
-  }
+  return readLocal(STORAGE_KEYS.lastBackupAt)
 }
 
 export function setLastBackupAt(iso: string): void {
-  try {
-    localStorage.setItem(LAST_BACKUP_KEY, iso)
-  } catch {
-    // storage blocked — nothing to do
-  }
+  writeLocal(STORAGE_KEYS.lastBackupAt, iso)
 }
