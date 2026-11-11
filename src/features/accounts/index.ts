@@ -1,0 +1,12 @@
+// Public API of the accounts feature — other modules import only from here (lint-enforced).
+export { AccountChips } from './AccountChips'
+export { AccountEditor } from './AccountEditor'
+export { AccountFilter, type AccountScope } from './AccountFilter'
+export { AccountIcon } from './AccountIcon'
+export { AccountsCard } from './AccountsCard'
+export { AccountsSection } from './AccountsSection'
+export { resolveSelection } from './accountSelection'
+export { accountBalances, balanceAdjustments, loanCredits, sumBalances, type BalanceAdjustment } from './balances'
+export { bankById } from './banks/catalog'
+export { accountUsage, createAccount, deleteAccount, setAccountArchived, updateAccount, validAccount, type AccountInput } from './ledger'
+export { useAccountBalances, useAccounts } from './useAccounts'

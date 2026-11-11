@@ -1,5 +1,5 @@
 import { defineConfig, type Plugin } from 'vitest/config'
-import type { HmrContext } from 'vite'
+import type { HmrContext, ViteDevServer } from 'vite'
 import react from '@vitejs/plugin-react'
 import nodePath from 'path'
 import fs from 'fs'
@@ -11,9 +11,10 @@ const _require = createRequire(import.meta.url)
 function tailwindV4(): Plugin {
   const candidates = new Set<string>()
   let cssModuleId = ''
+  let devServer: ViteDevServer | null = null
 
   function scan(code: string) {
-    const matches = code.match(/[\w:!\-/]+(?:\[[\w'"%.,\s\-#]+\])?/g) ?? []
+    const matches = code.match(/[\w:!\-/.]+(?:\[[\w'"%.,\s\-#]+\])?/g) ?? []
     matches.forEach(m => candidates.add(m))
   }
 
@@ -46,9 +47,23 @@ function tailwindV4(): Plugin {
       }
     },
 
+    configureServer(server: ViteDevServer) {
+      devServer = server
+    },
+
     transform(code: string, id: string) {
       if (/\.[jt]sx?$/.test(id) && !id.includes('node_modules')) {
+        const before = candidates.size
         scan(code)
+        // A module loaded after the CSS was built (e.g. a newly created component) may bring new
+        // classes: rebuild the CSS, or they stay missing until the next edit of another file
+        if (devServer && cssModuleId && candidates.size > before) {
+          const mod = devServer.moduleGraph.getModuleById(cssModuleId)
+          if (mod) {
+            devServer.moduleGraph.invalidateModule(mod)
+            devServer.hot.send({ type: 'full-reload' })
+          }
+        }
       }
       return null
     },
@@ -89,11 +104,13 @@ function tailwindV4(): Plugin {
 }
 // ─────────────────────────────────────────────────────────────────────────────
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [tailwindV4(), react()],
+  // `vite build --mode android` (test APK): readable code and source maps, nothing minified
+  build: mode === 'android' ? { minify: false, cssMinify: false, sourcemap: true } : {},
   test: {
     environment: 'node',
     // Brazil's UTC offset exposes local-vs-UTC date bugs that a UTC CI box would hide
     env: { TZ: 'America/Sao_Paulo' },
   },
-})
+}))
